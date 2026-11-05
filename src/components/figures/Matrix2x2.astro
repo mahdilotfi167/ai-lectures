@@ -1,0 +1,131 @@
+---
+import HtmlFigure from '../shell/HtmlFigure.astro';
+import { faNum } from '../../lib/format';
+
+interface Props {
+  id: string;
+  desc: string;
+  caption: string;
+  xAxis: { label: string; low: string; high: string };
+  yAxis: { label: string; low: string; high: string };
+  quadrants: { label: string; tone?: string; verdict?: string }[];
+  points: { label: string; x: number; y: number; quadrant: number }[];
+}
+
+const { id, desc, caption, xAxis, yAxis, quadrants, points } = Astro.props;
+
+const plot = { left: 120, right: 920, top: 70, bottom: 520 };
+const px = (x: number) => plot.right - x * (plot.right - plot.left);
+const py = (y: number) => plot.bottom - y * (plot.bottom - plot.top);
+const midX = (plot.left + plot.right) / 2;
+const midY = (plot.top + plot.bottom) / 2;
+
+const qRects = [
+  { x: midX, y: plot.top, w: plot.right - midX, h: midY - plot.top },
+  { x: plot.left, y: plot.top, w: midX - plot.left, h: midY - plot.top },
+  { x: midX, y: midY, w: plot.right - midX, h: plot.bottom - midY },
+  { x: plot.left, y: midY, w: midX - plot.left, h: plot.bottom - midY },
+];
+const qTone = ['is-warn', 'is-ok', 'is-muted', 'is-muted'];
+
+const grouped = [0, 1, 2, 3].map((q) => points.filter((p) => p.quadrant === q));
+let order = 0;
+const pointOrder = new Map<string, number>();
+for (const group of grouped) for (const p of group) pointOrder.set(p.label, order++);
+---
+
+<HtmlFigure id={id} desc={desc} caption={caption} type="matrix">
+  <div class="figure__desktop">
+    <svg class="fig-svg" viewBox="0 0 1000 620" role="img" aria-labelledby={`${id}-title ${id}-desc`}>
+      <title id={`${id}-title`}>{caption}</title>
+      <desc id={`${id}-desc`}>{desc}</desc>
+
+      {qRects.map((r, i) => (
+        <g>
+          <rect
+            x={r.x}
+            y={r.y}
+            width={r.w}
+            height={r.h}
+            class:list={['fig-matrix-q', qTone[i]]}
+          />
+          <text
+            x={i === 0 || i === 2 ? r.x + r.w - 12 : r.x + r.w - 12}
+            y={r.y + 24}
+            direction="rtl"
+            text-anchor="start"
+            class="fig-label-sm"
+          >
+            {quadrants[i]?.label}
+          </text>
+          {quadrants[i]?.verdict && (
+            <text
+              x={i === 0 || i === 2 ? r.x + r.w - 12 : r.x + r.w - 12}
+              y={r.y + 42}
+              direction="rtl"
+              text-anchor="start"
+              class="fig-label-xs"
+            >
+              {quadrants[i].verdict}
+            </text>
+          )}
+        </g>
+      ))}
+
+      <line x1={plot.left} y1={plot.bottom} x2={plot.right} y2={plot.bottom} class="fig-axis" />
+      <polygon points={`${plot.left},${plot.bottom} ${plot.left + 9},${plot.bottom - 5} ${plot.left + 9},${plot.bottom + 5}`} class="fig-arrow-head" />
+      <line x1={plot.right} y1={plot.bottom} x2={plot.right} y2={plot.top} class="fig-axis" />
+      <polygon points={`${plot.right},${plot.top} ${plot.right - 5},${plot.top + 9} ${plot.right + 5},${plot.top + 9}`} class="fig-arrow-head" />
+
+      <text x={plot.right} y={plot.bottom + 24} direction="rtl" text-anchor="start" class="fig-label-xs">{xAxis.low}</text>
+      <text x={plot.left} y={plot.bottom + 24} direction="rtl" text-anchor="end" class="fig-label-xs">{xAxis.high}</text>
+      <text x={midX} y={plot.bottom + 50} direction="rtl" text-anchor="middle" class="fig-label-sm">{xAxis.label}</text>
+
+      <text x={plot.right + 12} y={plot.bottom - 4} direction="rtl" text-anchor="end" class="fig-label-xs">{yAxis.low}</text>
+      <text x={plot.right + 12} y={plot.top + 10} direction="rtl" text-anchor="end" class="fig-label-xs">{yAxis.high}</text>
+      <text x={plot.right + 12} y={plot.top - 18} direction="rtl" text-anchor="end" class="fig-label-sm">{yAxis.label}</text>
+
+      {points.map((p) => {
+        const cx = px(p.x);
+        const cy = py(p.y);
+        const labelLeft = cx > midX;
+        return (
+          <g class="fig-step" style={`--i: ${pointOrder.get(p.label) ?? 0}`}>
+            <circle cx={cx} cy={cy} r={6} class:list={['fig-point-dot', qTone[p.quadrant]]} />
+            <text
+              x={labelLeft ? cx - 10 : cx + 10}
+              y={cy + 4}
+              direction="rtl"
+              text-anchor={labelLeft ? 'start' : 'end'}
+              class="fig-label-xs"
+            >
+              {p.label}
+            </text>
+          </g>
+        );
+      })}
+    </svg>
+  </div>
+
+  <div class="figure__mobile">
+    <div class="fig-matrix">
+      {quadrants.map((q, i) => (
+        <div class:list={['fig-quadrant', q.tone === 'ok' && 'fig-quadrant--start', q.tone === 'warn' && 'fig-quadrant--later', q.tone === 'muted' && 'fig-quadrant--no']}>
+          <div class="fig-quadrant__label">{q.label}</div>
+          {q.verdict && <div class="fig-quadrant__verdict">{q.verdict}</div>}
+          <div class="fig-quadrant__points">
+            {points.filter((p) => p.quadrant === i).map((p) => (
+              <span class="fig-point">{p.label}</span>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <div class="figure__legend">
+    <span><i style="--c: var(--fig-ok)" /> از اینجا شروع کنید</span>
+    <span><i style="--c: var(--warn)" /> بعداً</span>
+    <span><i style="--c: var(--fig-muted)" /> فعلاً نه</span>
+  </div>
+</HtmlFigure>

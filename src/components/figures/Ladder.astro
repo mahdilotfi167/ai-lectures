@@ -1,0 +1,83 @@
+---
+import HtmlFigure from '../shell/HtmlFigure.astro';
+import { faNum } from '../../lib/format';
+
+interface Rung {
+  label: string;
+  fixes?: string;
+  doesNotFix?: string;
+  cost?: string;
+  tone?: string;
+}
+
+interface Props {
+  id: string;
+  desc: string;
+  caption: string;
+  orientation: 'up' | 'down';
+  axisLabel?: string;
+  rungs: Rung[];
+  waterline?: number;
+  marker?: { rung: number; label: string };
+  interactive?: boolean;
+}
+
+const {
+  id,
+  desc,
+  caption,
+  orientation,
+  axisLabel,
+  rungs,
+  waterline,
+  marker,
+  interactive = false,
+} = Astro.props;
+---
+
+<HtmlFigure id={id} desc={desc} caption={caption} type="ladder" interactive={interactive}>
+  {axisLabel && <p class="fig-ladder__axis">{axisLabel}</p>}
+  <div class:list={['fig-ladder', orientation === 'down' && 'is-down']} data-ladder>
+    {rungs.map((rung, i) => (
+      <>
+        <div
+          class:list={['fig-rung', 'fig-step', marker?.rung === i && 'is-active']}
+          style={`--i: ${i}`}
+          data-rung={i}
+        >
+          <div class="fig-rung__num">{faNum(i + 1)}</div>
+          <div>
+            <div class="fig-rung__label">
+              {rung.label}
+              {marker?.rung === i && <span class="fig-rung__marker">{marker.label}</span>}
+            </div>
+            <div class="fig-rung__meta">
+              {rung.fixes && <span><b>حل می‌کند:</b> {rung.fixes}</span>}
+              {rung.doesNotFix && <span><b>حل نمی‌کند:</b> {rung.doesNotFix}</span>}
+            </div>
+          </div>
+          {rung.cost && <span class="fig-rung__cost">{rung.cost}</span>}
+        </div>
+        {waterline === i + 1 && <div class="fig-waterline"><span>سطح آب — دمو</span></div>}
+      </>
+    ))}
+  </div>
+  {interactive && (
+    <div slot="controls" class="figure__controls">
+      <div class="figure__control">
+        <span>مشکل اصلی شما کدام است؟</span>
+        <div class="fig-ladder__buttons">
+          <button type="button" class="figure__toggle" data-role="ladder-knowledge" aria-pressed="false">
+            دانش نادرست یا تازه
+          </button>
+          <button type="button" class="figure__toggle" data-role="ladder-behavior" aria-pressed="false">
+            رفتار یا سبک نادرست
+          </button>
+        </div>
+      </div>
+      <p class="figure__readout" aria-live="polite" data-role="ladder-readout">
+        از پایین‌ترین پله‌ای شروع کنید که مشکل شما را حل می‌کند.
+      </p>
+    </div>
+  )}
+</HtmlFigure>

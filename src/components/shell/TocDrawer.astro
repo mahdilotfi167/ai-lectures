@@ -1,0 +1,54 @@
+---
+import { faNum, lessonAnchor } from '../../lib/format';
+import type { PartMeta, LessonMeta } from '../../data/lessons';
+
+interface Props {
+  parts: PartMeta[];
+  lessons: LessonMeta[];
+}
+
+const { parts, lessons } = Astro.props;
+---
+
+<button
+  class="toc-button"
+  type="button"
+  id="toc-open"
+  aria-haspopup="dialog"
+  aria-controls="toc-dialog"
+>
+  <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+    <path d="M4 6h16M4 12h16M4 18h16"></path>
+  </svg>
+  فهرست
+</button>
+
+<dialog class="toc-dialog" id="toc-dialog" aria-labelledby="toc-title">
+  <div class="toc-dialog__head">
+    <div class="toc-dialog__title" id="toc-title">فهرست سند</div>
+    <button class="toc-dialog__close" type="button" id="toc-close">بستن</button>
+  </div>
+  <div class="toc-dialog__body">
+    {
+      parts.map((p) => (
+        <div class="toc-part" style={`--part-color: var(--part-${p.part})`}>
+          <a class="toc-part__link" href={`#part-${p.part}`} data-toc-part={p.part}>
+            <span class="toc-part__num">بخش {faNum(p.part)}</span>
+            <span>{p.title}</span>
+          </a>
+          <ul class="toc-lessons">
+            {lessons
+              .filter((l) => l.part === p.part)
+              .map((l) => (
+                <li>
+                  <a href={`#${lessonAnchor(l.id)}`} data-toc-lesson={l.id}>
+                    <span class="tabular">{faNum(l.id)}</span> — {l.title}
+                  </a>
+                </li>
+              ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+</dialog>

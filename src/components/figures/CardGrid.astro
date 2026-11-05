@@ -1,0 +1,71 @@
+---
+import HtmlFigure from '../shell/HtmlFigure.astro';
+import Icon from '../shell/Icon.astro';
+
+interface Card {
+  label: string;
+  body?: string;
+  example?: string;
+  icon?: string;
+  tone?: 'normal' | 'muted' | 'danger' | 'ok' | 'new';
+  badge?: string;
+}
+
+interface Props {
+  id: string;
+  desc: string;
+  caption: string;
+  columns?: 2 | 3 | 4;
+  cards: Card[];
+  groups?: { label: string; cardIds: number[] }[];
+}
+
+const { id, desc, caption, columns = 2, cards, groups } = Astro.props;
+
+type Item = { type: 'group'; label: string } | { type: 'card'; card: Card; index: number };
+
+const items: Item[] = [];
+let n = 0;
+if (groups?.length) {
+  for (const group of groups) {
+    items.push({ type: 'group', label: group.label });
+    for (const idx of group.cardIds) {
+      const card = cards[idx];
+      if (card) items.push({ type: 'card', card, index: n++ });
+    }
+  }
+} else {
+  for (const card of cards) items.push({ type: 'card', card, index: n++ });
+}
+---
+
+<HtmlFigure id={id} desc={desc} caption={caption} type="cards">
+  <div class="fig-grid" style={`--cols: ${columns}`}>
+    {
+      items.map((item) =>
+        item.type === 'group' ? (
+          <div class="fig-group-label">{item.label}</div>
+        ) : (
+          <div
+            class:list={[
+              'fig-card',
+              item.card.tone && `fig-card--${item.card.tone}`,
+              'fig-step',
+            ]}
+            style={`--i: ${item.index}`}
+          >
+            <div class="fig-card__top">
+              <div class="fig-card__label">
+                {item.card.icon && <Icon name={item.card.icon} size={18} />}
+                <span>{item.card.label}</span>
+              </div>
+              {item.card.badge && <span class="fig-card__badge">{item.card.badge}</span>}
+            </div>
+            {item.card.body && <div class="fig-card__body">{item.card.body}</div>}
+            {item.card.example && <div class="fig-card__example">{item.card.example}</div>}
+          </div>
+        ),
+      )
+    }
+  </div>
+</HtmlFigure>

@@ -1,0 +1,41 @@
+---
+import HtmlFigure from '../shell/HtmlFigure.astro';
+import { faNum } from '../../lib/format';
+import type { ZoneId } from '../../data/lessons';
+
+interface Stop {
+  label: string;
+  promise: string;
+  zone: ZoneId;
+}
+
+interface Props {
+  id: string;
+  desc: string;
+  caption: string;
+  stops: Stop[];
+}
+
+const { id, desc, caption, stops } = Astro.props;
+const zonePart: Record<ZoneId, number> = {
+  overview: 1,
+  agents: 2,
+  model: 3,
+  build: 4,
+  run: 5,
+  decide: 6,
+};
+---
+
+<HtmlFigure id={id} desc={desc} caption={caption} type="road">
+  <div class="fig-road">
+    {stops.map((stop, i) => (
+      <div class="fig-road__stop fig-step" style={`--i: ${i}; --part-color: var(--part-${zonePart[stop.zone]})`}>
+        <span class="fig-road__dot" aria-hidden="true"></span>
+        <div class="fig-road__num">بخش {faNum(i + 1)}</div>
+        <div class="fig-road__label">{stop.label}</div>
+        <div class="fig-road__promise">{stop.promise}</div>
+      </div>
+    ))}
+  </div>
+</HtmlFigure>

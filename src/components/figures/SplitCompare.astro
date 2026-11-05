@@ -1,0 +1,49 @@
+---
+import HtmlFigure from '../shell/HtmlFigure.astro';
+
+interface Side {
+  label: string;
+  steps: { label: string; mono?: boolean }[];
+  tone?: 'normal' | 'accent';
+  badge?: string;
+}
+
+interface Props {
+  id: string;
+  desc: string;
+  caption: string;
+  left: Side;
+  right: Side;
+  sharedInput?: string;
+  verdict?: string;
+}
+
+const { id, desc, caption, left, right, sharedInput, verdict } = Astro.props;
+---
+
+<HtmlFigure id={id} desc={desc} caption={caption} type="split">
+  {sharedInput && <div class="fig-split__shared">{sharedInput}</div>}
+  <div class="fig-split">
+    {
+      [left, right].map((side, sideIndex) => (
+        <div class:list={['fig-panel', side.tone === 'accent' && 'fig-panel--accent']}>
+          <div class="fig-panel__head">
+            <span>{side.label}</span>
+            {side.badge && <span class="fig-panel__badge">{side.badge}</span>}
+          </div>
+          <div class="fig-panel__steps">
+            {side.steps.map((step, i) => (
+              <div
+                class:list={['fig-panel__step', sideIndex === 1 && 'fig-panel__step--loop', 'fig-step']}
+                style={`--i: ${i}`}
+              >
+                {step.mono ? <code class="ltr-inline">{step.label}</code> : <span>{step.label}</span>}
+              </div>
+            ))}
+          </div>
+        </div>
+      ))
+    }
+    {verdict && <div class="fig-split__verdict">{verdict}</div>}
+  </div>
+</HtmlFigure>

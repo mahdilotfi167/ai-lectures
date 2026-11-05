@@ -1,0 +1,87 @@
+---
+import { getCollection } from 'astro:content';
+import Book from '../layouts/Book.astro';
+import Cover from '../components/shell/Cover.astro';
+import PartDivider from '../components/shell/PartDivider.astro';
+import Lesson from '../components/shell/Lesson.astro';
+import Term from '../components/shell/Term.astro';
+import Num from '../components/shell/Num.astro';
+import Ltr from '../components/shell/Ltr.astro';
+import Code from '../components/shell/Code.astro';
+import Aside from '../components/shell/Aside.astro';
+import Takeaway from '../components/shell/Takeaway.astro';
+
+import CardGrid from '../components/figures/CardGrid.astro';
+import ConceptMap from '../components/figures/ConceptMap.astro';
+import LayerStack from '../components/figures/LayerStack.astro';
+import RoadStrip from '../components/figures/RoadStrip.astro';
+import SplitCompare from '../components/figures/SplitCompare.astro';
+import SequenceFlow from '../components/figures/SequenceFlow.astro';
+import GraphMorph from '../components/figures/GraphMorph.astro';
+import LoopTrace from '../components/figures/LoopTrace.astro';
+import BranchDiagram from '../components/figures/BranchDiagram.astro';
+import ExplodedView from '../components/figures/ExplodedView.astro';
+import ProbabilityBars from '../components/figures/ProbabilityBars.astro';
+import TokenStrip from '../components/figures/TokenStrip.astro';
+import StackedBar from '../components/figures/StackedBar.astro';
+import FlowPipeline from '../components/figures/FlowPipeline.astro';
+import AnnotatedCode from '../components/figures/AnnotatedCode.astro';
+import Ladder from '../components/figures/Ladder.astro';
+import DataTable from '../components/figures/DataTable.astro';
+import TradeoffTriangle from '../components/figures/TradeoffTriangle.astro';
+import Matrix2x2 from '../components/figures/Matrix2x2.astro';
+import CostCalculator from '../components/figures/CostCalculator.astro';
+import ContextLens from '../components/context/ContextLens.astro';
+import ContextLab from '../components/context/ContextLab.astro';
+
+import { parts, lessons as lessonMeta, compareLessonId } from '../data/lessons';
+
+const entries = await getCollection('lessons');
+const sorted = entries.sort((a, b) => compareLessonId(a.data.id, b.data.id));
+const byPart = new Map(parts.map((part) => [part.part, sorted.filter((entry) => entry.data.part === part.part)]));
+
+const components = {
+  CardGrid,
+  ConceptMap,
+  LayerStack,
+  RoadStrip,
+  SplitCompare,
+  SequenceFlow,
+  GraphMorph,
+  LoopTrace,
+  BranchDiagram,
+  ExplodedView,
+  ProbabilityBars,
+  TokenStrip,
+  StackedBar,
+  FlowPipeline,
+  AnnotatedCode,
+  Ladder,
+  DataTable,
+  TradeoffTriangle,
+  Matrix2x2,
+  CostCalculator,
+  ContextLens,
+  ContextLab,
+  Term,
+  Num,
+  Ltr,
+  Code,
+  Aside,
+  Takeaway,
+};
+---
+
+<Book parts={parts} lessons={lessonMeta}>
+  <Cover />
+  {
+    parts.map((part) => (
+      <>
+        <PartDivider part={part} />
+        {byPart.get(part.part)?.map((entry) => (
+          <Lesson entry={entry} components={components} />
+        ))}
+      </>
+    ))
+  }
+</Book>

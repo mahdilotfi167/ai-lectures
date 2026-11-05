@@ -1,0 +1,21 @@
+---
+interface Props {
+  code?: string;
+  lang?: string;
+  inline?: boolean;
+}
+
+const { code, lang = 'text', inline = false } = Astro.props;
+---
+
+{
+  inline ? (
+    <code class="ltr-inline">{code ?? <slot />}</code>
+  ) : (
+    <div class="code-block" data-lang={lang}>
+      <pre>
+        <code>{code ?? <slot />}</code>
+      </pre>
+    </div>
+  )
+}

@@ -1,0 +1,131 @@
+---
+import HtmlFigure from '../shell/HtmlFigure.astro';
+import { faNum } from '../../lib/format';
+
+interface Segment {
+  label: string;
+  tokens: number;
+  tone: 'system' | 'history' | 'docs' | 'question' | 'normal';
+  source?: string;
+}
+
+interface Props {
+  id: string;
+  desc: string;
+  caption: string;
+  capacity: number;
+  segments: Segment[];
+  overflow?: { label: string; tokens: number };
+  interactive?: boolean;
+  showCounts?: boolean;
+}
+
+const {
+  id,
+  desc,
+  caption,
+  capacity,
+  segments,
+  overflow,
+  interactive = false,
+  showCounts = true,
+} = Astro.props;
+
+const total = segments.reduce((sum, s) => sum + s.tokens, 0);
+let remaining = Math.max(0, total - capacity);
+const fitted = segments.map((s) => {
+  let tokens = s.tokens;
+  if (remaining > 0 && (s.tone === 'history' || s.tone === 'docs')) {
+    const cut = Math.min(tokens, remaining);
+    tokens -= cut;
+    remaining -= cut;
+  }
+  return { ...s, display: tokens };
+});
+const used = fitted.reduce((sum, s) => sum + s.display, 0);
+const cut = Math.max(0, total - capacity);
+const width = (tokens: number) => `${Math.max(0, (tokens / capacity) * 100)}%`;
+const outerTotal = capacity + cut;
+const barWidth = (capacity / outerTotal) * 100;
+const ghostWidth = (cut / outerTotal) * 100;
+---
+
+<HtmlFigure id={id} desc={desc} caption={caption} type="stacked-bar" interactive={interactive}>
+  <div class="fig-bar-wrap" data-stacked-bar data-capacity={capacity} data-total={total}>
+    <div class="fig-bar-outer" data-role="bar-outer">
+      <div class="fig-bar" data-role="bar" style={`width: ${barWidth}%`}>
+        {
+          fitted.map((seg) => (
+            <div
+              class:list={['fig-bar__seg', `fig-bar__seg--${seg.tone}`]}
+              style={`width: ${width(seg.display)}`}
+              data-kind={seg.tone}
+              data-tokens={seg.tokens}
+              data-label={seg.label}
+              title={`${seg.label}${seg.source ? ` — ${seg.source}` : ''}`}
+            >
+              {showCounts && seg.display / capacity > 0.07 ? (
+                <span>
+                  {seg.label} · {faNum(seg.display)}
+                </span>
+              ) : null}
+            </div>
+          ))
+        }
+      </div>
+      <div
+        class="fig-bar__ghost"
+        data-role="ghost"
+        hidden={cut === 0}
+        style={`width: ${ghostWidth}%`}
+        title={overflow?.label ?? 'بیرون‌افتاده'}
+      >
+        {cut > 0 ? `${overflow?.label ?? 'بیرون‌افتاده'} · ${faNum(cut)}` : ''}
+      </div>
+    </div>
+    <div class="fig-bar__status" data-role="status">
+      <span>ظرفیت: <strong>{faNum(capacity)}</strong> توکن</span>
+      <span>استفاده‌شده: <strong data-role="used">{faNum(used)}</strong> توکن</span>
+      <span data-role="overflow" class:list={[cut > 0 && 'is-over']}>
+        {cut > 0 ? `بیرون‌افتاده: ${faNum(cut)}` : 'همه‌چیز جا می‌شود'}
+      </span>
+    </div>
+  </div>
+  {
+    segments.length > 0 && (
+      <div class="fig-bar__legend">
+        {segments.map((s) => (
+          <span>
+            <i class={`fig-bar__seg--${s.tone}`} />
+            {s.label}
+            {s.source ? ` — ${s.source}` : ''}
+          </span>
+        ))}
+      </div>
+    )
+  }
+  {
+    interactive && (
+      <div slot="controls" class="figure__controls">
+        <label class="figure__control">
+          <span>اندازهٔ اسناد بازیابی‌شده</span>
+          <input
+            type="range"
+            min="0"
+            max={Math.round(capacity * 1.6)}
+            step="100"
+            value={segments.find((s) => s.tone === 'docs')?.tokens ?? 0}
+            data-role="docs-slider"
+            aria-label="اندازهٔ اسناد بازیابی‌شده به توکن"
+          />
+          <output data-role="docs-output">
+            {faNum(segments.find((s) => s.tone === 'docs')?.tokens ?? 0)} توکن
+          </output>
+        </label>
+        <p class="figure__readout" aria-live="polite" data-role="live">
+          با بزرگ‌ترکردن اسناد، قدیمی‌ترین بخش تاریخچه از پنجره بیرون می‌افتد.
+        </p>
+      </div>
+    )
+  }
+</HtmlFigure>

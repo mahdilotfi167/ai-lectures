@@ -1,0 +1,59 @@
+---
+import { Code } from 'astro:components';
+import HtmlFigure from '../shell/HtmlFigure.astro';
+import { faNum } from '../../lib/format';
+
+interface Annotation {
+  line: number;
+  label: string;
+  detail?: string;
+}
+
+interface Block {
+  title: string;
+  lang: 'json' | 'python' | 'http';
+  code: string;
+  annotations: Annotation[];
+}
+
+interface Props {
+  id: string;
+  desc: string;
+  caption: string;
+  blocks: Block[];
+}
+
+const { id, desc, caption, blocks } = Astro.props;
+let counter = 0;
+---
+
+<HtmlFigure id={id} desc={desc} caption={caption} type="code">
+  <div class="fig-annotated">
+    <div>
+      {blocks.map((block) => (
+        <div class="fig-annotated__block">
+          <div class="fig-annotated__title">{block.title} — نمونه</div>
+          <div class="fig-annotated__code">
+            <Code code={block.code} lang={block.lang} />
+          </div>
+        </div>
+      ))}
+    </div>
+    <div class="fig-annotated__annotations">
+      {blocks.flatMap((block) =>
+        block.annotations.map((annotation) => {
+          const i = counter++;
+          return (
+            <div class="fig-annotation fig-step" style={`--i: ${i}`}>
+              <span class="fig-annotation__num">{faNum(annotation.line)}</span>
+              <div>
+                <div class="fig-annotation__label">{annotation.label}</div>
+                {annotation.detail && <div class="fig-annotation__detail">{annotation.detail}</div>}
+              </div>
+            </div>
+          );
+        }),
+      )}
+    </div>
+  </div>
+</HtmlFigure>

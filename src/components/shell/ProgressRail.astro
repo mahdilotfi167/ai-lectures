@@ -1,0 +1,26 @@
+---
+import { faNum } from '../../lib/format';
+import type { PartMeta } from '../../data/lessons';
+
+interface Props {
+  parts: PartMeta[];
+}
+
+const { parts } = Astro.props;
+---
+
+<nav class="rail" aria-label="پیشرفت در بخش‌ها">
+  {
+    parts.map((p) => (
+      <button
+        class="rail__seg"
+        type="button"
+        data-part={p.part}
+        style={`--seg-color: var(--part-${p.part}); --fill: 0%`}
+        aria-label={`بخش ${faNum(p.part)}: ${p.title}`}
+      >
+        <span class="rail__label">{faNum(p.part)} — {p.title}</span>
+      </button>
+    ))
+  }
+</nav>

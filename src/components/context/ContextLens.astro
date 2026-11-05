@@ -1,0 +1,175 @@
+---
+import FigureShell from '../shell/FigureShell.astro';
+import ContextTape from './ContextTape.astro';
+import { faNum } from '../../lib/format';
+import { compareLessonId } from '../../data/lessons';
+import { requireLens } from '../../data/context/lenses';
+import type { Frame, Panel } from '../../data/context/types';
+
+interface Props {
+  id: string;
+  lens: string;
+  caption: string;
+  desc: string;
+}
+
+const { id, lens, caption, desc } = Astro.props;
+const def = requireLens(lens);
+const lesson = def.lesson;
+const frames = def.frames ?? [];
+const panels = def.panels ?? [];
+const showTokens = compareLessonId(lesson, '3.2') >= 0;
+const raw = def.rawView !== false;
+const stepper = def.mode === 'steps' || def.mode === 'mapping';
+const staticMode = def.mode === 'static';
+
+const frameForPanel = (panel: Panel, index: number): Frame => ({
+  id: `panel-${index}`,
+  title: panel.label,
+  narration: '',
+  blocks: panel.blocks.map((ref, i) =>
+    panel.cachedPrefix && i < panel.cachedPrefix ? { ...ref, cached: true } : ref,
+  ),
+  output: panel.output,
+});
+
+const spine = 'مدل فقط ادامهٔ متنی را می‌نویسد که جلویش گذاشته‌اند.';
+---
+
+<FigureShell
+  id={id}
+  caption={caption}
+  suffix="ب"
+  type="context-lens"
+  describedby={`${id}-desc`}
+>
+  <div
+    slot="visual"
+    class:list={['ctx-lens', staticMode && 'is-static']}
+    data-context-lens={def.key}
+    data-mode={def.mode}
+    data-lesson={lesson}
+    data-raw-default="false"
+  >
+    <p class="sr-only" id={`${id}-desc`}>{desc}</p>
+
+    <div class="ctx-head">
+      <span class="ctx-head__title">آنچه مدل می‌بیند</span>
+      <a class="ctx-head__simplified" href="#lesson-1-3">نسخهٔ ساده‌شده</a>
+      {
+        raw && (
+          <button type="button" class="ctx-raw" data-raw-toggle aria-pressed="false">
+            نمای خام
+          </button>
+        )
+      }
+    </div>
+    <p class="ctx-raw-note">برچسب‌ها برای فهم ماست؛ مدل فقط همین متن پیوسته را می‌بیند.</p>
+
+    {
+      def.mode === 'compare' ? (
+        <>
+          <div class="ctx-compare">
+            {panels.map((panel, i) => (
+              <section class="ctx-panel" data-panel={i}>
+                <div class="ctx-panel__head">
+                  <h4>{panel.label}</h4>
+                  {panel.modelLabel && <span class="ctx-model-chip">{panel.modelLabel}</span>}
+                </div>
+                {panel.cachedPrefix ? (
+                  <p class="ctx-panel__cache">
+                    {faNum(panel.cachedPrefix)} بلوک اول ثابت و قابل کش است
+                  </p>
+                ) : null}
+                <ContextTape
+                  frame={frameForPanel(panel, i)}
+                  lesson={lesson}
+                  showActors={false}
+                  showTokens={showTokens}
+                />
+                {panel.note && <p class="ctx-panel__note">{panel.note}</p>}
+              </section>
+            ))}
+          </div>
+          {def.compareNote && <p class="ctx-compare__note">{def.compareNote}</p>}
+        </>
+      ) : def.mode === 'static' ? (
+        <>
+          {frames[0] && <ContextTape frame={frames[0]} lesson={lesson} showTokens={showTokens} />}
+          {def.slots && (
+            <div class="ctx-slots">
+              <p class="ctx-slots__title">جاهای خالی این متن</p>
+              <div class="ctx-slots__grid">
+                {def.slots.map((slot) => (
+                  <div class="ctx-slot">
+                    <span class="ctx-slot__label">{slot.label}</span>
+                    {slot.badge && <span class="ctx-slot__badge">{slot.badge}</span>}
+                    <span class="ctx-slot__empty">جای خالی</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
+      ) : (
+        <>
+          <div class="ctx-frames" data-ctx-frames>
+            {frames.map((frame, i) => (
+              <section
+                class:list={['ctx-frame', i === 0 && 'is-active']}
+                data-frame-index={i}
+                aria-hidden={i === 0 ? undefined : 'true'}
+              >
+                <div class="ctx-frame__head">
+                  <span class="ctx-frame__step">
+                    گام {faNum(i + 1)} از {faNum(frames.length)}
+                  </span>
+                  <h4>{frame.title}</h4>
+                  <p>{frame.narration}</p>
+                </div>
+                {def.mode === 'mapping' ? (
+                  <div class="ctx-map-grid">
+                    <div class="ctx-mapping">
+                      <p class="ctx-mapping__title" dir="rtl">
+                        چیزی که فرستاده می‌شود: <code dir="ltr">messages</code>
+                      </p>
+                      <pre class="ctx-code" dir="ltr"><code>{frame.messages}</code></pre>
+                      {frame.messagesNote && <p class="ctx-mapping__note">{frame.messagesNote}</p>}
+                    </div>
+                    <div class="ctx-mapping__tape">
+                      <ContextTape
+                        frame={frame}
+                        lesson={lesson}
+                        showActors={false}
+                        showTokens={showTokens}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <ContextTape frame={frame} lesson={lesson} showTokens={showTokens} />
+                )}
+              </section>
+            ))}
+          </div>
+          {stepper && (
+            <div class="ctx-stepper" data-stepper>
+              <button type="button" class="ctx-stepper__btn" data-prev>
+                قبلی
+              </button>
+              <span class="ctx-stepper__label" data-step-label>
+                گام ۱ از {faNum(frames.length)}
+              </span>
+              <button type="button" class="ctx-stepper__btn" data-next>
+                بعدی
+              </button>
+            </div>
+          )}
+        </>
+      )
+    }
+
+    <p class="ctx-spine">{spine}</p>
+    <p class="ctx-disclaimer">خروجی‌ها نمونهٔ ساخته‌شده‌اند؛ مدل زنده‌ای در کار نیست.</p>
+    <p class="sr-only" aria-live="polite" data-ctx-live></p>
+  </div>
+</FigureShell>

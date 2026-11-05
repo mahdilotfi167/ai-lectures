@@ -1,0 +1,92 @@
+---
+import Icon from '../shell/Icon.astro';
+import { faNum, lessonAnchor } from '../../lib/format';
+import { compareLessonId } from '../../data/lessons';
+import { authors, kinds } from '../../data/context/kinds';
+import type { BlockRef } from '../../data/context/types';
+import type { ContextBlockDef } from '../../data/context/blocks';
+import ContextText from './ContextText.astro';
+
+interface Props {
+  block: ContextBlockDef;
+  blockRef: BlockRef;
+  lesson: string;
+  showTokens?: boolean;
+}
+
+const { block, blockRef, lesson, showTokens = false } = Astro.props;
+const kind = kinds[block.kind];
+const author = authors[kind.author];
+const text = blockRef.text ?? block.text;
+const state = blockRef.state ?? 'same';
+const json = kind.format === 'json' || (kind.format === 'auto' && /^[[{]/.test(text.trim()));
+const code = block.code || json;
+const lines = text.split('\n');
+const tokens = showTokens || compareLessonId(lesson, '3.2') >= 0;
+
+const stateLabel: Record<string, string | undefined> = {
+  new: 'جدید',
+  changed: 'تغییر کرد',
+  gone: 'حذف شد',
+  evicted: 'بیرون‌افتاده',
+  danger: 'هشدار',
+  dim: 'کم‌رنگ',
+};
+---
+
+<li
+  class:list={['ctx-block', `ctx-block--${block.kind}`, `is-${state}`]}
+  data-author={kind.author}
+  data-kind={block.kind}
+  data-block={block.id}
+  data-tokens={block.tokens}
+  data-state={state}
+  hidden={blockRef.hidden}
+>
+  <span class="ctx-block__rail" aria-hidden="true"></span>
+
+  <div class="ctx-block__meta">
+    <span class="ctx-block__author">
+      <Icon name={author.icon} size={15} />
+      {author.label}
+    </span>
+    <span class="ctx-block__sep" aria-hidden="true">·</span>
+    <span class="ctx-block__kind">{kind.label}</span>
+    <code class="ctx-block__role" dir="ltr">{kind.role}</code>
+    {
+      stateLabel[state] && (
+        <span class:list={['ctx-block__badge', `ctx-block__badge--${state}`]}>
+          {state === 'danger' ? '⚠ ' : ''}
+          {stateLabel[state]}
+        </span>
+      )
+    }
+    {blockRef.cached && <span class="ctx-block__cache">کش‌شده</span>}
+    {
+      blockRef.lessonRef && (
+        <a class="ctx-block__lesson" href={`#${lessonAnchor(blockRef.lessonRef)}`}>
+          درس {faNum(blockRef.lessonRef)}
+        </a>
+      )
+    }
+  </div>
+
+  <code class="ctx-raw-role" dir="ltr">{kind.role}</code>
+
+  {
+    code ? (
+      <pre class="ctx-code" dir="ltr"><code>{text}</code></pre>
+    ) : (
+      <div class="ctx-block__body" dir="rtl">
+        {lines.map((line) => (
+          <span class="ctx-line">
+            <ContextText text={line} />
+          </span>
+        ))}
+      </div>
+    )
+  }
+
+  {blockRef.note && <p class="ctx-block__note">{blockRef.note}</p>}
+  {tokens && <span class="ctx-block__tokens">≈ {faNum(block.tokens)} توکن</span>}
+</li>

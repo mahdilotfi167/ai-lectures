@@ -1,0 +1,19 @@
+---
+interface Props {
+  inline?: boolean;
+}
+
+const { inline = false } = Astro.props;
+---
+
+{
+  inline ? (
+    <bdi class="ltr-inline">
+      <slot />
+    </bdi>
+  ) : (
+    <span class="ltr">
+      <slot />
+    </span>
+  )
+}

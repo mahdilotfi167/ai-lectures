@@ -1,0 +1,29 @@
+---
+import { render } from 'astro:content';
+import { faNum, lessonAnchor } from '../../lib/format';
+
+interface Props {
+  entry: any;
+  components: Record<string, any>;
+}
+
+const { entry, components } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+const anchor = lessonAnchor(d.id);
+---
+
+<article
+  class="lesson"
+  id={anchor}
+  style={`--lesson-color: var(--part-${d.part})`}
+  aria-labelledby={`${anchor}-title`}
+>
+  <header class="lesson__header">
+    <div class="lesson__num">درس {faNum(d.id)}</div>
+    <h3 class="lesson__title" id={`${anchor}-title`}>{d.title_fa}</h3>
+  </header>
+  <div class="lesson__body">
+    <Content components={components} />
+  </div>
+</article>

@@ -1,0 +1,132 @@
+import { readdirSync, readFileSync, existsSync } from 'node:fs';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import matter from 'gray-matter';
+import { lessons, parts } from '../src/data/lessons.ts';
+import { termById } from '../src/data/glossary.ts';
+import { lensByKey } from '../src/data/context/lenses.ts';
+
+const root = dirname(dirname(fileURLToPath(import.meta.url)));
+const dir = join(root, 'src/content/lessons');
+const errors: string[] = [];
+const warnings: string[] = [];
+
+const files = readdirSync(dir).filter((f) => f.endsWith('.mdx')).sort();
+if (files.length !== 35) errors.push(`expected 35 lesson files, found ${files.length}`);
+
+const parsed = files.map((file) => {
+  const raw = readFileSync(join(dir, file), 'utf8');
+  const fm = matter(raw);
+  return { file, data: fm.data as Record<string, any>, body: fm.content };
+});
+const byId = new Map(parsed.map((p) => [p.data.id, p]));
+
+for (const expected of lessons) {
+  const p = byId.get(expected.id);
+  if (!p) {
+    errors.push(`missing lesson ${expected.id}`);
+    continue;
+  }
+  const d = p.data;
+  const prefix = `lesson ${expected.id}`;
+
+  if (d.part !== expected.part) errors.push(`${prefix}: part ${d.part} != ${expected.part}`);
+  if (d.slug !== expected.slug) errors.push(`${prefix}: slug ${d.slug} != ${expected.slug}`);
+  if (d.title_fa !== expected.title) errors.push(`${prefix}: title mismatch`);
+  if (d.objective_fa !== expected.objective) errors.push(`${prefix}: objective mismatch`);
+  if (d.example !== expected.example) errors.push(`${prefix}: example ${d.example} != ${expected.example}`);
+  if (d.words !== expected.words) errors.push(`${prefix}: words ${d.words} != ${expected.words}`);
+  if (d.has_aside !== expected.hasAside) errors.push(`${prefix}: has_aside mismatch`);
+  if (d.status !== 'confirmed') warnings.push(`${prefix}: status is ${d.status}, not confirmed`);
+
+  if (d.figure?.component !== expected.figure.component) {
+    errors.push(`${prefix}: figure component ${d.figure?.component} != ${expected.figure.component}`);
+  }
+  if (d.figure?.id !== expected.figure.id) errors.push(`${prefix}: figure id mismatch`);
+  if (d.figure?.caption_fa !== expected.figure.caption) errors.push(`${prefix}: figure caption mismatch`);
+  if (d.figure?.interactive !== expected.figure.interactive) {
+    errors.push(`${prefix}: figure interactive mismatch`);
+  }
+
+  const expectedFile = `${expected.part}-${expected.id.split('.')[1]}-${expected.slug}.mdx`;
+  if (p.file !== expectedFile) errors.push(`${prefix}: filename ${p.file} != ${expectedFile}`);
+
+  const componentPath = join(root, 'src/components/figures', `${d.figure?.component}.astro`);
+  if (!existsSync(componentPath)) errors.push(`${prefix}: missing figure component ${d.figure?.component}.astro`);
+
+  const lens = d.context_lens;
+  if (lens) {
+    const def = lensByKey.get(lens.lens);
+    if (!def) {
+      errors.push(`${prefix}: unknown context lens ${lens.lens}`);
+    } else {
+      if (def.lesson !== expected.id) errors.push(`${prefix}: lens ${lens.lens} belongs to ${def.lesson}`);
+      const expectedLensId = `fig-${expected.part}-${expected.id.split('.')[1]}-ctx`;
+      if (lens.id !== expectedLensId) errors.push(`${prefix}: lens id ${lens.id} != ${expectedLensId}`);
+      if (def.mode === 'lab') {
+        if (!p.body.includes('<ContextLab')) errors.push(`${prefix}: lab declared but no <ContextLab>`);
+        if (lens.interactive !== 'lab') errors.push(`${prefix}: lab interactive must be lab`);
+      } else {
+        if (!p.body.includes('<ContextLens')) errors.push(`${prefix}: lens declared but no <ContextLens>`);
+        if (def.mode === 'steps' || def.mode === 'mapping') {
+          if (!['stepper', 'predict'].includes(String(lens.interactive))) {
+            errors.push(`${prefix}: stepper lens interactive must be stepper or predict`);
+          }
+        } else if (lens.interactive !== false) {
+          errors.push(`${prefix}: static/compare lens interactive must be false`);
+        }
+      }
+      if (!p.body.includes(`id="${lens.id}"`)) errors.push(`${prefix}: lens call missing id`);
+      if (!p.body.includes(`caption="${lens.caption_fa}"`)) errors.push(`${prefix}: lens caption mismatch`);
+    }
+  }
+
+  for (const termId of d.terms_introduced ?? []) {
+    if (!termById.has(termId)) errors.push(`${prefix}: unknown term ${termId}`);
+  }
+
+  const tagRe = new RegExp(`<${d.figure?.component}\\b[\\s\\S]*?/>`);
+  const tag = p.body.match(tagRe)?.[0];
+  if (!tag) {
+    errors.push(`${prefix}: no <${d.figure?.component} ... /> call in body`);
+  } else {
+    if (!tag.includes(`id="${d.figure.id}"`)) errors.push(`${prefix}: figure call missing id="${d.figure.id}"`);
+    if (!tag.includes(`caption="${d.figure.caption_fa}"`)) {
+      errors.push(`${prefix}: figure call caption does not match frontmatter`);
+    }
+    const desc = tag.match(/desc="([^"]*)"/)?.[1] ?? '';
+    if (desc.length < 25) errors.push(`${prefix}: figure desc missing or too short`);
+  }
+
+  if (!p.body.includes('<Takeaway>')) errors.push(`${prefix}: missing <Takeaway>`);
+  if (d.has_aside && !p.body.includes('<Aside')) errors.push(`${prefix}: has_aside true but no <Aside>`);
+  if (!d.has_aside && p.body.includes('<Aside')) errors.push(`${prefix}: has_aside false but <Aside> present`);
+}
+
+for (const p of parsed) {
+  if (!lessons.some((l) => l.id === p.data.id)) errors.push(`unexpected lesson file ${p.file} (id ${p.data.id})`);
+}
+
+const interactive = parsed.filter((p) => p.data.figure?.interactive);
+if (interactive.length !== 8) {
+  errors.push(`expected exactly 8 interactive figures, found ${interactive.length}`);
+}
+
+const withLens = parsed.filter((p) => p.data.context_lens);
+if (withLens.length !== 21) errors.push(`expected 21 lessons with a context lens (20 + lab), found ${withLens.length}`);
+
+for (const part of parts) {
+  const retail = parsed.filter((p) => p.data.part === part.part && p.data.example === 'retail');
+  if (retail.length === 0) warnings.push(`part ${part.part}: no example: retail lesson`);
+}
+
+const ids = parsed.map((p) => p.data.id);
+if (new Set(ids).size !== ids.length) errors.push('duplicate lesson ids');
+
+console.log(`skeleton: ${parsed.length} lessons, ${interactive.length} interactive figures`);
+for (const warning of warnings) console.warn(`warning: ${warning}`);
+if (errors.length) {
+  for (const error of errors) console.error(`error: ${error}`);
+  process.exit(1);
+}
+console.log('skeleton: OK');

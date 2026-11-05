@@ -1,0 +1,21 @@
+---
+interface Props {
+  text: string;
+}
+
+const { text } = Astro.props;
+const parts = text.split(/(\b[A-Za-z][A-Za-z0-9_.+/-]*\b)/g).filter(Boolean);
+const isLatin = (s: string) => /^[A-Za-z]/.test(s);
+---
+
+{
+  parts.map((part) =>
+    isLatin(part) ? (
+      <bdi class="ctx-latin" dir="ltr">
+        {part}
+      </bdi>
+    ) : (
+      part
+    ),
+  )
+}

@@ -1,0 +1,55 @@
+---
+import HtmlFigure from '../shell/HtmlFigure.astro';
+
+interface Layer {
+  label: string;
+  sublabel?: string;
+  examples?: string[];
+  tone?: 'normal' | 'accent' | 'muted';
+}
+
+interface Props {
+  id: string;
+  desc: string;
+  caption: string;
+  layers: Layer[];
+  direction?: 'top-down' | 'bottom-up';
+  pointer?: { layer: number; label: string };
+  outputs?: string[];
+}
+
+const { id, desc, caption, layers, direction = 'top-down', pointer, outputs } = Astro.props;
+const ordered = direction === 'bottom-up' ? [...layers].reverse() : layers;
+---
+
+<HtmlFigure id={id} desc={desc} caption={caption} type="layers">
+  <div class="fig-layers">
+    {
+      ordered.map((layer, i) => (
+        <div
+          class:list={[
+            'fig-layer',
+            layer.tone === 'accent' && 'fig-layer--accent',
+            layer.tone === 'muted' && 'fig-layer--muted',
+            'fig-step',
+          ]}
+          style={`--i: ${i}`}
+        >
+          <div>
+            <div class="fig-layer__label">{layer.label}</div>
+            {layer.sublabel && <div class="fig-layer__sub">{layer.sublabel}</div>}
+          </div>
+          <div>
+            {layer.examples?.length ? (
+              <div class="fig-layer__examples">
+                {layer.examples.map((ex) => <span class="fig-layer__example">{ex}</span>)}
+              </div>
+            ) : null}
+            {outputs?.[i] && <div class="fig-layer__output">{outputs[i]}</div>}
+          </div>
+        </div>
+      ))
+    }
+  </div>
+  {pointer && <div class="fig-pointer">{pointer.label}</div>}
+</HtmlFigure>

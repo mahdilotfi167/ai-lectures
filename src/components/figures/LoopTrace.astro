@@ -1,0 +1,70 @@
+---
+import HtmlFigure from '../shell/HtmlFigure.astro';
+import LoopStep from './LoopStep.astro';
+
+interface Step {
+  id: string;
+  label: string;
+  detail?: string;
+  mono?: boolean;
+  outcome?: 'ok' | 'fail' | 'pending';
+}
+
+interface Pass {
+  label: string;
+  steps: string[];
+}
+
+interface Props {
+  id: string;
+  desc: string;
+  caption: string;
+  mode: 'loop' | 'trace';
+  steps: Step[];
+  loopBack?: { from: string; to: string; label?: string };
+  store?: { label: string; reads: string[]; writes: string[] };
+  passes?: Pass[];
+}
+
+const { id, desc, caption, mode, steps, loopBack, store, passes } = Astro.props;
+const byId = new Map(steps.map((s) => [s.id, s]));
+---
+
+<HtmlFigure id={id} desc={desc} caption={caption} type="loop">
+  <div class:list={['fig-trace-wrap', passes?.length && 'fig-trace-wrap--two']}>
+    {
+      passes?.length ? (
+        passes.map((pass) => (
+          <div class="fig-trace">
+            <div class="fig-trace__title">{pass.label}</div>
+            <div class="fig-trace__steps">
+              {pass.steps.map((stepId, i) => {
+                const step = byId.get(stepId);
+                return step ? <LoopStep step={step} index={i} /> : null;
+              })}
+            </div>
+          </div>
+        ))
+      ) : (
+        <div class="fig-trace">
+          <div class="fig-trace__title">{mode === 'loop' ? 'حلقهٔ اجرا' : 'ردِ اجرا'}</div>
+          <div class="fig-trace__steps">
+            {steps.map((step, i) => <LoopStep step={step} index={i} />)}
+          </div>
+        </div>
+      )
+    }
+  </div>
+  {loopBack && (
+    <div class="fig-trace__store">
+      <strong>حلقه:</strong> {loopBack.label ?? `از ${loopBack.from} به ${loopBack.to} برمی‌گردد.`}
+    </div>
+  )}
+  {store && (
+    <div class="fig-trace__store">
+      <strong>{store.label}</strong>
+      <div>خواندن: {store.reads.join('، ')}</div>
+      <div>نوشتن: {store.writes.join('، ')}</div>
+    </div>
+  )}
+</HtmlFigure>

@@ -1,0 +1,48 @@
+---
+import HtmlFigure from '../shell/HtmlFigure.astro';
+import Icon from '../shell/Icon.astro';
+
+interface Part {
+  id: string;
+  label: string;
+  role: string;
+  lessonRef: string;
+  icon?: string;
+}
+
+interface Props {
+  id: string;
+  desc: string;
+  caption: string;
+  whole: { label: string };
+  parts: Part[];
+  assembleMs?: number;
+}
+
+const { id, desc, caption, whole, parts } = Astro.props;
+const scatter = [
+  { dx: '-28px', dy: '-18px', rot: '-3deg' },
+  { dx: '22px', dy: '-24px', rot: '2deg' },
+  { dx: '-18px', dy: '20px', rot: '3deg' },
+  { dx: '26px', dy: '18px', rot: '-2deg' },
+  { dx: '0px', dy: '28px', rot: '1deg' },
+];
+---
+
+<HtmlFigure id={id} desc={desc} caption={caption} type="exploded">
+  <div class="fig-anatomy">
+    <div class="fig-anatomy__whole fig-step" style="--i: 0">{whole.label}</div>
+    {parts.map((part, i) => (
+      <div
+        class="fig-part fig-step"
+        style={`--i: ${i + 1}; --dx: ${scatter[i % scatter.length].dx}; --dy: ${scatter[i % scatter.length].dy}; --rot: ${scatter[i % scatter.length].rot}`}
+      >
+        <div class="fig-part__label">
+          {part.icon && <Icon name={part.icon} size={16} />} {part.label}
+        </div>
+        <div class="fig-part__role">{part.role}</div>
+        <span class="fig-part__ref">درس {part.lessonRef}</span>
+      </div>
+    ))}
+  </div>
+</HtmlFigure>

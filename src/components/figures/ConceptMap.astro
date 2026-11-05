@@ -1,0 +1,180 @@
+---
+import FigureShell from '../shell/FigureShell.astro';
+import { mapZones, mapEdges } from '../../data/concept-map';
+import { faNum } from '../../lib/format';
+
+interface Props {
+  id: string;
+  desc: string;
+  caption: string;
+  highlight: 'none' | 'all' | 'overview' | 'agents' | 'model' | 'build' | 'run' | 'decide';
+  revealZones?: boolean;
+  clickable?: boolean;
+  height?: number;
+}
+
+const { id, desc, caption, highlight, revealZones = false, clickable = false } = Astro.props;
+
+const CHIP_W = 140;
+const CHIP_H = 26;
+const CHIP_GAP = 8;
+const ROW_H = 32;
+const PER_ROW = 6;
+const PAD = 24;
+const BAND_W = 952;
+
+let cursor = PAD;
+const bands = mapZones.map((zone, zoneIndex) => {
+  const rows = Math.ceil(zone.nodes.length / PER_ROW);
+  const h = 40 + rows * ROW_H + 8;
+  const band = { zone, zoneIndex, y: cursor, h, rows };
+  cursor += h + 12;
+  return band;
+});
+const height = cursor - 12 + PAD;
+
+const nodePos = new Map<string, { x: number; y: number; zone: string }>();
+for (const band of bands) {
+  band.zone.nodes.forEach((node, i) => {
+    const row = Math.floor(i / PER_ROW);
+    const col = i % PER_ROW;
+    nodePos.set(node.id, {
+      x: PAD + BAND_W - CHIP_W - col * (CHIP_W + CHIP_GAP),
+      y: band.y + 40 + row * ROW_H,
+      zone: band.zone.id,
+    });
+  });
+}
+
+const lit = (zoneId: string) =>
+  highlight === 'all' || highlight === 'overview' || highlight === 'none' || highlight === zoneId;
+---
+
+<FigureShell id={id} caption={caption} type="concept-map" describedby={`${id}-desc`}>
+  <div slot="visual" data-map-clickable={clickable ? 'true' : undefined}>
+    <p class="sr-only" id={`${id}-desc`}>{desc}</p>
+
+    <div class="figure__desktop">
+      <svg
+        class="fig-svg"
+        viewBox={`0 0 1000 ${height}`}
+        role={clickable ? 'group' : 'img'}
+        aria-labelledby={`${id}-title ${id}-desc`}
+      >
+        <title id={`${id}-title`}>{caption}</title>
+
+        {bands.map((band) => (
+          <g
+            class:list={['map-zone', revealZones && 'fig-step']}
+            style={`--zone-color: ${band.zone.color}; --i: ${band.zoneIndex}`}
+            data-lit={lit(band.zone.id) ? 'true' : 'false'}
+          >
+            <rect x={PAD} y={band.y} width={BAND_W} height={band.h} rx="12" class="fig-zone" />
+          </g>
+        ))}
+
+        <g class="map-edges-layer" aria-hidden="true">
+          {mapEdges.map((edge) => {
+            const a = nodePos.get(edge.from);
+            const b = nodePos.get(edge.to);
+            if (!a || !b) return null;
+            const cross = lit(a.zone) !== lit(b.zone);
+            return (
+              <line
+                x1={a.x + CHIP_W / 2}
+                y1={a.y + CHIP_H / 2}
+                x2={b.x + CHIP_W / 2}
+                y2={b.y + CHIP_H / 2}
+                class:list={[
+                  'map-edge',
+                  cross && 'is-cross',
+                  (edge.to === 'context' || edge.from === 'context') && 'is-context',
+                ]}
+              />
+            );
+          })}
+        </g>
+
+        {bands.map((band) => (
+          <g
+            class:list={['map-zone-content', revealZones && 'fig-step']}
+            style={`--zone-color: ${band.zone.color}; --i: ${band.zoneIndex}`}
+            data-lit={lit(band.zone.id) ? 'true' : 'false'}
+          >
+            <text x={PAD + BAND_W - 12} y={band.y + 22} direction="rtl" text-anchor="start" class="fig-zone-label">
+              {band.zone.label}
+            </text>
+            <text x={PAD + BAND_W - 12} y={band.y + 37} direction="rtl" text-anchor="start" class="fig-label-xs">
+              بخش {faNum(band.zone.part)}
+            </text>
+            {band.zone.nodes.map((node) => {
+              const pos = nodePos.get(node.id);
+              if (!pos) return null;
+              const label = node.shortLabel ?? node.label;
+              return (
+                <g
+                  class="map-node"
+                  data-node={clickable ? node.id : undefined}
+                  data-def={clickable ? node.def : undefined}
+                  data-lesson={clickable ? node.lesson : undefined}
+                  data-label={node.label}
+                  tabindex={clickable ? '0' : undefined}
+                  role={clickable ? 'button' : undefined}
+                  aria-label={clickable ? `${node.label} — درس ${faNum(node.lesson)}` : undefined}
+                >
+                  <rect x={pos.x} y={pos.y} width={CHIP_W} height={CHIP_H} rx="7" class="map-chip-rect" />
+                  <text
+                    x={pos.x + CHIP_W / 2}
+                    y={pos.y + 17}
+                    direction="rtl"
+                    text-anchor="middle"
+                    class="map-chip-label"
+                  >
+                    {label}
+                  </text>
+                </g>
+              );
+            })}
+          </g>
+        ))}
+      </svg>
+    </div>
+
+    <div class="figure__mobile">
+      <div class="map-stacked">
+        {bands.map((band) => (
+          <div class="map-stacked__zone" style={`--zone-color: ${band.zone.color}`} data-lit={lit(band.zone.id) ? 'true' : 'false'}>
+            <div class="map-stacked__head">
+              <span>{band.zone.label}</span>
+              <span>بخش {faNum(band.zone.part)}</span>
+            </div>
+            <div class="map-stacked__chips">
+              {band.zone.nodes.map((node) =>
+                clickable ? (
+                  <button
+                    type="button"
+                    class="map-chip"
+                    data-node={node.id}
+                    data-def={node.def}
+                    data-lesson={node.lesson}
+                    data-label={node.label}
+                  >
+                    {node.shortLabel ?? node.label}
+                  </button>
+                ) : (
+                  <span class="map-chip">{node.shortLabel ?? node.label}</span>
+                ),
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {clickable && (
+      <div class="map-detail" data-map-detail aria-live="polite">
+        روی یک واژه کلیک کنید تا تعریف یک‌خطی و شمارهٔ درسش را ببینید.
+      </div>
+    )}
+  </div>
+</FigureShell>

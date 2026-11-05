@@ -1,0 +1,128 @@
+---
+import HtmlFigure from '../shell/HtmlFigure.astro';
+import { faNum } from '../../lib/format';
+
+interface Actor {
+  id: string;
+  label: string;
+  labelShort?: string;
+  kind?: 'user' | 'system' | 'model' | 'tool' | 'store';
+}
+
+interface Step {
+  from: string;
+  to: string;
+  label: string;
+  mono?: boolean;
+  dashed?: boolean;
+  note?: string;
+  tone?: 'normal' | 'danger' | 'ok';
+  pause?: string;
+}
+
+interface Props {
+  id: string;
+  desc: string;
+  caption: string;
+  actors: Actor[];
+  steps: Step[];
+  stackAt?: number;
+}
+
+const { id, desc, caption, actors, steps } = Astro.props;
+
+const actorX = (i: number) => (actors.length === 1 ? 500 : 880 - (i * 780) / (actors.length - 1));
+const actorIndex = new Map(actors.map((a, i) => [a.id, i]));
+const height = 130 + steps.length * 74 + 50;
+
+const iconFor = (kind?: string) =>
+  kind === 'user' ? 'user' : kind === 'model' ? 'model' : kind === 'tool' ? 'tool' : kind === 'store' ? 'database' : 'bot';
+---
+
+<HtmlFigure id={id} desc={desc} caption={caption} type="sequence">
+  <div class="figure__desktop">
+    <svg class="fig-svg" viewBox={`0 0 1000 ${height}`} role="img" aria-labelledby={`${id}-title ${id}-desc`}>
+      <title id={`${id}-title`}>{caption}</title>
+      <desc id={`${id}-desc`}>{desc}</desc>
+
+      {actors.map((actor, i) => {
+        const x = actorX(i);
+        return (
+          <g>
+            <rect x={x - 82} y="24" width="164" height="44" rx="9" class="fig-node-box" />
+            <use href={`#icon-${iconFor(actor.kind)}`} x={x - 72} y="35" width="20" height="20" class="fig-actor-icon" />
+            <text x={x + 8} y="51" direction="rtl" text-anchor="middle" class="fig-label-sm">
+              {actor.label}
+            </text>
+            <line x1={x} y1="68" x2={x} y2={height - 34} class="fig-lifeline" />
+          </g>
+        );
+      })}
+
+      {steps.map((step, i) => {
+        const fromIndex = actorIndex.get(step.from) ?? 0;
+        const toIndex = actorIndex.get(step.to) ?? 0;
+        const x1 = actorX(fromIndex);
+        const x2 = actorX(toIndex);
+        const y = 120 + i * 74;
+        const pointsLeft = x2 < x1;
+        const head = pointsLeft
+          ? `${x2},${y} ${x2 + 9},${y - 5} ${x2 + 9},${y + 5}`
+          : `${x2},${y} ${x2 - 9},${y - 5} ${x2 - 9},${y + 5}`;
+        const toneClass = step.tone === 'danger' ? 'is-danger' : step.tone === 'ok' ? 'is-ok' : '';
+        return (
+          <g class="fig-step" style={`--i: ${i}`}>
+            <line
+              x1={x1}
+              y1={y}
+              x2={x2}
+              y2={y}
+              class:list={['fig-arrow', 'fig-draw', step.dashed && 'is-dashed', toneClass]}
+              style={`--i: ${i}`}
+            />
+            <polygon points={head} class:list={['fig-arrow-head', toneClass]} />
+            <text
+              x={(x1 + x2) / 2}
+              y={y - 9}
+              direction={step.mono ? 'ltr' : 'rtl'}
+              text-anchor="middle"
+              class:list={[step.mono ? 'mono' : 'fig-label-sm']}
+            >
+              {step.label}
+            </text>
+            {step.note && (
+              <text x={(x1 + x2) / 2} y={y + 17} direction="rtl" text-anchor="middle" class="fig-label-xs">
+                {step.note}
+              </text>
+            )}
+            {step.pause && (
+              <g>
+                <rect x={x1 - 9} y={y + 8} width="18" height="56" rx="4" class="fig-pause" />
+                <text x={x1 + 16} y={y + 40} direction="rtl" text-anchor="end" class="fig-pause-label">
+                  {step.pause}
+                </text>
+              </g>
+            )}
+          </g>
+        );
+      })}
+    </svg>
+  </div>
+
+  <div class="figure__mobile">
+    <ol class="fig-seq-mobile">
+      {steps.map((step) => {
+        const from = actors.find((a) => a.id === step.from)?.labelShort ?? actors.find((a) => a.id === step.from)?.label;
+        const to = actors.find((a) => a.id === step.to)?.labelShort ?? actors.find((a) => a.id === step.to)?.label;
+        return (
+          <li class:list={[step.tone === 'danger' && 'is-danger', step.tone === 'ok' && 'is-ok']}>
+            <span class="fig-seq-mobile__route">از {from} به {to}</span>
+            <span class="fig-seq-mobile__label">{step.mono ? <code class="ltr-inline">{step.label}</code> : step.label}</span>
+            {step.pause && <span class="fig-seq-mobile__pause">{step.pause}</span>}
+            {step.note && <span class="fig-seq-mobile__note">{step.note}</span>}
+          </li>
+        );
+      })}
+    </ol>
+  </div>
+</HtmlFigure>

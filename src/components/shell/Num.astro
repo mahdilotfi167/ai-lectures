@@ -1,0 +1,15 @@
+---
+interface Props {
+  value: string | number;
+  digits?: 'fa' | 'latin';
+}
+
+const { value, digits = 'fa' } = Astro.props;
+const FA = '۰۱۲۳۴۵۶۷۸۹';
+const text =
+  digits === 'fa'
+    ? String(value).replace(/[0-9]/g, (d) => FA[Number(d)])
+    : String(value);
+---
+
+<span class="tabular" dir={digits === 'latin' ? 'ltr' : undefined}>{text}</span>

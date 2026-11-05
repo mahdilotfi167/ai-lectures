@@ -1,0 +1,122 @@
+---
+import HtmlFigure from '../shell/HtmlFigure.astro';
+import { faNum } from '../../lib/format';
+
+interface Candidate {
+  token: string;
+  p: number;
+}
+
+interface Step {
+  candidates: Candidate[];
+  chosen: number;
+  note?: string;
+  tone?: 'normal' | 'danger';
+}
+
+interface Props {
+  id: string;
+  desc: string;
+  caption: string;
+  prefix: string;
+  steps: Step[];
+  interactive?: boolean;
+  autoAdvanceMs?: number;
+}
+
+const { id, desc, caption, prefix, steps, interactive = false } = Astro.props;
+const chosenTokens = steps.map((s) => s.candidates[s.chosen]?.token ?? '');
+const finalSentence = prefix + chosenTokens.join('');
+const liveStep = steps[0];
+---
+
+<HtmlFigure id={id} desc={desc} caption={caption} type="probability" interactive={interactive}>
+  <div class="fig-prob" data-probability>
+    <div class="fig-prob__input-head">
+      <span class="fig-prob__input-label">ورودی مدل (تا اینجا)</span>
+      <span class="fig-prob__input-author fig-prob__input-author--user">کاربر</span>
+      <span class="fig-prob__input-author fig-prob__input-author--model">مدل</span>
+    </div>
+    <div class="fig-prob__sentence" aria-label="جملهٔ در حال ساخته‌شدن">
+      <span class="fig-prob__prefix">{prefix}</span>
+      {chosenTokens.map((token, i) => (
+        <span
+          class:list={['fig-prob__chosen', steps[i]?.tone === 'danger' && 'fig-prob__chosen--danger', 'fig-step']}
+          style={`--i: ${i + 1}`}
+        >{token}</span>
+      ))}
+      <span class="ctx-caret" aria-hidden="true" />
+    </div>
+
+    <div class="fig-prob__steps">
+      {steps.map((step, stepIndex) => {
+        const sorted = step.candidates
+          .map((c, index) => ({ ...c, index }))
+          .sort((a, b) => b.p - a.p);
+        return (
+          <div class="fig-prob__panel fig-step" style={`--i: ${stepIndex + 1}`}>
+            <div class="fig-prob__panel-title">قدم {faNum(stepIndex + 1)} — انتخاب بعدی</div>
+            <div class="fig-prob__rows">
+              {sorted.map((c) => (
+                <div
+                  class:list={[
+                    'fig-prob__row',
+                    c.index === step.chosen && 'is-chosen',
+                    step.tone === 'danger' && c.index === step.chosen && 'is-danger',
+                  ]}
+                >
+                  <span class="fig-prob__token">{c.token.trim() || '␣'}</span>
+                  <span class="fig-prob__track">
+                    <span class="fig-prob__fill" style={`width: ${Math.round(c.p * 100)}%`} />
+                  </span>
+                </div>
+              ))}
+            </div>
+            {step.note && <p class="fig-prob__note">{step.note}</p>}
+          </div>
+        );
+      })}
+      {interactive && liveStep && (
+        <div class="fig-prob__panel fig-prob__panel--live" data-role="prob-live">
+          <div class="fig-prob__panel-title">انتخاب زنده — تنوع را تغییر دهید</div>
+          <div class="fig-prob__rows">
+            {liveStep.candidates.map((c, i) => (
+              <div class:list={['fig-prob__row', i === 0 && 'is-chosen']} data-p={c.p} data-token={c.token}>
+                <span class="fig-prob__token">{c.token.trim() || '␣'}</span>
+                <span class="fig-prob__track">
+                  <span class="fig-prob__fill" style={`width: ${Math.round(c.p * 100)}%`} />
+                </span>
+              </div>
+            ))}
+          </div>
+          <div class="fig-prob__controls">
+            <span>انتخاب: <strong data-role="prob-choice">{liveStep.candidates[0]?.token}</strong></span>
+          </div>
+        </div>
+      )}
+    </div>
+    <p class="sr-only">جملهٔ نهایی در این نمایش: {finalSentence}</p>
+  </div>
+  {
+    interactive && (
+      <div slot="controls" class="figure__controls">
+        <label class="figure__control">
+          <span>تنوع انتخاب</span>
+          <input
+            type="range"
+            min="0.2"
+            max="1.6"
+            step="0.1"
+            value="0.7"
+            data-role="prob-temp"
+            aria-label="تنوع انتخاب کلمهٔ بعدی"
+          />
+          <output data-role="prob-temp-output">۰٫۷</output>
+        </label>
+        <p class="figure__readout" aria-live="polite" data-role="prob-live-text">
+          با تنوع کم، مدل محتمل‌ترین گزینه را می‌گیرد؛ با تنوع زیاد، گزینه‌های کم‌احتمال‌تر هم شانس می‌گیرند.
+        </p>
+      </div>
+    )
+  }
+</HtmlFigure>

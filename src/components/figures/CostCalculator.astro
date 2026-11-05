@@ -1,0 +1,139 @@
+---
+import HtmlFigure from '../shell/HtmlFigure.astro';
+import { pricing } from '../../data/figures/pricing';
+import { faNum } from '../../lib/format';
+
+interface Props {
+  id: string;
+  desc: string;
+  caption: string;
+  defaults?: typeof pricing.defaults;
+  tiers?: typeof pricing.tiers;
+  currency?: 'usd';
+}
+
+const {
+  id,
+  desc,
+  caption,
+  defaults = pricing.defaults,
+  tiers = pricing.tiers,
+  currency = 'usd',
+} = Astro.props;
+
+const currentTier = tiers.find((t) => t.id === defaults.tier) ?? tiers[1];
+const monthlyRequests = defaults.requestsPerDay * 30;
+const outputTokens = Math.round(defaults.tokensPerRequest * 0.25);
+const cachedFraction = defaults.cacheHitRate / 100;
+const inputCost =
+  (monthlyRequests * defaults.tokensPerRequest * (1 - cachedFraction * 0.8) * currentTier.inputPrice) / 1_000_000;
+const outputCost = (monthlyRequests * outputTokens * currentTier.outputPrice) / 1_000_000;
+const total = inputCost + outputCost;
+const saved = (monthlyRequests * defaults.tokensPerRequest * cachedFraction * 0.8 * currentTier.inputPrice) / 1_000_000;
+const money = (n: number) => `$${n.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+---
+
+<HtmlFigure id={id} desc={desc} caption={caption} type="cost" interactive>
+  <div
+    class="fig-cost"
+    data-cost-calculator
+    data-tokens={defaults.tokensPerRequest}
+    data-requests={defaults.requestsPerDay}
+    data-cache={defaults.cacheHitRate}
+    data-tier={defaults.tier}
+    data-currency={currency}
+  >
+    <div class="fig-cost__panel">
+      <div class="fig-cost__total" aria-live="polite">
+        <span data-role="cost-total">{money(total)}</span>
+        <small> در ماه (تخمین)</small>
+      </div>
+      <div class="fig-cost__rows">
+        <div class="fig-cost__row"><span>هزینهٔ ورودی</span><b data-role="cost-input">{money(inputCost)}</b></div>
+        <div class="fig-cost__row"><span>هزینهٔ خروجی</span><b data-role="cost-output">{money(outputCost)}</b></div>
+        <div class="fig-cost__row"><span>صرفه‌جویی کش</span><b data-role="cost-saved">{money(saved)}</b></div>
+        <div class="fig-cost__row"><span>درخواست در ماه</span><b>{faNum(monthlyRequests)}</b></div>
+      </div>
+      <div class="fig-cost__bar" aria-hidden="true">
+        <span data-role="cost-bar-input" style="width: 60%; background: var(--accent)" />
+        <span data-role="cost-bar-output" style="width: 40%; background: var(--fig-accent)" />
+      </div>
+      <p class="fig-cost__note">
+        قیمت‌ها نمونه — {pricing.date}. {pricing.note}
+      </p>
+    </div>
+    <div class="fig-cost__panel">
+      <div class="fig-cost__scenarios">
+        <div class="fig-cost__scenarios-title">سناریوهای نمونه</div>
+        <table class="fig-table">
+          <thead>
+            <tr><th>مدل</th><th>هزینهٔ ماهانه</th></tr>
+          </thead>
+          <tbody>
+            {tiers.map((tier) => {
+              const ic = (monthlyRequests * defaults.tokensPerRequest * (1 - cachedFraction * 0.8) * tier.inputPrice) / 1_000_000;
+              const oc = (monthlyRequests * outputTokens * tier.outputPrice) / 1_000_000;
+              return (
+                <tr>
+                  <td>{tier.label}</td>
+                  <td class="num">{money(ic + oc)}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <p class="fig-cost__note">
+        با {faNum(defaults.requestsPerDay)} درخواست در روز، {faNum(defaults.tokensPerRequest)} توکن زمینه و
+        {' '}{faNum(defaults.cacheHitRate)}٪ کش.
+      </p>
+    </div>
+  </div>
+
+  <div class="print-fallback" aria-hidden="true">
+    <table class="fig-table">
+      <thead><tr><th>مدل</th><th>هزینهٔ ماهانه</th></tr></thead>
+      <tbody>
+        {tiers.map((tier) => {
+          const ic = (monthlyRequests * defaults.tokensPerRequest * (1 - cachedFraction * 0.8) * tier.inputPrice) / 1_000_000;
+          const oc = (monthlyRequests * outputTokens * tier.outputPrice) / 1_000_000;
+          return <tr><td>{tier.label}</td><td class="num">{money(ic + oc)}</td></tr>;
+        })}
+      </tbody>
+    </table>
+  </div>
+
+  <div slot="controls" class="figure__controls">
+    <label class="figure__control">
+      <span>درخواست در روز</span>
+      <input type="range" min="1000" max="50000" step="1000" value={defaults.requestsPerDay} data-role="cost-requests" />
+      <output data-role="cost-requests-out">{faNum(defaults.requestsPerDay)}</output>
+    </label>
+    <label class="figure__control">
+      <span>اندازهٔ زمینه (توکن در هر درخواست)</span>
+      <input type="range" min="500" max="8000" step="100" value={defaults.tokensPerRequest} data-role="cost-tokens" />
+      <output data-role="cost-tokens-out">{faNum(defaults.tokensPerRequest)}</output>
+    </label>
+    <label class="figure__control">
+      <span>نرخ کش</span>
+      <input type="range" min="0" max="90" step="5" value={defaults.cacheHitRate} data-role="cost-cache" />
+      <output data-role="cost-cache-out">{faNum(defaults.cacheHitRate)}٪</output>
+    </label>
+    <div class="figure__control">
+      <span>ردهٔ مدل</span>
+      <div class="fig-cost__tiers" role="group" aria-label="ردهٔ مدل">
+        {tiers.map((tier) => (
+          <button
+            type="button"
+            class="figure__toggle"
+            data-role="cost-tier"
+            data-tier={tier.id}
+            data-input-price={tier.inputPrice}
+            data-output-price={tier.outputPrice}
+            aria-pressed={tier.id === defaults.tier ? 'true' : 'false'}
+          >{tier.label}</button>
+        ))}
+      </div>
+    </div>
+  </div>
+</HtmlFigure>

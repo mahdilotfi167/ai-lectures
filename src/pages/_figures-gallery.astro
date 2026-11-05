@@ -1,0 +1,329 @@
+---
+import Book from '../layouts/Book.astro';
+import CardGrid from '../components/figures/CardGrid.astro';
+import ConceptMap from '../components/figures/ConceptMap.astro';
+import LayerStack from '../components/figures/LayerStack.astro';
+import RoadStrip from '../components/figures/RoadStrip.astro';
+import SplitCompare from '../components/figures/SplitCompare.astro';
+import SequenceFlow from '../components/figures/SequenceFlow.astro';
+import GraphMorph from '../components/figures/GraphMorph.astro';
+import LoopTrace from '../components/figures/LoopTrace.astro';
+import BranchDiagram from '../components/figures/BranchDiagram.astro';
+import ExplodedView from '../components/figures/ExplodedView.astro';
+import ProbabilityBars from '../components/figures/ProbabilityBars.astro';
+import TokenStrip from '../components/figures/TokenStrip.astro';
+import StackedBar from '../components/figures/StackedBar.astro';
+import FlowPipeline from '../components/figures/FlowPipeline.astro';
+import AnnotatedCode from '../components/figures/AnnotatedCode.astro';
+import Ladder from '../components/figures/Ladder.astro';
+import DataTable from '../components/figures/DataTable.astro';
+import TradeoffTriangle from '../components/figures/TradeoffTriangle.astro';
+import Matrix2x2 from '../components/figures/Matrix2x2.astro';
+import CostCalculator from '../components/figures/CostCalculator.astro';
+import { tokenSamples } from '../data/figures/tokens';
+import { apiBlocks } from '../data/figures/api';
+---
+
+<Book parts={[]} lessons={[]}>
+  <div class="full gallery">
+    <header class="gallery__head">
+      <h1>گالری شکل‌ها</h1>
+      <p>
+        صفحهٔ توسعه برای بررسی همهٔ بیست شکل در سه اندازه و در حالت کاهش حرکت.
+        این صفحه در خروجی نهایی ساخته نمی‌شود.
+      </p>
+      <label class="gallery__toggle">
+        <input type="checkbox" id="reduce-motion" />
+        شبیه‌سازی کاهش حرکت
+      </label>
+    </header>
+
+    <section class="gallery__item"><h2>۱. ConceptMap</h2>
+      <ConceptMap id="fig-g-1" caption="نمونهٔ نقشه" desc="نقشهٔ مفهومی نمونه با همهٔ ناحیه‌ها روشن." highlight="all" clickable={true} />
+    </section>
+
+    <section class="gallery__item"><h2>۲. SequenceFlow</h2>
+      <SequenceFlow
+        id="fig-g-2"
+        caption="نمونهٔ نمودار ترتیبی"
+        desc="سه بازیگر و سه پیام نمونه."
+        actors={[
+          { id: 'u', label: 'کاربر', kind: 'user' },
+          { id: 'a', label: 'عامل', kind: 'system' },
+          { id: 'm', label: 'مدل', kind: 'model' }
+        ]}
+        steps={[
+          { from: 'u', to: 'a', label: 'پرسش' },
+          { from: 'a', to: 'm', label: 'زمینه' },
+          { from: 'm', to: 'a', label: 'پاسخ', dashed: true }
+        ]}
+      />
+    </section>
+
+    <section class="gallery__item"><h2>۳. FlowPipeline</h2>
+      <FlowPipeline
+        id="fig-g-3"
+        caption="نمونهٔ خط لوله"
+        desc="سه مرحله از راست به چپ."
+        stages={[
+          { id: 'a', label: 'ورودی' },
+          { id: 'b', label: 'پردازش', tone: 'accent' },
+          { id: 'c', label: 'خروجی' }
+        ]}
+      />
+    </section>
+
+    <section class="gallery__item"><h2>۴. LoopTrace</h2>
+      <LoopTrace
+        id="fig-g-4"
+        caption="نمونهٔ حلقه"
+        desc="سه مرحلهٔ نمونه با یک نتیجهٔ ناموفق."
+        mode="trace"
+        steps={[
+          { id: 'a', label: 'خواندن' },
+          { id: 'b', label: 'اجرا', outcome: 'fail' },
+          { id: 'c', label: 'اصلاح', outcome: 'ok' }
+        ]}
+      />
+    </section>
+
+    <section class="gallery__item"><h2>۵. SplitCompare</h2>
+      <SplitCompare
+        id="fig-g-5"
+        caption="نمونهٔ مقایسه"
+        desc="دو ستون کنار هم با ورودی مشترک."
+        sharedInput="یک ورودی"
+        left={{ label: 'الف', steps: [{ label: 'قدم یک' }, { label: 'قدم دو' }] }}
+        right={{ label: 'ب', tone: 'accent', steps: [{ label: 'قدم یک' }, { label: 'قدم دو' }, { label: 'قدم سه' }] }}
+        verdict="یک خط جمع‌بندی."
+      />
+    </section>
+
+    <section class="gallery__item"><h2>۶. CardGrid</h2>
+      <CardGrid
+        id="fig-g-6"
+        caption="نمونهٔ کارت‌ها"
+        desc="دو کارت نمونه."
+        columns={2}
+        cards={[
+          { label: 'کارت یک', body: 'توضیح کوتاه.', example: 'نمونه.', icon: 'check' },
+          { label: 'کارت دو', body: 'توضیح کوتاه.', example: 'نمونه.', icon: 'alert', tone: 'muted' }
+        ]}
+      />
+    </section>
+
+    <section class="gallery__item"><h2>۷. LayerStack</h2>
+      <LayerStack
+        id="fig-g-7"
+        caption="نمونهٔ لایه‌ها"
+        desc="سه لایهٔ روی هم."
+        layers={[
+          { label: 'بالا', sublabel: 'لایهٔ اول' },
+          { label: 'میانه', sublabel: 'لایهٔ دوم' },
+          { label: 'پایین', sublabel: 'لایهٔ سوم', tone: 'accent' }
+        ]}
+      />
+    </section>
+
+    <section class="gallery__item"><h2>۸. StackedBar</h2>
+      <StackedBar
+        id="fig-g-8"
+        caption="نمونهٔ نوار"
+        desc="نوار ظرفیت با سه بخش."
+        capacity={1000}
+        segments={[
+          { label: 'الف', tokens: 300, tone: 'system' },
+          { label: 'ب', tokens: 400, tone: 'docs' },
+          { label: 'ج', tokens: 200, tone: 'question' }
+        ]}
+      />
+    </section>
+
+    <section class="gallery__item"><h2>۹. ProbabilityBars</h2>
+      <ProbabilityBars
+        id="fig-g-9"
+        caption="نمونهٔ احتمال"
+        desc="یک قدم با سه گزینه."
+        prefix="سفارش "
+        steps={[
+          { candidates: [{ token: 'فردا', p: 0.5 }, { token: 'امروز', p: 0.3 }, { token: 'بعد', p: 0.2 }], chosen: 0 }
+        ]}
+      />
+    </section>
+
+    <section class="gallery__item"><h2>۱۰. TokenStrip</h2>
+      <TokenStrip
+        id="fig-g-10"
+        caption="نمونهٔ توکن"
+        desc="دو نمونهٔ فارسی و انگلیسی."
+        samples={[tokenSamples.fa, tokenSamples.en]}
+        compare={true}
+      />
+    </section>
+
+    <section class="gallery__item"><h2>۱۱. GraphMorph</h2>
+      <GraphMorph
+        id="fig-g-11"
+        caption="نمونهٔ استاندارد"
+        desc="دو برنامه و دو ابزار، قبل و بعد از استاندارد."
+        before={{ label: 'قبل', apps: ['الف', 'ب'], tools: ['۱', '۲'] }}
+        after={{ label: 'بعد', apps: ['الف', 'ب'], tools: ['۱', '۲'], hub: 'MCP' }}
+      />
+    </section>
+
+    <section class="gallery__item"><h2>۱۲. BranchDiagram</h2>
+      <BranchDiagram
+        id="fig-g-12"
+        caption="نمونهٔ تصمیم"
+        desc="دو معیار و دو خروجی."
+        question="کدام مسیر؟"
+        interactive={true}
+        criteria={[{ label: 'معیار یک' }, { label: 'معیار دو' }]}
+        branches={[
+          { label: 'الف', outcome: 'خروجی الف.', traits: ['سریع'] },
+          { label: 'ب', outcome: 'خروجی ب.', traits: ['منعطف'] }
+        ]}
+      />
+    </section>
+
+    <section class="gallery__item"><h2>۱۳. ExplodedView</h2>
+      <ExplodedView
+        id="fig-g-13"
+        caption="نمونهٔ اجزا"
+        desc="سه جزء از یک کل."
+        whole={{ label: 'کل' }}
+        parts={[
+          { id: 'a', label: 'جزء یک', role: 'نقش یک.', lessonRef: '۱.۱' },
+          { id: 'b', label: 'جزء دو', role: 'نقش دو.', lessonRef: '۱.۲' },
+          { id: 'c', label: 'جزء سه', role: 'نقش سه.', lessonRef: '۱.۳' }
+        ]}
+      />
+    </section>
+
+    <section class="gallery__item"><h2>۱۴. Ladder</h2>
+      <Ladder
+        id="fig-g-14"
+        caption="نمونهٔ نردبان"
+        desc="سه پله با هزینهٔ فزاینده."
+        orientation="up"
+        rungs={[
+          { label: 'پلهٔ یک', fixes: 'چیزی', doesNotFix: 'چیز دیگر', cost: 'کم' },
+          { label: 'پلهٔ دو', fixes: 'چیزی', doesNotFix: 'چیز دیگر', cost: 'متوسط' },
+          { label: 'پلهٔ سه', fixes: 'چیزی', doesNotFix: 'چیز دیگر', cost: 'زیاد' }
+        ]}
+      />
+    </section>
+
+    <section class="gallery__item"><h2>۱۵. Matrix2x2</h2>
+      <Matrix2x2
+        id="fig-g-15"
+        caption="نمونهٔ ماتریس"
+        desc="دو در دو با دو نقطه."
+        xAxis={{ label: 'محور افقی', low: 'کم', high: 'زیاد' }}
+        yAxis={{ label: 'محور عمودی', low: 'کم', high: 'زیاد' }}
+        quadrants={[
+          { label: 'ربع یک', tone: 'warn' },
+          { label: 'ربع دو', tone: 'ok' },
+          { label: 'ربع سه', tone: 'muted' },
+          { label: 'ربع چهار', tone: 'muted' }
+        ]}
+        points={[{ label: 'نقطهٔ یک', x: 0.8, y: 0.8, quadrant: 1 }, { label: 'نقطهٔ دو', x: 0.2, y: 0.3, quadrant: 2 }]}
+      />
+    </section>
+
+    <section class="gallery__item"><h2>۱۶. AnnotatedCode</h2>
+      <AnnotatedCode id="fig-g-16" caption="نمونهٔ کد" desc="درخواست و پاسخ نمونه با توضیح." blocks={apiBlocks} />
+    </section>
+
+    <section class="gallery__item"><h2>۱۷. DataTable</h2>
+      <DataTable
+        id="fig-g-17"
+        caption="نمونهٔ جدول"
+        desc="جدول سه‌ستونه با یک ردیف قرمز."
+        columns={[{ key: 'a', label: 'مورد' }, { key: 'b', label: 'مقدار', digits: 'latin' }]}
+        rows={[{ a: 'یک', b: '12' }, { a: 'دو', b: '34', _tone: 'danger' }]}
+      />
+    </section>
+
+    <section class="gallery__item"><h2>۱۸. TradeoffTriangle</h2>
+      <TradeoffTriangle
+        id="fig-g-18"
+        caption="نمونهٔ مثلث"
+        desc="سه رأس و یک گزینه."
+        vertices={['کیفیت', 'سرعت', 'قیمت']}
+        options={[{ label: 'متعادل', weights: [0.5, 0.5, 0.5] }]}
+      />
+    </section>
+
+    <section class="gallery__item"><h2>۱۹. RoadStrip</h2>
+      <RoadStrip
+        id="fig-g-19"
+        caption="نمونهٔ مسیر"
+        desc="سه ایستگاه نمونه."
+        stops={[
+          { label: 'یک', promise: 'وعدهٔ یک', zone: 'overview' },
+          { label: 'دو', promise: 'وعدهٔ دو', zone: 'agents' },
+          { label: 'سه', promise: 'وعدهٔ سه', zone: 'model' }
+        ]}
+      />
+    </section>
+
+    <section class="gallery__item"><h2>۲۰. CostCalculator</h2>
+      <CostCalculator id="fig-g-20" caption="نمونهٔ ماشین‌حساب" desc="ماشین‌حساب هزینه با سه لغزنده." />
+    </section>
+  </div>
+</Book>
+
+<style is:inline>
+  .gallery {
+    max-width: 1100px;
+    margin-inline: auto;
+    padding: var(--space-8) var(--gutter) var(--space-24);
+  }
+  .gallery__head {
+    padding-block: var(--space-12);
+    border-block-end: 1px solid var(--stroke);
+    margin-block-end: var(--space-8);
+  }
+  .gallery__head h1 {
+    font-size: var(--text-2xl);
+    margin-block-end: var(--space-2);
+  }
+  .gallery__head p {
+    color: var(--fg-muted);
+    max-width: 60ch;
+  }
+  .gallery__toggle {
+    display: inline-flex;
+    gap: var(--space-2);
+    align-items: center;
+    margin-block-start: var(--space-4);
+    font-size: var(--text-sm);
+  }
+  .gallery__item {
+    padding-block: var(--space-8);
+    border-block-end: 1px solid var(--stroke);
+  }
+  .gallery__item h2 {
+    font-size: var(--text-lg);
+    margin-block-end: var(--space-4);
+  }
+  .reduce-motion [data-reveal] { opacity: 1 !important; }
+  .reduce-motion .fig-step,
+  .reduce-motion .fig-arrow,
+  .reduce-motion .fig-fade,
+  .reduce-motion .fig-grow,
+  .reduce-motion .fig-grow-ltr,
+  .reduce-motion .fig-part {
+    opacity: 1 !important;
+    transform: none !important;
+    stroke-dashoffset: 0 !important;
+    transition: none !important;
+  }
+</style>
+
+<script is:inline>
+  document.getElementById('reduce-motion')?.addEventListener('change', (event) => {
+    document.documentElement.classList.toggle('reduce-motion', event.target.checked);
+  });
+</script>

@@ -1,0 +1,24 @@
+---
+import { faNum } from '../../lib/format';
+
+interface Props {
+  step: {
+    id: string;
+    label: string;
+    detail?: string;
+    mono?: boolean;
+    outcome?: 'ok' | 'fail' | 'pending';
+  };
+  index: number;
+}
+
+const { step, index } = Astro.props;
+---
+
+<div class="fig-trace__step fig-step" style={`--i: ${index}`} data-outcome={step.outcome ?? 'pending'}>
+  <span class="fig-trace__dot">{faNum(index + 1)}</span>
+  <span class="fig-trace__label">
+    {step.mono ? <code class="ltr-inline">{step.label}</code> : step.label}
+    {step.detail && <span class="fig-trace__detail">{step.detail}</span>}
+  </span>
+</div>

@@ -1,0 +1,36 @@
+---
+import ConceptMap from '../figures/ConceptMap.astro';
+import { faNum } from '../../lib/format';
+import type { PartMeta } from '../../data/lessons';
+
+interface Props {
+  part: PartMeta;
+}
+
+const { part } = Astro.props;
+const zoneLabel = part.title;
+---
+
+<section
+  class="part-divider full"
+  id={`part-${part.part}`}
+  style={`--part-color: var(--part-${part.part})`}
+  aria-labelledby={`part-${part.part}-title`}
+>
+  <div class="part-divider__inner">
+    <div class="part-divider__num">بخش {faNum(part.part)}</div>
+    <div class="part-divider__kicker">از {faNum(6)} بخش</div>
+    <h2 class="part-divider__title" id={`part-${part.part}-title`}>{part.title}</h2>
+    <p class="part-divider__promise">{part.promise}</p>
+    <p class="part-divider__divider">{part.divider}</p>
+    <div class="part-divider__map">
+      <ConceptMap
+        id={`fig-part-${part.part}`}
+        caption={`در این بخش، ناحیهٔ «${zoneLabel}» روی نقشه روشن است.`}
+        desc={`نقشهٔ مفهومی سند. در این نمایش، ناحیهٔ ${zoneLabel} روشن و بقیهٔ ناحیه‌ها کم‌رنگ شده‌اند.`}
+        highlight={part.zone}
+        height={560}
+      />
+    </div>
+  </div>
+</section>

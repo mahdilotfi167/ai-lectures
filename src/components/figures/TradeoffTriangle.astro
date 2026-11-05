@@ -1,0 +1,118 @@
+---
+import HtmlFigure from '../shell/HtmlFigure.astro';
+
+interface Option {
+  label: string;
+  weights: [number, number, number];
+  note?: string;
+}
+
+interface Props {
+  id: string;
+  desc: string;
+  caption: string;
+  vertices: [string, string, string];
+  options: Option[];
+}
+
+const { id, desc, caption, vertices, options } = Astro.props;
+
+const v = [
+  { x: 500, y: 70 },
+  { x: 850, y: 480 },
+  { x: 150, y: 480 },
+];
+const labelPos = [
+  { x: 500, y: 44, anchor: 'middle' as const },
+  { x: 870, y: 508, anchor: 'end' as const },
+  { x: 130, y: 508, anchor: 'start' as const },
+];
+const colors = ['var(--fig-accent)', 'var(--fig-ok)', 'var(--warn)'];
+
+const project = (weights: [number, number, number]) => {
+  const sum = weights.reduce((a, b) => a + b, 0) || 1;
+  return {
+    x: (weights[0] * v[0].x + weights[1] * v[1].x + weights[2] * v[2].x) / sum,
+    y: (weights[0] * v[0].y + weights[1] * v[1].y + weights[2] * v[2].y) / sum,
+  };
+};
+---
+
+<HtmlFigure id={id} desc={desc} caption={caption} type="triangle">
+  <div class="figure__desktop">
+    <svg class="fig-svg" viewBox="0 0 1000 560" role="img" aria-labelledby={`${id}-title ${id}-desc`}>
+      <title id={`${id}-title`}>{caption}</title>
+      <desc id={`${id}-desc`}>{desc}</desc>
+
+      <polygon points={v.map((p) => `${p.x},${p.y}`).join(' ')} class="fig-tri-outline" />
+      {v.map((p, i) => (
+        <circle cx={p.x} cy={p.y} r={7} style={`fill: ${colors[i]}`} />
+      ))}
+      {vertices.map((label, i) => (
+        <text
+          x={labelPos[i].x}
+          y={labelPos[i].y}
+          direction="rtl"
+          text-anchor={labelPos[i].anchor}
+          class="fig-title"
+        >
+          {label}
+        </text>
+      ))}
+
+      {options.map((option, i) => {
+        const p = project(option.weights);
+        const strongest = option.weights.indexOf(Math.max(...option.weights));
+        const target = v[strongest];
+        return (
+          <g class="fig-step" style={`--i: ${i}`}>
+            <line
+              x1={p.x}
+              y1={p.y}
+              x2={target.x}
+              y2={target.y}
+              stroke={colors[strongest]}
+              stroke-width="2"
+              stroke-dasharray="4 5"
+              opacity="0.35"
+            />
+            <circle cx={p.x} cy={p.y} r={9} fill={colors[strongest]} opacity="0.9" />
+            <circle cx={p.x} cy={p.y} r={4} fill="var(--bg-raised)" />
+            <text
+              x={p.x}
+              y={p.y - 16}
+              direction="rtl"
+              text-anchor="middle"
+              class="fig-label-sm"
+            >
+              {option.label}
+            </text>
+          </g>
+        );
+      })}
+    </svg>
+  </div>
+  <div class="figure__mobile">
+    <div class="fig-tri-options">
+      {options.map((option) => (
+        <div class="fig-tri-option">
+          <div class="fig-tri-option__label">{option.label}</div>
+          <div class="fig-tri-option__bars">
+            {option.weights.map((w, i) => (
+              <div class="fig-tri-option__bar">
+                <span>{vertices[i]}</span>
+                <i style={`width: ${Math.round(w * 100)}%; background: ${colors[i]}`} />
+              </div>
+            ))}
+          </div>
+          {option.note && <div class="fig-tri-option__note">{option.note}</div>}
+        </div>
+      ))}
+    </div>
+  </div>
+  <div class="figure__legend">
+    <span><i style="--c: var(--fig-accent)" /> {vertices[0]}</span>
+    <span><i style="--c: var(--fig-ok)" /> {vertices[1]}</span>
+    <span><i style="--c: var(--warn)" /> {vertices[2]}</span>
+  </div>
+</HtmlFigure>

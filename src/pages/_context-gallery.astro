@@ -1,0 +1,66 @@
+---
+import Book from '../layouts/Book.astro';
+import ContextLens from '../components/context/ContextLens.astro';
+import ContextLab from '../components/context/ContextLab.astro';
+---
+
+<Book parts={[]} lessons={[]}>
+  <div class="full gallery">
+    <header class="gallery__head">
+      <h1>گالری لنزهای زمینه</h1>
+      <p>
+        صفحهٔ توسعه برای دیدن پنج حالت لنز: گام‌به‌گام، مقایسه، ثابت، نگاشت messages و آزمایشگاه.
+        این صفحه در خروجی نهایی ساخته نمی‌شود.
+      </p>
+    </header>
+
+    <section class="gallery__item">
+      <h2>گام‌به‌گام — ۱.۳</h2>
+      <ContextLens
+        id="fig-1-3-ctx"
+        lens="text-loop"
+        caption="همان مدل، با متن عوض‌شده، پاسخ عوض‌شده می‌دهد؛ جادویی در کار نیست."
+        desc="چهار گام: متن دستور و پرسش، نوشتن ادامه، چسباندن پاسخ، و تکرار با دستور عوض‌شده."
+      />
+    </section>
+
+    <section class="gallery__item">
+      <h2>مقایسه — ۳.۵</h2>
+      <ContextLens
+        id="fig-3-5-ctx"
+        lens="no-fact-fluent-guess"
+        caption="مدل مجبور است متن را ادامه بدهد؛ اگر واقعیت در متن نباشد، ادامهٔ روان می‌سازد."
+        desc="دو مقایسه با یک پرسش: بدون واقعیت در متن، شمارهٔ ساختگی؛ با واقعیت، شمارهٔ درست."
+      />
+    </section>
+
+    <section class="gallery__item">
+      <h2>ثابت — ۱.۴</h2>
+      <ContextLens
+        id="fig-1-4-ctx"
+        lens="slots"
+        caption="پنج چیز لازم است؛ هر پنج، جای مشخصی در یک متن دارند."
+        desc="متن دستور و پرسش، و چهار جای خالی برای نیازهای یک پاسخ خوب."
+      />
+    </section>
+
+    <section class="gallery__item">
+      <h2>نگاشت — ۴.۱</h2>
+      <ContextLens
+        id="fig-4-1-ctx"
+        lens="messages-array"
+        caption="API چیزی به یاد نمی‌آورد؛ شما هر بار همهٔ متن را از نو می‌فرستید."
+        desc="سه فراخوانی پشت سر هم؛ آرایهٔ messages بلندتر می‌شود و همان متن دوباره فرستاده می‌شود."
+      />
+    </section>
+
+    <section class="gallery__item">
+      <h2>آزمایشگاه — ۴.۳</h2>
+      <ContextLab
+        id="fig-4-3-ctx"
+        caption="خروجی تابعی از متن ورودی است؛ کار شما ساختن آن متن است."
+        desc="پنج کلید روشن و خاموش برای دستور، حافظه، ابزارها، مهارت و سند؛ پاسخ نمونه با هر تغییر عوض می‌شود."
+      />
+    </section>
+  </div>
+</Book>

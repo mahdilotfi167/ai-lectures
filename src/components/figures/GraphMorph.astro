@@ -1,0 +1,116 @@
+---
+import HtmlFigure from '../shell/HtmlFigure.astro';
+import { faNum } from '../../lib/format';
+
+interface Side {
+  label: string;
+  caption?: string;
+  apps: string[];
+  tools: string[];
+}
+
+interface Props {
+  id: string;
+  desc: string;
+  caption: string;
+  before: Side;
+  after: Side & { hub: string };
+  morphMs?: number;
+}
+
+const { id, desc, caption, before, after } = Astro.props;
+
+const beforeCount = before.apps.length * before.tools.length;
+const afterCount = after.apps.length + after.tools.length;
+
+const spread = (count: number, top: number, bottom: number) => {
+  if (count === 1) return [(top + bottom) / 2];
+  return Array.from({ length: count }, (_, i) => top + (i * (bottom - top)) / (count - 1));
+};
+
+const beforeApps = spread(before.apps.length, 90, 280).map((y, i) => ({ label: before.apps[i], y }));
+const beforeTools = spread(before.tools.length, 90, 280).map((y, i) => ({ label: before.tools[i], y }));
+const afterApps = spread(after.apps.length, 90, 280).map((y, i) => ({ label: after.apps[i], y }));
+const afterTools = spread(after.tools.length, 90, 280).map((y, i) => ({ label: after.tools[i], y }));
+---
+
+<HtmlFigure id={id} desc={desc} caption={caption} type="morph">
+  <div class="figure__desktop">
+    <svg class="fig-svg" viewBox="0 0 1000 360" role="img" aria-labelledby={`${id}-title ${id}-desc`}>
+      <title id={`${id}-title`}>{caption}</title>
+      <desc id={`${id}-desc`}>{desc}</desc>
+
+      <!-- before (right panel, first in RTL reading order) -->
+      <g>
+        <text x="960" y="34" direction="rtl" text-anchor="start" class="fig-title">{before.label}</text>
+        {beforeApps.map((app) =>
+          beforeTools.map((tool) => (
+            <line x1="880" y1={app.y} x2="640" y2={tool.y} class="fig-morph-edge" />
+          )),
+        )}
+        {beforeApps.map((app) => (
+          <g>
+            <rect x="880" y={app.y - 15} width="88" height="30" rx="7" class="fig-node-box" />
+            <text x="924" y={app.y + 4} direction="rtl" text-anchor="middle" class="fig-label-xs">{app.label}</text>
+          </g>
+        ))}
+        {beforeTools.map((tool) => (
+          <g>
+            <rect x="552" y={tool.y - 15} width="88" height="30" rx="7" class="fig-node-box" />
+            <text x="596" y={tool.y + 4} direction="rtl" text-anchor="middle" class="fig-label-xs">{tool.label}</text>
+          </g>
+        ))}
+        <text x="760" y="326" direction="rtl" text-anchor="middle" class="fig-label-sm">{faNum(beforeCount)} اتصال</text>
+        {before.caption && <text x="760" y="346" direction="rtl" text-anchor="middle" class="fig-label-xs">{before.caption}</text>}
+      </g>
+
+      <!-- transition arrow -->
+      <line x1="530" y1="180" x2="490" y2="180" class="fig-arrow fig-draw" style="--i: 8" />
+      <polygon points="482,180 492,175 492,185" class="fig-arrow-head" />
+
+      <!-- after (left panel) -->
+      <g class="fig-step" style="--i: 10">
+        <text x="460" y="34" direction="rtl" text-anchor="start" class="fig-title">{after.label}</text>
+        {afterApps.map((app) => (
+          <line x1="390" y1={app.y} x2="260" y2="180" class="fig-morph-edge is-accent" />
+        ))}
+        {afterTools.map((tool) => (
+          <line x1="240" y1="180" x2="110" y2={tool.y} class="fig-morph-edge is-accent" />
+        ))}
+        {afterApps.map((app) => (
+          <g>
+            <rect x="390" y={app.y - 15} width="88" height="30" rx="7" class="fig-node-box" />
+            <text x="434" y={app.y + 4} direction="rtl" text-anchor="middle" class="fig-label-xs">{app.label}</text>
+          </g>
+        ))}
+        {afterTools.map((tool) => (
+          <g>
+            <rect x="22" y={tool.y - 15} width="88" height="30" rx="7" class="fig-node-box" />
+            <text x="66" y={tool.y + 4} direction="rtl" text-anchor="middle" class="fig-label-xs">{tool.label}</text>
+          </g>
+        ))}
+        <g>
+          <rect x="210" y="150" width="80" height="60" rx="10" class="fig-node-box is-accent" />
+          <text x="250" y="176" direction="rtl" text-anchor="middle" class="fig-label-sm">{after.hub}</text>
+          <text x="250" y="194" direction="rtl" text-anchor="middle" class="fig-label-xs">استاندارد</text>
+        </g>
+        <text x="250" y="326" direction="rtl" text-anchor="middle" class="fig-label-sm">{faNum(afterCount)} اتصال</text>
+        {after.caption && <text x="250" y="346" direction="rtl" text-anchor="middle" class="fig-label-xs">{after.caption}</text>}
+      </g>
+    </svg>
+  </div>
+  <div class="figure__mobile">
+    <div class="fig-morph-mobile">
+      <div class="fig-morph-mobile__panel">
+        <strong>{before.label}</strong>
+        <span>{faNum(beforeCount)} اتصال</span>
+        <p>{before.apps.join('، ')} × {before.tools.join('، ')}</p>
+      </div>
+      <div class="fig-morph-mobile__panel is-after">
+        <strong>{after.label}</strong>
+        <span>{faNum(afterCount)} اتصال</span>
+        <p>{after.apps.join('، ')} ← {after.hub} ← {after.tools.join('، ')}</p>
+      </div>
+    </div>
+  </div>
+</HtmlFigure>

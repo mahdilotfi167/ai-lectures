@@ -1,0 +1,14 @@
+---
+import { requireTerm } from '../../data/glossary';
+
+interface Props {
+  id: string;
+  form?: 'first' | 'short';
+}
+
+const { id, form = 'first' } = Astro.props;
+const term = requireTerm(id);
+const text = form === 'short' ? term.short : term.first_use;
+---
+
+<span class="term" data-term={id} lang="fa"><bdi dir="rtl">{text}</bdi></span>

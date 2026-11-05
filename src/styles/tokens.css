@@ -1,0 +1,101 @@
+:root {
+  /* surfaces */
+  --bg: #fbfaf8;
+  --bg-raised: #ffffff;
+  --bg-sunken: #f3f1ed;
+  --bg-code: #1e1e2a;
+
+  /* text */
+  --fg: #1a1a22;
+  --fg-muted: #5a5a68;
+  --fg-faint: #8a8a96;
+  --fg-on-dark: #e8e8f0;
+
+  /* accents */
+  --accent: #2563a8;
+  --accent-soft: #e3edf8;
+  --ok: #1f7a52;
+  --ok-soft: #e2f2ea;
+  --danger: #b03a30;
+  --danger-soft: #fbe8e5;
+  --warn: #9a6a12;
+  --warn-soft: #fbf1dc;
+
+  /* lines */
+  --stroke: #d8d4cc;
+  --stroke-strong: #b0aba1;
+
+  /* figure semantics */
+  --fig-primary: var(--accent);
+  --fig-accent: #7b4fa8;
+  --fig-muted: #9a9aa6;
+  --fig-danger: var(--danger);
+  --fig-ok: var(--ok);
+  --fig-surface: var(--bg-raised);
+  --fig-stroke: var(--stroke-strong);
+
+  /* parts */
+  --part-1: #2563a8;
+  --part-2: #7b4fa8;
+  --part-3: #a85a24;
+  --part-4: #1f7a52;
+  --part-5: #b03a30;
+  --part-6: #3a6b80;
+
+  /* type */
+  --font-fa: 'Vazirmatn', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Consolas, monospace;
+  --text-xs: 0.78rem;
+  --text-sm: 0.88rem;
+  --text-base: 1rem;
+  --text-lg: 1.22rem;
+  --text-xl: 1.55rem;
+  --text-2xl: 2.1rem;
+  --text-3xl: 3.2rem;
+  --leading-body: 1.95;
+  --leading-tight: 1.45;
+  --measure: 68ch;
+
+  /* space */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;
+
+  /* motion */
+  --dur-fast: 180ms;
+  --dur-base: 320ms;
+  --dur-slow: 600ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* layout */
+  --gutter: var(--space-6);
+  --rail-width: 3px;
+  --figure-max: 1100px;
+}
+
+@media (max-width: 600px) {
+  :root {
+    --gutter: var(--space-4);
+    --text-3xl: 2.4rem;
+    --text-2xl: 1.7rem;
+    --text-xl: 1.32rem;
+    --leading-body: 1.9;
+  }
+}
+
+/* Context Lens author colors (aliases of existing hues; no new hex) */
+:root {
+  --ctx-developer: var(--part-1);
+  --ctx-user: var(--part-4);
+  --ctx-model: var(--part-2);
+  --ctx-tool: var(--part-6);
+  --ctx-store: var(--part-3);
+  --ctx-attacker: var(--danger);
+}

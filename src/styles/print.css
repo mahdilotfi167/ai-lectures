@@ -1,0 +1,355 @@
+/* Print: A4, clean PDF, figures in final state, asides expanded. */
+
+@page {
+  size: A4;
+  margin: 18mm;
+}
+
+@media print {
+  :root {
+    --bg: #ffffff;
+    --bg-raised: #ffffff;
+    --bg-sunken: #f5f5f5;
+    --fg: #111111;
+    --fg-muted: #444444;
+    --fg-faint: #666666;
+    --stroke: #cccccc;
+    --stroke-strong: #999999;
+    --measure: 100%;
+    --figure-max: 100%;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #111111 !important;
+  }
+
+  body {
+    font-size: 11pt;
+    line-height: 1.7;
+  }
+
+  .rail,
+  .toc-button,
+  .toc-dialog,
+  .skip-link,
+  .figure__controls,
+  .map-detail {
+    display: none !important;
+  }
+
+  .cover {
+    min-height: auto;
+    break-after: page;
+    padding-block: 24mm;
+  }
+
+  .cover__scroll {
+    display: none !important;
+  }
+
+  .part-divider {
+    min-height: auto;
+    break-before: page;
+    break-after: page;
+    padding-block: 10mm;
+    background: none !important;
+    border: 0;
+  }
+
+  .part-divider__num {
+    font-size: 26pt;
+  }
+
+  .part-divider__title {
+    font-size: 20pt;
+  }
+
+  .lesson {
+    margin-block: 8mm;
+    break-inside: auto;
+  }
+
+  .lesson__title {
+    break-after: avoid;
+  }
+
+  .lesson__body > p:first-child {
+    font-size: 12pt;
+  }
+
+  .lesson__body .figure {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-inline: 0 !important;
+  }
+
+  .figure {
+    break-inside: avoid;
+  }
+
+  .figure__frame {
+    border: 1px solid #999;
+    background: #ffffff !important;
+    padding: 4mm;
+  }
+
+  .figure__caption {
+    font-size: 9pt;
+  }
+
+  /* Figures print in their final state, never blank. */
+  html.js [data-reveal] {
+    opacity: 1 !important;
+  }
+
+  .fig-step,
+  .fig-arrow,
+  .fig-fade,
+  .fig-grow,
+  .fig-grow-ltr,
+  .fig-part {
+    opacity: 1 !important;
+    transform: none !important;
+    stroke-dashoffset: 0 !important;
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .fig-sweep {
+    clip-path: none !important;
+  }
+
+  /* Asides print expanded. */
+  details:not([open]) > *:not(summary) {
+    display: block !important;
+  }
+
+  details > summary {
+    list-style: none;
+  }
+
+  .aside {
+    border-inline-start: 1px dashed #999;
+    background: #f5f5f5 !important;
+    break-inside: avoid;
+  }
+
+  .aside > summary::before {
+    content: '▾';
+  }
+
+  /* Interactive figures: static fallback. */
+  .print-fallback {
+    display: block !important;
+    margin-block-start: 4mm;
+  }
+
+  .print-fallback::before {
+    content: 'نسخهٔ چاپی — سناریوهای نمونه';
+    display: block;
+    font-size: 9pt;
+    color: #444;
+    margin-block-end: 2mm;
+  }
+
+  /* Dark code blocks become light. */
+  .code-block,
+  .fig-annotated__code {
+    background: #ffffff !important;
+    color: #111111 !important;
+    border: 1px solid #999;
+    overflow: visible !important;
+    white-space: pre-wrap !important;
+  }
+
+  .code-block pre,
+  .fig-annotated__code pre {
+    white-space: pre-wrap !important;
+    word-break: break-word;
+  }
+
+  .code-block *,
+  .fig-annotated__code * {
+    color: #111111 !important;
+    background: transparent !important;
+  }
+
+  .fig-annotated__code .line::before {
+    color: #777 !important;
+  }
+
+  .takeaway {
+    background: #f5f5f5 !important;
+    border-inline-start: 2px solid #333;
+    break-inside: avoid;
+  }
+
+  a {
+    color: #111111;
+    text-decoration: none;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  table,
+  .fig-table {
+    break-inside: avoid;
+  }
+
+  .fig-table tr {
+    break-inside: avoid;
+  }
+
+  /* Avoid the mobile stacked variants in print. */
+  .figure__mobile {
+    display: none !important;
+  }
+
+  .figure__desktop {
+    display: block !important;
+  }
+
+  .map-stacked {
+    display: none !important;
+  }
+
+  /* Page footer with the document title. */
+  .book::after {
+    content: 'هوش مصنوعی، از بالا به پایین';
+    display: block;
+    text-align: center;
+    font-size: 8pt;
+    color: #777;
+    margin-block-start: 8mm;
+  }
+}
+
+/* ---------- Context Lens ---------- */
+
+@media print {
+  /* Every frame prints, not just the one that was on screen. */
+  .ctx-frames {
+    display: block !important;
+  }
+
+  .ctx-frame {
+    display: block !important;
+    visibility: visible !important;
+    grid-area: auto !important;
+    break-inside: auto;
+    margin-block-end: 6mm;
+    padding-block-end: 3mm;
+    border-block-end: 1px dashed #bbb;
+  }
+
+  .ctx-frame:last-child {
+    border-block-end: 0;
+  }
+
+  .ctx-stepper,
+  .ctx-raw,
+  .ctx-predict__options,
+  .ctx-lab__controls,
+  .ctx-lab__presets {
+    display: none !important;
+  }
+
+  .ctx-predict__answer {
+    display: block !important;
+  }
+
+  html.js .ctx-predict:not(.is-answered) ~ .ctx-output-wrap,
+  .ctx-output-wrap {
+    display: block !important;
+  }
+
+  .ctx-tape__main.has-outside {
+    display: block !important;
+  }
+
+  .ctx-outside {
+    margin-block-start: 3mm;
+    background: #f5f5f5 !important;
+    border-color: #999 !important;
+  }
+
+  .ctx-code {
+    background: #ffffff !important;
+    color: #111111 !important;
+    border: 1px solid #999;
+    white-space: pre-wrap !important;
+    overflow: visible !important;
+  }
+
+  .ctx-code * {
+    color: #111111 !important;
+    background: transparent !important;
+  }
+
+  .ctx-block {
+    break-inside: avoid;
+    background: #ffffff !important;
+    border-color: #ddd;
+  }
+
+  .ctx-block__rail {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .ctx-lab__presets-table {
+    display: block !important;
+    break-inside: avoid;
+  }
+
+  html.js .ctx-lab__presets-table {
+    display: block !important;
+  }
+
+  .ctx-spine {
+    break-after: avoid;
+  }
+}
+
+@media print {
+  .ctx-lens,
+  .ctx-lab {
+    font-size: 8.8pt;
+    line-height: 1.6;
+  }
+
+  .ctx-block__body {
+    font-size: 9pt;
+    line-height: 1.65;
+  }
+
+  .ctx-code {
+    font-size: 7.6pt;
+    line-height: 1.45;
+  }
+
+  .ctx-block__meta,
+  .ctx-block__note,
+  .ctx-block__tokens,
+  .ctx-frame__head p,
+  .ctx-output__head,
+  .ctx-outside,
+  .ctx-lab__answer,
+  .ctx-lab__presets-table {
+    font-size: 7.5pt;
+  }
+
+  .ctx-tape {
+    padding: 2.5mm;
+  }
+
+  .ctx-block {
+    padding-block: 1.5mm;
+  }
+}

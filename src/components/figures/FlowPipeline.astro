@@ -1,0 +1,213 @@
+---
+import HtmlFigure from '../shell/HtmlFigure.astro';
+import { faNum } from '../../lib/format';
+
+interface Stage {
+  id: string;
+  label: string;
+  sublabel?: string;
+  icon?: string;
+  tone?: 'normal' | 'accent' | 'muted';
+  lane?: string;
+  lessonRef?: string;
+}
+
+interface Phase {
+  id: string;
+  label: string;
+  stages: Stage[];
+}
+
+interface Connection {
+  from: string;
+  to: string;
+  label?: string;
+  dashed?: boolean;
+}
+
+interface Props {
+  id: string;
+  desc: string;
+  caption: string;
+  phases?: Phase[];
+  stages?: Stage[];
+  connections?: Connection[];
+  lanes?: { id: string; label: string }[];
+}
+
+const { id, desc, caption, phases, stages = [], connections, lanes } = Astro.props;
+
+type Row = { id: string; label?: string; stages: Stage[] };
+let rows: Row[] = [];
+if (phases?.length) {
+  rows = phases.map((p) => ({ id: p.id, label: p.label, stages: p.stages }));
+} else if (lanes?.length) {
+  rows = lanes.map((l) => ({ id: l.id, label: l.label, stages: stages.filter((s) => s.lane === l.id) }));
+} else {
+  rows = [{ id: 'main', stages }];
+}
+
+const gap = 24;
+const boxH = 78;
+const rowGap = 152;
+const top = 64;
+const width = 1000;
+const height = top + rows.length * rowGap + 10;
+
+const layout = new Map<string, { x: number; y: number; w: number; row: number }>();
+rows.forEach((row, rowIndex) => {
+  const n = Math.max(1, row.stages.length);
+  const boxW = Math.min(220, (width - 48 - (n - 1) * gap) / n);
+  const total = n * boxW + (n - 1) * gap;
+  const startX = 24 + (width - 48 - total) / 2 + total - boxW;
+  row.stages.forEach((stage, i) => {
+    layout.set(stage.id, {
+      x: startX - i * (boxW + gap),
+      y: top + rowIndex * rowGap,
+      w: boxW,
+      row: rowIndex,
+    });
+  });
+});
+
+const allStages = rows.flatMap((r) => r.stages);
+const defaultConnections: Connection[] = [];
+for (const row of rows) {
+  for (let i = 0; i < row.stages.length - 1; i++) {
+    defaultConnections.push({ from: row.stages[i].id, to: row.stages[i + 1].id });
+  }
+}
+const edges = connections ?? defaultConnections;
+
+const edgePath = (from: string, to: string) => {
+  const a = layout.get(from);
+  const b = layout.get(to);
+  if (!a || !b) return null;
+  if (a.row === b.row) {
+    const x1 = a.x;
+    const x2 = b.x + b.w;
+    const y = a.y + boxH / 2;
+    return { d: `M ${x1} ${y} H ${x2 + 2}`, head: `${x2},${y} ${x2 + 9},${y - 5} ${x2 + 9},${y + 5}` };
+  }
+  const x1 = a.x + a.w / 2;
+  const y1 = a.y + boxH;
+  const x2 = b.x + b.w / 2;
+  const y2 = b.y;
+  const midY = (y1 + y2) / 2;
+  const head =
+    y2 > y1
+      ? `${x2},${y2} ${x2 - 5},${y2 - 9} ${x2 + 5},${y2 - 9}`
+      : `${x2},${y2} ${x2 - 5},${y2 + 9} ${x2 + 5},${y2 + 9}`;
+  return { d: `M ${x1} ${y1} V ${midY} H ${x2} V ${y2}`, head };
+};
+---
+
+<HtmlFigure id={id} desc={desc} caption={caption} type="pipeline">
+  <div class="figure__desktop">
+    <svg class="fig-svg" viewBox={`0 0 1000 ${height}`} role="img" aria-labelledby={`${id}-title ${id}-desc`}>
+      <title id={`${id}-title`}>{caption}</title>
+      <desc id={`${id}-desc`}>{desc}</desc>
+
+      {rows.map((row, rowIndex) => (
+        <g>
+          {row.label && (
+            <text x="976" y={top + rowIndex * rowGap - 16} direction="rtl" text-anchor="start" class="fig-label-sm">
+              {row.label}
+            </text>
+          )}
+          {rowIndex > 0 && (
+            <line
+              x1="24"
+              y1={top + rowIndex * rowGap - 32}
+              x2="976"
+              y2={top + rowIndex * rowGap - 32}
+              class="fig-divider"
+              stroke-dasharray="4 6"
+            />
+          )}
+        </g>
+      ))}
+
+      {edges.map((edge, i) => {
+        const p = edgePath(edge.from, edge.to);
+        if (!p) return null;
+        return (
+          <g>
+            <path
+              d={p.d}
+              class:list={['fig-arrow', 'fig-draw', edge.dashed && 'is-dashed']}
+              style={`--i: ${i + allStages.length}`}
+            />
+            <polygon points={p.head} class="fig-arrow-head" />
+          </g>
+        );
+      })}
+
+      {allStages.map((stage, i) => {
+        const pos = layout.get(stage.id);
+        if (!pos) return null;
+        const accent = stage.tone === 'accent';
+        const muted = stage.tone === 'muted';
+        return (
+          <g class="fig-step" style={`--i: ${i}`}>
+            <rect
+              x={pos.x}
+              y={pos.y}
+              width={pos.w}
+              height={boxH}
+              rx="9"
+              class:list={['fig-node-box', accent && 'is-accent', muted && 'is-muted']}
+            />
+            <text
+              x={pos.x + pos.w / 2}
+              y={pos.y + 28}
+              direction="rtl"
+              text-anchor="middle"
+              class="fig-label-sm"
+            >
+              {stage.label}
+            </text>
+            {stage.sublabel && (
+              <text
+                x={pos.x + pos.w / 2}
+                y={pos.y + 46}
+                direction="rtl"
+                text-anchor="middle"
+                class="fig-label-xs"
+              >
+                {stage.sublabel}
+              </text>
+            )}
+            {stage.lessonRef && (
+              <g>
+                <rect x={pos.x + pos.w - 40} y={pos.y + boxH - 20} width="32" height="14" rx="7" class="fig-badge" />
+                <text x={pos.x + pos.w - 24} y={pos.y + boxH - 10} direction="rtl" text-anchor="middle" class="fig-badge-text">
+                  {faNum(stage.lessonRef)}
+                </text>
+              </g>
+            )}
+          </g>
+        );
+      })}
+    </svg>
+  </div>
+
+  <div class="figure__mobile">
+    <div class="fig-pipeline-mobile">
+      {rows.map((row) => (
+        <div class="fig-pipeline-mobile__row">
+          {row.label && <div class="fig-pipeline-mobile__label">{row.label}</div>}
+          <ol>
+            {row.stages.map((stage) => (
+              <li>
+                <strong>{stage.label}</strong>
+                {stage.sublabel && <span>{stage.sublabel}</span>}
+                {stage.lessonRef && <em>درس {faNum(stage.lessonRef)}</em>}
+              </li>
+            ))}
+          </ol>
+        </div>
+      ))}
+    </div>
+  </div>
+</HtmlFigure>

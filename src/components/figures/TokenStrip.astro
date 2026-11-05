@@ -1,0 +1,86 @@
+---
+import HtmlFigure from '../shell/HtmlFigure.astro';
+import { faNum } from '../../lib/format';
+
+interface Sample {
+  lang: 'fa' | 'en';
+  text: string;
+  tokens: string[];
+  flow: 'rtl' | 'ltr';
+}
+
+interface Props {
+  id: string;
+  desc: string;
+  caption: string;
+  samples: Sample[];
+  showCounts?: boolean;
+  interactive?: boolean;
+  compare?: boolean;
+}
+
+const { id, desc, caption, samples, showCounts = true, interactive = false, compare = false } = Astro.props;
+const fa = samples.find((s) => s.lang === 'fa');
+const en = samples.find((s) => s.lang === 'en');
+---
+
+<HtmlFigure id={id} desc={desc} caption={caption} type="tokens" interactive={interactive}>
+  <div class="fig-tokens" data-token-strip>
+    {
+      samples.map((sample) => (
+        <div class="fig-token-row">
+          <div class="fig-token-row__head">
+            <strong>{sample.lang === 'fa' ? 'فارسی' : 'انگلیسی'}</strong>
+            <span>{sample.text}</span>
+            {showCounts && <span>{faNum(sample.tokens.length)} توکن</span>}
+          </div>
+          <div class:list={['fig-token-row__chips', sample.flow === 'ltr' && 'is-ltr']}>
+            {sample.tokens.map((token) => (
+              <span class="fig-token">{token === ' ' ? '·' : token}</span>
+            ))}
+          </div>
+        </div>
+      ))
+    }
+    {
+      interactive && (
+        <div class="fig-token-row" data-role="live-row">
+          <div class="fig-token-row__head">
+            <strong>متن شما</strong>
+            <span data-role="live-count">۰ توکن</span>
+          </div>
+          <div class="fig-token-row__chips" data-role="live-chips">
+            <span class="fig-token">اینجا تایپ کنید…</span>
+          </div>
+        </div>
+      )
+    }
+    {
+      compare && fa && en && (
+        <div class="fig-token-compare">
+          همین معنا: فارسی {faNum(fa.tokens.length)} توکن، انگلیسی {faNum(en.tokens.length)} توکن.
+          فارسی معمولاً برای همان جمله توکن بیشتری مصرف می‌کند.
+        </div>
+      )
+    }
+  </div>
+  {
+    interactive && (
+      <div slot="controls" class="figure__controls">
+        <label class="figure__control">
+          <span>یک متن کوتاه را امتحان کنید (تقریبی)</span>
+          <input
+            type="text"
+            data-role="token-input"
+            placeholder="مثلاً: سفارش من کجاست؟"
+            aria-label="متن برای تخمین توکن"
+            dir="auto"
+          />
+        </label>
+        <p class="figure__readout" aria-live="polite" data-role="token-status">
+          شمارش تقریبی است؛ مرزها را نشان می‌دهد، نه عدد دقیق.
+        </p>
+      </div>
+    )
+  }
+</HtmlFigure>

@@ -1,0 +1,210 @@
+---
+import FigureShell from '../shell/FigureShell.astro';
+import ContextTape from './ContextTape.astro';
+import Icon from '../shell/Icon.astro';
+import { faNum } from '../../lib/format';
+import { requireBlock } from '../../data/context/blocks';
+import {
+  composeLab,
+  labBlockOrder,
+  labDefaultState,
+  labPresets,
+  labSentences,
+  labToggles,
+} from '../../data/context/lab';
+import type { BlockRef, Frame } from '../../data/context/types';
+
+interface Props {
+  id: string;
+  caption: string;
+  desc: string;
+}
+
+const { id, caption, desc } = Astro.props;
+
+const state = labDefaultState;
+const blockRefs: BlockRef[] = labBlockOrder.map((blockId) => {
+  const toggle = labToggles.find((t) => t.blockId === blockId);
+  return {
+    id: blockId,
+    state: 'same',
+    hidden: toggle ? !state[toggle.id] : false,
+  };
+});
+
+const labFrame: Frame = {
+  id: 'lab',
+  title: 'زمینهٔ ساخته‌شده',
+  narration: 'فقط بلوک‌های روشن در متن هستند.',
+  actor: 'harness',
+  blocks: blockRefs,
+};
+
+const defaultAnswers = composeLab(state);
+const answerFor = (sentenceId: string) => defaultAnswers.find((a) => a.id === sentenceId);
+
+const statusLabel: Record<string, string> = {
+  ok: '✓ پشتوانه‌دار',
+  warn: '⚠ بدون پشتوانه',
+  ask: '○ پرسش‌گرانه',
+};
+
+const sourceLabel: Record<string, string> = {
+  sys: 'دستور سیستم',
+  mem: 'حافظه',
+  tools: 'ابزارها',
+  skill: 'مهارت',
+  doc: 'سند',
+};
+
+const totalTokens = labBlockOrder.reduce((sum, blockId) => {
+  const toggle = labToggles.find((t) => t.blockId === blockId);
+  if (toggle && !state[toggle.id]) return sum;
+  return sum + requireBlock(blockId).tokens;
+}, 0);
+
+const presetAnswers = labPresets.map((preset) => ({
+  ...preset,
+  text: composeLab(preset.state)
+    .map((a) => a.text)
+    .join(' '),
+}));
+
+const presetButtonLabels: Record<string, string> = {
+  all: 'همه‌چیز',
+  'sys-only': 'فقط دستور',
+  'no-tools': 'بدون ابزار',
+};
+---
+
+<FigureShell id={id} caption={caption} suffix="ب" type="context-lab" describedby={`${id}-desc`}>
+  <div
+    slot="visual"
+    class="ctx-lab"
+    data-context-lab="true"
+    data-lab-default={JSON.stringify(state)}
+    data-lab-presets={JSON.stringify(labPresets)}
+    data-lab-tokens={totalTokens}
+  >
+    <p class="sr-only" id={`${id}-desc`}>{desc}</p>
+
+    <div class="ctx-lab__question">
+      <span class="ctx-lab__question-label">سؤال مشتری</span>
+      <p>{requireBlock('u.lab').text}</p>
+    </div>
+
+    <div class="ctx-lab__controls">
+      <fieldset class="ctx-lab__toggles">
+        <legend>چه چیزی در متن باشد؟</legend>
+        {labToggles.map((toggle) => (
+          <label class="ctx-lab__toggle">
+            <input
+              type="checkbox"
+              checked={state[toggle.id]}
+              data-lab-toggle={toggle.id}
+              data-lab-block-id={toggle.blockId}
+            />
+            <span class="ctx-lab__toggle-main">
+              <span class="ctx-lab__toggle-label">{toggle.label}</span>
+              <span class="ctx-lab__toggle-size">≈ {faNum(toggle.tokens)} توکن</span>
+            </span>
+            <span class="ctx-lab__toggle-hint">{toggle.hint}</span>
+          </label>
+        ))}
+      </fieldset>
+
+      <div class="ctx-lab__presets" role="group" aria-label="نمونه‌های آماده">
+        {labPresets.map((preset) => (
+          <button type="button" class="ctx-lab__preset" data-lab-preset={preset.id}>
+            {presetButtonLabels[preset.id] ?? preset.label}
+          </button>
+        ))}
+        <button type="button" class="ctx-lab__reset" data-lab-reset>
+          بازگشت به حالت اول
+        </button>
+      </div>
+    </div>
+
+    <div class="ctx-lab__grid">
+      <div class="ctx-lab__tape">
+        <ContextTape frame={labFrame} lesson="4.3" showTokens={true} />
+        <p class="ctx-lab__tokens">
+          <Icon name="coin" size={15} />
+          ≈ <strong data-lab-token-count>{faNum(totalTokens)}</strong> توکن در این متن
+          <span class="ctx-lab__approx">(تقریبی)</span>
+        </p>
+      </div>
+
+      <div class="ctx-lab__answer">
+        <div class="ctx-lab__answer-head">
+          <h4>پاسخ نمونه</h4>
+          <span>ساخته‌شده با قاعده، نه با مدل</span>
+        </div>
+
+        {
+          labSentences.map((sentence) => {
+            const current = answerFor(sentence.id);
+            return (
+              <div
+                class:list={['ctx-lab__sentence', !current && 'is-off']}
+                data-lab-sentence={sentence.id}
+              >
+                {sentence.variants.map((variant) => (
+                  <div
+                    class="ctx-lab__variant"
+                    data-lab-variant
+                    data-when={JSON.stringify(variant.when)}
+                    data-status={variant.status}
+                    hidden={current?.text !== variant.text}
+                  >
+                    <span class:list={['ctx-lab__status', `is-${variant.status}`]}>
+                      {statusLabel[variant.status]}
+                    </span>
+                    <p class="ctx-lab__sentence-text">{variant.text}</p>
+                    {variant.sources.length > 0 && (
+                      <p class="ctx-lab__sources">
+                        پشتوانه: {variant.sources.map((s) => sourceLabel[s] ?? s).join('، ')}
+                      </p>
+                    )}
+                    {variant.note && <p class="ctx-lab__variant-note">{variant.note}</p>}
+                  </div>
+                ))}
+              </div>
+            );
+          })
+        }
+
+        <p class="ctx-lab__answer-note">
+          هر جمله از یک بلوک روشن می‌آید. بلوک را خاموش کنید تا ببینید کدام جمله عوض می‌شود.
+        </p>
+        <p class="sr-only" aria-live="polite" data-lab-live></p>
+      </div>
+    </div>
+
+    <div class="ctx-lab__presets-table">
+      <p class="ctx-lab__presets-title">سه نمونهٔ آماده</p>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">حالت</th>
+            <th scope="col">پاسخ نمونه</th>
+          </tr>
+        </thead>
+        <tbody>
+          {presetAnswers.map((preset) => (
+            <tr>
+              <th scope="row">{presetButtonLabels[preset.id] ?? preset.label}</th>
+              <td>{preset.text}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p class="ctx-lab__cost-link">
+        هر بلوک بیشتر، بار بیشتر در هر نوبت. جزئیات در <a href="#lesson-5-2">درس ۵.۲</a>.
+      </p>
+    </div>
+
+    <p class="ctx-spine">مدل فقط ادامهٔ متنی را می‌نویسد که جلویش گذاشته‌اند.</p>
+    <p class="ctx-disclaimer">خروجی‌ها نمونهٔ ساخته‌شده‌اند؛ مدل زنده‌ای در کار نیست.</p>
+  </div>
+</FigureShell>

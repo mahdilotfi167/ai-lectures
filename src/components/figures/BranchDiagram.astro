@@ -1,0 +1,88 @@
+---
+import HtmlFigure from '../shell/HtmlFigure.astro';
+import { faNum } from '../../lib/format';
+
+interface Criterion {
+  label: string;
+  hint?: string;
+}
+
+interface Branch {
+  label: string;
+  outcome: string;
+  traits: string[];
+  tone?: string;
+}
+
+interface Props {
+  id: string;
+  desc: string;
+  caption: string;
+  question: string;
+  criteria: Criterion[];
+  branches: Branch[];
+  interactive?: boolean;
+  variant?: 'workflow' | 'build-buy';
+  defaultBranch?: number;
+}
+
+const {
+  id,
+  desc,
+  caption,
+  question,
+  criteria,
+  branches,
+  interactive = false,
+  variant = 'workflow',
+  defaultBranch = 0,
+} = Astro.props;
+---
+
+<HtmlFigure id={id} desc={desc} caption={caption} type="branch" interactive={interactive}>
+  <div class="fig-branch" data-branch-diagram data-variant={variant} data-default={defaultBranch}>
+    <div class="fig-branch__question">{question}</div>
+    <div class="fig-branch__criteria">
+      {criteria.map((criterion, i) => (
+        <div class="fig-criterion">
+          <div class="fig-criterion__label">
+            {faNum(i + 1)}. {criterion.label}
+          </div>
+          {criterion.hint && <div class="fig-criterion__hint">{criterion.hint}</div>}
+          {interactive && (
+            <button
+              type="button"
+              class="figure__toggle fig-criterion__toggle js-only"
+              data-criterion={i}
+              aria-pressed="false"
+              aria-label={`${criterion.label} — بله`}
+            >
+              بله
+            </button>
+          )}
+        </div>
+      ))}
+    </div>
+    <div class="fig-branch__outcomes">
+      {branches.map((branch, i) => (
+        <div class="fig-outcome" data-branch={i} data-default={i === defaultBranch ? 'true' : undefined}>
+          <div class="fig-outcome__label">{branch.label}</div>
+          <div class="fig-outcome__outcome">{branch.outcome}</div>
+          <div class="fig-outcome__traits">
+            {branch.traits.map((trait) => <span class="fig-outcome__trait">{trait}</span>)}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+  {interactive && (
+    <div slot="controls" class="figure__controls">
+      <button type="button" class="figure__toggle" data-role="branch-reset">
+        پاک‌کردن انتخاب‌ها
+      </button>
+      <p class="figure__readout" aria-live="polite" data-role="branch-readout">
+        معیارهایی را که برای شما درست است روشن کنید تا گزینهٔ مناسب مشخص شود.
+      </p>
+    </div>
+  )}
+</HtmlFigure>

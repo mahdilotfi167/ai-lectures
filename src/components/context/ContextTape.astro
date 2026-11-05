@@ -1,0 +1,163 @@
+---
+import Icon from '../shell/Icon.astro';
+import { faNum } from '../../lib/format';
+import { blockById, requireBlock } from '../../data/context/blocks';
+import { kinds } from '../../data/context/kinds';
+import type { Frame } from '../../data/context/types';
+import ContextBlock from './ContextBlock.astro';
+
+interface Props {
+  frame: Frame;
+  lesson: string;
+  showActors?: boolean;
+  showTokens?: boolean;
+}
+
+const { frame, lesson, showActors = true, showTokens = false } = Astro.props;
+
+const actorLabels: Record<string, string> = {
+  harness: 'چارچوب اجرا متن را می‌چیند',
+  model: 'مدل ادامه را می‌نویسد',
+  tool: 'ابزار اجرا می‌شود؛ نتیجه متن است',
+  store: 'انبار خوانده یا نوشته می‌شود',
+};
+
+const output = frame.output;
+const jsonOutput = output ? /^[[{]/.test(output.text.trim()) : false;
+const meter = frame.meter;
+const used = meter?.used ?? 0;
+const capacity = meter?.capacity ?? 0;
+const pct = capacity > 0 ? Math.min(100, Math.round((used / capacity) * 100)) : 0;
+const over = capacity > 0 ? used > capacity : false;
+
+const feedBlock = frame.outside?.feeds ? blockById.get(frame.outside.feeds) : undefined;
+const feedKind = feedBlock ? kinds[feedBlock.kind] : undefined;
+---
+
+<div class="ctx-tape" data-frame={frame.id}>
+  {
+    showActors && (
+      <div class="ctx-actors" data-active={frame.actor ?? 'harness'}>
+        <span class="ctx-actor" data-actor="harness">
+          <Icon name="document" size={14} /> چارچوب اجرا
+        </span>
+        <span class="ctx-actor" data-actor="model">
+          <Icon name="model" size={14} /> مدل
+        </span>
+        <span class="ctx-actor" data-actor="tool">
+          <Icon name="tool" size={14} /> ابزار
+        </span>
+        <span class="ctx-actor" data-actor="store">
+          <Icon name="database" size={14} /> انبار
+        </span>
+        {frame.actor && <span class="ctx-actors__label">{actorLabels[frame.actor]}</span>}
+      </div>
+    )
+  }
+
+  <div class:list={['ctx-tape__main', frame.outside && 'has-outside']}>
+    <ol class="ctx-blocks" aria-label="متن ورودی مدل">
+      {
+        frame.blocks.map((ref) => (
+          <>
+            {ref.edge && (
+              <li class="ctx-edge">
+                <span>{ref.edge}</span>
+              </li>
+            )}
+            <ContextBlock block={requireBlock(ref.id)} blockRef={ref} lesson={lesson} showTokens={showTokens} />
+          </>
+        ))
+      }
+      {frame.edge && (
+        <li class="ctx-edge ctx-edge--end">
+          <span>{frame.edge}</span>
+        </li>
+      )}
+    </ol>
+
+    {
+      meter && (
+        <div class="ctx-meter" class:list={[over && 'is-over']} data-meter>
+          <div class="ctx-meter__bar">
+            <span style={`width:${pct}%`} />
+          </div>
+          <p class="ctx-meter__label">
+            {showTokens ? (
+              <>
+                ≈ {faNum(used)} از {faNum(capacity)} توکن
+                {over ? ' — بیرون از لبه' : ''}
+              </>
+            ) : (
+              'اندازهٔ متن'
+            )}
+          </p>
+        </div>
+      )
+    }
+
+    {
+      frame.outside && (
+        <aside class="ctx-outside" data-outside data-tone={frame.outside.tone ?? 'normal'}>
+          <div class="ctx-outside__head">
+            <Icon name={frame.outside.icon} size={16} />
+            <strong>بیرون از متن</strong>
+          </div>
+          <p class="ctx-outside__label">{frame.outside.label}</p>
+          {frame.outside.detail && <p class="ctx-outside__detail">{frame.outside.detail}</p>}
+          {feedKind && <p class="ctx-outside__feed">نتیجه به بلوک «{feedKind.label}» می‌رسد.</p>}
+        </aside>
+      )
+    }
+  </div>
+
+  {
+    frame.predict && (
+      <div class="ctx-predict" data-predict>
+        <p class="ctx-predict__question">{frame.predict.question}</p>
+        <div class="ctx-predict__options">
+          {frame.predict.options.map((option, i) => (
+            <button
+              type="button"
+              class="ctx-predict__option"
+              data-predict-option={i}
+              data-correct={option.correct ? 'true' : 'false'}
+              data-why={option.why}
+            >
+              {option.text}
+            </button>
+          ))}
+        </div>
+        <div class="ctx-predict__answer" data-predict-answer>
+          <p>
+            <strong>پاسخ درست: </strong>
+            {frame.predict.options.find((o) => o.correct)?.text}
+          </p>
+          <p class="ctx-predict__why">{frame.predict.options.find((o) => o.correct)?.why}</p>
+        </div>
+      </div>
+    )
+  }
+
+  {
+    output && (
+      <div class="ctx-output-wrap" data-after-predict>
+        <div class:list={['ctx-output', output.tone && `is-${output.tone}`]} data-output>
+          <div class="ctx-output__head">
+            <span>ادامهٔ متن (نوشتهٔ مدل)</span>
+            <span class="ctx-output__next">{showTokens ? 'توکن بعدی' : 'کلمهٔ بعدی'}</span>
+          </div>
+          {jsonOutput ? (
+            <pre class="ctx-code ctx-code--output" dir="ltr"><code>{output.text}</code></pre>
+          ) : (
+            <p class="ctx-output__text">
+              <span data-typed={output.typed === false ? undefined : 'true'}>{output.text}</span>
+              <span class="ctx-caret" aria-hidden="true" />
+            </p>
+          )}
+          {output.note && <p class="ctx-output__note">{output.note}</p>}
+        </div>
+      </div>
+    )
+  }
+</div>

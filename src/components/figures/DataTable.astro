@@ -1,0 +1,76 @@
+---
+import HtmlFigure from '../shell/HtmlFigure.astro';
+import { faNum } from '../../lib/format';
+
+interface Column {
+  key: string;
+  label: string;
+  align?: 'start' | 'end' | 'center';
+  mono?: boolean;
+  digits?: 'fa' | 'latin';
+}
+
+interface Props {
+  id: string;
+  desc: string;
+  caption: string;
+  columns: Column[];
+  rows: Record<string, string | number>[];
+  rowTone?: (row: Record<string, unknown>) => string | undefined;
+  summary?: { label: string; value: string; tone?: string }[];
+  highlightNote?: string;
+  note?: string;
+}
+
+const { id, desc, caption, columns, rows, rowTone, summary, highlightNote, note } = Astro.props;
+
+const format = (value: string | number, column: Column): string => {
+  if (value === undefined || value === null) return '—';
+  if (column.digits === 'latin' || column.mono) return String(value);
+  return typeof value === 'number' ? faNum(value) : faNum(String(value));
+};
+---
+
+<HtmlFigure id={id} desc={desc} caption={caption} type="table">
+  <div class="fig-table-wrap">
+    <table class="fig-table">
+      <thead>
+        <tr>
+          {columns.map((column) => (
+            <th scope="col" style={`text-align: ${column.align ?? 'start'}`}>{column.label}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((row, i) => {
+          const tone = (row._tone as string | undefined) ?? rowTone?.(row);
+          return (
+            <tr class="fig-fade" style={`--i: ${i}`} data-tone={tone}>
+              {columns.map((column) => (
+                <td
+                  data-label={column.label}
+                  class:list={[column.mono && 'mono', column.digits === 'latin' && 'num']}
+                  style={`text-align: ${column.align ?? 'start'}`}
+                >
+                  {format(row[column.key], column)}
+                </td>
+              ))}
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </div>
+  {summary?.length && (
+    <div class="fig-summary">
+      {summary.map((item) => (
+        <div class:list={['fig-summary__item', item.tone && `is-${item.tone}`]}>
+          <span class="fig-summary__label">{item.label}</span>
+          <strong class="fig-summary__value">{item.value}</strong>
+        </div>
+      ))}
+    </div>
+  )}
+  {highlightNote && <p class="fig-highlight-note">{highlightNote}</p>}
+  {note && <p class="figure__note">{note}</p>}
+</HtmlFigure>
