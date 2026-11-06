@@ -46,11 +46,16 @@ function update() {
     if (lesson.top <= y) current = lesson.id;
     else break;
   }
+  const currentPart = ranges.find((range) => y >= range.top && y < range.bottom)?.part;
+  if (current && Number(current.split('.')[0]) !== currentPart) current = null;
 
   const links = document.querySelectorAll<HTMLElement>('[data-toc-lesson]');
   for (const link of links) {
     if (link.dataset.tocLesson === current) link.setAttribute('aria-current', 'true');
     else link.removeAttribute('aria-current');
+  }
+  for (const zone of document.querySelectorAll<HTMLElement>('[data-toc-zone]')) {
+    zone.dataset.current = String(Number(zone.dataset.tocZone) === currentPart);
   }
 }
 
@@ -66,6 +71,10 @@ function init() {
   update();
 
   window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('hashchange', () => {
+    measure();
+    update();
+  });
   window.addEventListener('resize', () => {
     measure();
     update();

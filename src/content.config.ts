@@ -14,7 +14,7 @@ const lessons = defineCollection({
       id: z.string().regex(/^fig-\d-\d+$/),
       caption_fa: z.string().min(1),
       interactive: z.boolean().default(false),
-    }),
+    }).optional(),
     terms_introduced: z.array(z.string()).default([]),
     example: z.enum(['retail', 'none']).default('none'),
     words: z.number().int().positive(),

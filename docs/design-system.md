@@ -249,15 +249,15 @@ Six stacked segments in Part colors, filled portion at full opacity, unfilled at
 
 ### 5.5 TOC drawer
 
-One fixed icon button, top inline-start. Opens a `<dialog>` with the six Parts and their lessons, current lesson marked. Closes on selection, Escape, or backdrop click. Focus is trapped while open and restored on close. The only modal in the document.
+One fixed icon button, top inline-start. Opens a wide `<dialog>` containing six color-coded Part bands, all 35 lesson links, and 53 concept links from the map data. A search field filters Persian/English names and lesson numbers; the current lesson is marked. On mobile the bands stack and lesson cards become a single column. Selection closes the map and focuses the destination. Escape, the close button, and backdrop clicks restore opener focus. Native `<dialog>` traps focus; a native `<details>` version provides no-JavaScript navigation. Hidden in print. The map is not repeated inside the book.
 
 ### 5.6 Part divider
 
 ```
-min-height: 100vh; display: grid; place-content: center;
+min-height: 45vh; display: grid; place-content: center;
 ```
 
-Part number at `--text-3xl` in the Part color, title at `--text-2xl`, one orienting sentence, and `<ConceptMap highlight="{zone}">` beneath. A subtle Part-color gradient wash at ≤4% opacity — the only large color area in the document.
+Part number at `--text-3xl` in the Part color, title at `--text-2xl`, and orienting text. No inline map. A subtle Part-color gradient wash is the only large color area in the document. Printed dividers introduce the next lesson rather than occupying a dedicated map page.
 
 ---
 

@@ -39,20 +39,26 @@ for (const expected of lessons) {
   if (d.has_aside !== expected.hasAside) errors.push(`${prefix}: has_aside mismatch`);
   if (d.status !== 'confirmed') warnings.push(`${prefix}: status is ${d.status}, not confirmed`);
 
-  if (d.figure?.component !== expected.figure.component) {
-    errors.push(`${prefix}: figure component ${d.figure?.component} != ${expected.figure.component}`);
-  }
-  if (d.figure?.id !== expected.figure.id) errors.push(`${prefix}: figure id mismatch`);
-  if (d.figure?.caption_fa !== expected.figure.caption) errors.push(`${prefix}: figure caption mismatch`);
-  if (d.figure?.interactive !== expected.figure.interactive) {
-    errors.push(`${prefix}: figure interactive mismatch`);
+  if (expected.figure) {
+    if (d.figure?.component !== expected.figure.component) {
+      errors.push(`${prefix}: figure component ${d.figure?.component} != ${expected.figure.component}`);
+    }
+    if (d.figure?.id !== expected.figure.id) errors.push(`${prefix}: figure id mismatch`);
+    if (d.figure?.caption_fa !== expected.figure.caption) errors.push(`${prefix}: figure caption mismatch`);
+    if (d.figure?.interactive !== expected.figure.interactive) {
+      errors.push(`${prefix}: figure interactive mismatch`);
+    }
+  } else if (d.figure) {
+    errors.push(`${prefix}: unexpected primary figure`);
   }
 
   const expectedFile = `${expected.part}-${expected.id.split('.')[1]}-${expected.slug}.mdx`;
   if (p.file !== expectedFile) errors.push(`${prefix}: filename ${p.file} != ${expectedFile}`);
 
-  const componentPath = join(root, 'src/components/figures', `${d.figure?.component}.astro`);
-  if (!existsSync(componentPath)) errors.push(`${prefix}: missing figure component ${d.figure?.component}.astro`);
+  if (expected.figure) {
+    const componentPath = join(root, 'src/components/figures', `${expected.figure.component}.astro`);
+    if (!existsSync(componentPath)) errors.push(`${prefix}: missing figure component ${expected.figure.component}.astro`);
+  }
 
   const lens = d.context_lens;
   if (lens) {
@@ -85,17 +91,19 @@ for (const expected of lessons) {
     if (!termById.has(termId)) errors.push(`${prefix}: unknown term ${termId}`);
   }
 
-  const tagRe = new RegExp(`<${d.figure?.component}\\b[\\s\\S]*?/>`);
-  const tag = p.body.match(tagRe)?.[0];
-  if (!tag) {
-    errors.push(`${prefix}: no <${d.figure?.component} ... /> call in body`);
-  } else {
-    if (!tag.includes(`id="${d.figure.id}"`)) errors.push(`${prefix}: figure call missing id="${d.figure.id}"`);
-    if (!tag.includes(`caption="${d.figure.caption_fa}"`)) {
-      errors.push(`${prefix}: figure call caption does not match frontmatter`);
+  if (expected.figure) {
+    const tagRe = new RegExp(`<${expected.figure.component}\\b[\\s\\S]*?/>`);
+    const tag = p.body.match(tagRe)?.[0];
+    if (!tag) {
+      errors.push(`${prefix}: no <${expected.figure.component} ... /> call in body`);
+    } else {
+      if (!tag.includes(`id="${expected.figure.id}"`)) errors.push(`${prefix}: figure call missing id="${expected.figure.id}"`);
+      if (!tag.includes(`caption="${expected.figure.caption}"`)) {
+        errors.push(`${prefix}: figure call caption does not match frontmatter`);
+      }
+      const desc = tag.match(/desc="([^"]*)"/)?.[1] ?? '';
+      if (desc.length < 25) errors.push(`${prefix}: figure desc missing or too short`);
     }
-    const desc = tag.match(/desc="([^"]*)"/)?.[1] ?? '';
-    if (desc.length < 25) errors.push(`${prefix}: figure desc missing or too short`);
   }
 
   if (!p.body.includes('<Takeaway>')) errors.push(`${prefix}: missing <Takeaway>`);
@@ -108,8 +116,9 @@ for (const p of parsed) {
 }
 
 const interactive = parsed.filter((p) => p.data.figure?.interactive);
-if (interactive.length !== 8) {
-  errors.push(`expected exactly 8 interactive figures, found ${interactive.length}`);
+const expectedInteractive = lessons.filter((lesson) => lesson.figure?.interactive).length;
+if (interactive.length !== expectedInteractive) {
+  errors.push(`expected exactly ${expectedInteractive} interactive figures, found ${interactive.length}`);
 }
 
 const withLens = parsed.filter((p) => p.data.context_lens);

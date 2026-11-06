@@ -5,10 +5,10 @@ This is the **authoring contract**. One row per lesson. An agent authoring a les
 Column meanings:
 
 - **Objective** — what the reader can do afterwards. Written as a capability, not a topic.
-- **Figure** — the primary primitive from `figures.md` plus what it shows. Exactly one primary figure per lesson; a Context Lens may be a second, secondary figure.
+- **Figure** — the primary primitive from `figures.md` plus what it shows. Lessons 1.2 and 6.4 link to the shared navigation map instead of rendering a primary figure; a Context Lens may be a secondary figure.
 - **Terms** — terms whose `not_before` equals this lesson. First use here, glossed via `<Term>`.
 - **Words** — Persian word budget for prose (hook + body + takeaway, excluding figure labels and asides). ±10%.
-- **✋** — marked lessons may carry **one** optional control on the primary figure. Total: 8 of 35. Adding a ninth requires removing one. Lens controls are separate and bounded.
+- **✋** — marked lessons have an optional primary-figure control. Current total: 7. The shared navigation map and lens controls are separate.
 - **🛍** — the retail running example appears in this lesson.
 - **🔎** — this lesson has a Context Lens (a secondary figure; see `PLAN-CONTEXT.md` and the table below). The **Lens** column names its key.
 
@@ -49,7 +49,7 @@ status: draft                    # draft | reviewed | confirmed
 | # | Lesson | Objective | Figure | Terms | Words | Flags | Lens |
 |---|---|---|---|---|---|---|---|
 | 1.1 | هوش مصنوعی امروز واقعاً چه کاری می‌کند | Name the four things today's AI is actually good at, and three it is not. Deflates both hype and dismissal before any vocabulary arrives. | `CardGrid` — 4 capability cards (writing/summarizing, answering from documents, writing code, ordering multi-step work) each with a concrete one-line example; then 3 dimmed "not yet" cards (guaranteed accuracy, true novelty, acting unsupervised). Cards fade in staggered. | — | 240 | | — |
-| 1.2 | **یک نقشه برای همهٔ واژه‌ها** | Locate any term in the document on a single map. **The spine of the whole document (PLAN §2.1).** | `ConceptMap` — the master map. 53 nodes in 5 zones: ایجنت‌ها / مدل / ساختن / اجرا / تصمیم (49 glossary terms + 4 concepts). Zones draw in sequence, right to left, then edges fade in. This exact SVG reappears 7 more times. | — (map node labels are exempt from `not_before`) | 200 | | — |
+| 1.2 | **یک نقشه برای همهٔ واژه‌ها** | Locate any term or lesson in the shared map. | No inline figure. Introduces the map-style فهرست: six Part bands, all 35 lesson links and 53 concept links from `concept-map.ts`, with search and current-lesson highlighting. | — (navigation labels are exempt from `not_before`) | 200 | | — |
 | 1.3 | سه لایه: مدل، چارچوب اجرا، محصول | Distinguish "the model" from "the thing you use". The single most common confusion among non-technical readers, cleared early. | `LayerStack` — three stacked bands: محصول (ChatGPT, Copilot) / چارچوب اجرا / مدل. Animated top-down. A pointer shows "when people say 'AI', they usually mean the top band". | harness, llm, model | 260 | 🔎 | text-loop |
 | 1.4 | **مثالی که تا آخر همراه ماست** | Hold one concrete scenario to attach everything else to. Introduces the retail assistant (PLAN §2.2). | `CardGrid` — the online store, the customer, the question «سفارش من کجاست؟», and the five things a good answer requires. Each requirement fades in and is tagged with the Part that will cover it. | — | 220 | 🛍 🔎 | slots |
 | 1.5 | این سند چطور خوانده می‌شود | Know the route and that scrolling is the only required action. | `RoadStrip` — six Part markers along a path with a one-line promise each. Fills as it reveals; visually echoes the progress rail. | — | 150 | | — |
@@ -127,7 +127,7 @@ status: draft                    # draft | reviewed | confirmed
 | 6.1 | کجا ارزش واقعی هست | Pick a first use case using two axes: tolerance for error × volume of repetitive work. | `Matrix2x2` — 2×2 with ~10 real use cases plotted (support triage, document search, code review, contract review, forecasting…). Quadrants labeled «از اینجا شروع کنید» / «بعداً» / «نه». Points fade in by quadrant. | — | 290 | | — |
 | 6.2 | بسازیم یا بخریم | Apply a four-question test instead of defaulting to either answer. | `BranchDiagram` — four questions (is it differentiating? is our data unique? do we have the skills? how fast?) routing to buy / assemble / build. The retail assistant is run through the test as the worked case. | — | 280 | 🛍 ✋ | — |
 | 6.3 | تیم و مهارت‌ها | Name the four roles an AI feature needs and which ones are genuinely new. Reassuring and specific: most of the team already exists. | `CardGrid` — four roles with responsibilities; the genuinely new parts highlighted against the existing ones. | — | 270 | | — |
-| 6.4 | **نقشه، یک بار دیگر** | Read the full map from 1.2 with every term now meaningful. Closes the loop. **The final figure of the document.** | `ConceptMap` with `highlight="all"` — the master map, fully lit, every node now clickable to reveal its one-line definition and lesson number. The one place where the whole vocabulary is reviewable at once. | — | 240 | ✋ 🔎 | recap |
+| 6.4 | **نقشه، یک بار دیگر** | Revisit the shared map with every term now meaningful. Closes the loop. | No inline primary figure. Links back to the shared فهرست; keeps the `recap` Context Lens. Concept links navigate to the introducing lesson. | — | 240 | 🔎 | recap |
 
 ---
 
@@ -159,7 +159,7 @@ Twenty lessons carry one Context Lens, plus the Lab in 4.3. A lens is **not** th
 | 5.4 | `read-the-trace` | static | raw | To debug, read the text the model saw. |
 | 6.4 | `recap` | static | raw | The whole document, as one text. |
 
-**Counts**: 20 lenses + 1 Lab = 21 secondary pieces. Of these, 9 use a stepper, 2 use predict, 1 is the Lab, and the rest are static/compare. The primary interactive figure count remains exactly 8.
+**Counts**: 20 lenses + 1 Lab = 21 secondary pieces. Of these, 9 use a stepper, 2 use predict, 1 is the Lab, and the rest are static/compare. There are 33 primary figures, 7 interactive; the map is now navigation, not a lesson figure.
 
 ---
 
@@ -172,12 +172,12 @@ Twenty lessons carry one Context Lens, plus the Lab in 4.3. A lens is **not** th
 | 3 | 7 | 1,980 | 3 | 1 | 4 |
 | 4 | 7 | 2,010 | 1 | 4 | 4 |
 | 5 | 4 | 1,210 | 1 | 3 | 4 |
-| 6 | 4 | 1,080 | 2 | 1 | 1 |
-| **Total** | **35** | **≈9,400** | **8** | **14** | 21 |
+| 6 | 4 | 1,080 | 1 | 1 | 1 |
+| **Total** | **35** | **≈9,400** | **7** | **14** | 21 |
 
-**Authored**: 6,381 Persian words (≈55 minutes), plus figure time. The per-lesson numbers above are ceilings; the draft sits below most of them. Appropriate for one sitting by a motivated reader, or six sittings by a busy one.
+**Authored**: 6,340 Persian words, plus figure time. The per-lesson numbers above are ceilings; the draft sits below most of them. Appropriate for one sitting by a motivated reader, or six sittings by a busy one.
 
-Both caps hold: **exactly 8** primary interactive figures (PLAN §3.2) and **every Part** carries the running example (PLAN §2.2). The 21 Context Lenses are secondary and bounded by `PLAN-CONTEXT.md`.
+The interaction budget holds with **7** primary interactive figures; **every Part** carries the running example (PLAN §2.2). The 21 Context Lenses are secondary and bounded by `PLAN-CONTEXT.md`.
 
 ## Authoring order
 
@@ -193,4 +193,4 @@ Four deliberate visual callbacks. They are a primary teaching mechanism, not a s
 | 3.5 توهم | 3.1's `ProbabilityBars` visual language | Hallucination must *look like* next-token prediction, because it is. |
 | 4.3 کانتکست | 3.3's `StackedBar` | Context engineering is literally filling that bar. |
 | 5.1 معماری | Boxes from 2.2, 2.5, 4.4 | The architecture is assembled from parts the reader already owns. |
-| 6.4 نقشه | 1.2's `ConceptMap` | Closes the document's frame. |
+| 6.4 نقشه | The shared فهرست introduced in 1.2 | Closes the document's frame without repeating the diagram. |

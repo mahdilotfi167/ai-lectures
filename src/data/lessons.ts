@@ -6,7 +6,7 @@ export interface LessonMeta {
   slug: string;
   title: string;
   objective: string;
-  figure: {
+  figure?: {
     component: string;
     id: string;
     caption: string;
@@ -96,12 +96,6 @@ export const lessons: LessonMeta[] = [
     slug: 'the-map',
     title: 'یک نقشه برای همهٔ واژه‌ها',
     objective: 'خواننده می‌تواند هر واژه را روی یک نقشهٔ واحد پیدا کند.',
-    figure: {
-      component: 'ConceptMap',
-      id: 'fig-1-2',
-      caption: 'همهٔ واژه‌های این سند روی یک نقشه جای دارند؛ نقشه را حفظ نکنید، از آن استفاده کنید.',
-      interactive: false,
-    },
     terms: [],
     example: 'none',
     words: 200,
@@ -667,12 +661,6 @@ export const lessons: LessonMeta[] = [
     slug: 'the-map-again',
     title: 'نقشه، یک بار دیگر',
     objective: 'خواننده نقشهٔ ۱.۲ را با معنای همهٔ واژه‌ها می‌خواند و حلقه بسته می‌شود.',
-    figure: {
-      component: 'ConceptMap',
-      id: 'fig-6-4',
-      caption: 'مدل حدس می‌زند، چارچوب اجرا می‌گرداند، کانتکست محدود است، RAG زمین می‌دهد، ارزیابی می‌سنجد و گاردریل مهار می‌کند.',
-      interactive: true,
-    },
     terms: [],
     example: 'none',
     words: 240,

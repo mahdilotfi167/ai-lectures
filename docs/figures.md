@@ -546,7 +546,7 @@ Icons are always paired with a text label. No icon-only meaning.
 
 | Primitive | Lessons | Count |
 |---|---|---|
-| `ConceptMap` | 1.2, 6.4, + 6 Part dividers | 2 (+6) |
+| `ConceptMap` | Development gallery only; production navigation uses `shell/TocMap.astro` and the same map data | 0 inline |
 | `CardGrid` | 1.1, 1.4, 3.6, 6.3 | 4 |
 | `FlowPipeline` | 3.4, 4.4, 5.1 | 3 |
 | `SequenceFlow` | 2.2, 5.3 | 2 |
@@ -568,7 +568,7 @@ Icons are always paired with a text label. No icon-only meaning.
 | `CostCalculator` | 5.2 | 1 |
 | `ContextLens` | 20 lessons (1.3, 1.4, 2.2–2.5, 2.7, 2.8, 3.3–3.5, 3.7, 4.1, 4.4, 4.5, 5.1–5.4, 6.4) | 20 (secondary) |
 | `ContextLab` | 4.3 | 1 (secondary) |
-| | **Total primary** | **35** |
+| | **Total primary** | **33** |
 | | **Total context** | **21** |
 
 Build order: `CardGrid`, `FlowPipeline`, `SequenceFlow`, `SplitCompare`, `LayerStack`, `StackedBar`, `ProbabilityBars`, `LoopTrace`, `BranchDiagram`, `Ladder`, `DataTable`, `ConceptMap`, then the six single-use primitives, then `ContextLens` and `ContextLab`. Highest reuse first, so content authoring on Part 1–2 can begin before the library is finished.

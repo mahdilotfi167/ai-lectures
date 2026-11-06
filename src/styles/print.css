@@ -23,6 +23,7 @@
   body {
     background: #ffffff !important;
     color: #111111 !important;
+    overflow: visible !important;
   }
 
   body {
@@ -33,6 +34,8 @@
   .rail,
   .toc-button,
   .toc-dialog,
+  .toc-fallback,
+  .toc-inline-link,
   .skip-link,
   .figure__controls,
   .map-detail {
@@ -52,7 +55,7 @@
   .part-divider {
     min-height: auto;
     break-before: page;
-    break-after: page;
+    break-after: avoid;
     padding-block: 10mm;
     background: none !important;
     border: 0;

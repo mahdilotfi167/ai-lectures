@@ -1,5 +1,5 @@
 ---
-import { faNum, lessonAnchor } from '../../lib/format';
+import TocMap from './TocMap.astro';
 import type { PartMeta, LessonMeta } from '../../data/lessons';
 
 interface Props {
@@ -14,8 +14,10 @@ const { parts, lessons } = Astro.props;
   class="toc-button"
   type="button"
   id="toc-open"
+  data-toc-open
   aria-haspopup="dialog"
   aria-controls="toc-dialog"
+  aria-expanded="false"
 >
   <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
     <path d="M4 6h16M4 12h16M4 18h16"></path>
@@ -23,32 +25,43 @@ const { parts, lessons } = Astro.props;
   فهرست
 </button>
 
-<dialog class="toc-dialog" id="toc-dialog" aria-labelledby="toc-title">
+<dialog class="toc-dialog" id="toc-dialog" aria-labelledby="toc-title" aria-describedby="toc-description">
   <div class="toc-dialog__head">
-    <div class="toc-dialog__title" id="toc-title">فهرست سند</div>
+    <div>
+      <h2 class="toc-dialog__title" id="toc-title">نقشهٔ درس‌ها</h2>
+      <p class="toc-dialog__description" id="toc-description">
+        هر درس یا مفهوم را انتخاب کنید تا به همان‌جا بروید.
+      </p>
+    </div>
     <button class="toc-dialog__close" type="button" id="toc-close">بستن</button>
   </div>
-  <div class="toc-dialog__body">
-    {
-      parts.map((p) => (
-        <div class="toc-part" style={`--part-color: var(--part-${p.part})`}>
-          <a class="toc-part__link" href={`#part-${p.part}`} data-toc-part={p.part}>
-            <span class="toc-part__num">بخش {faNum(p.part)}</span>
-            <span>{p.title}</span>
-          </a>
-          <ul class="toc-lessons">
-            {lessons
-              .filter((l) => l.part === p.part)
-              .map((l) => (
-                <li>
-                  <a href={`#${lessonAnchor(l.id)}`} data-toc-lesson={l.id}>
-                    <span class="tabular">{faNum(l.id)}</span> — {l.title}
-                  </a>
-                </li>
-              ))}
-          </ul>
-        </div>
-      ))
-    }
+
+  <div class="toc-search">
+    <label class="sr-only" for="toc-search">جست‌وجوی درس یا مفهوم</label>
+    <input
+      id="toc-search"
+      type="search"
+      placeholder="جست‌وجوی درس یا مفهوم…"
+      autocomplete="off"
+      aria-controls="toc-results"
+    />
+    <button type="button" class="toc-search__reset" data-toc-reset hidden>پاک کردن</button>
+    <p class="sr-only" role="status" data-toc-status></p>
+  </div>
+
+  <div class="toc-dialog__body" id="toc-results">
+    <TocMap parts={parts} lessons={lessons} />
+    <p class="toc-empty" data-toc-empty hidden>درسی یا مفهومی پیدا نشد. عبارت دیگری بنویسید.</p>
   </div>
 </dialog>
+
+<noscript>
+  <details class="toc-fallback">
+    <summary class="toc-button">فهرست</summary>
+    <div class="toc-fallback__panel">
+      <h2 class="toc-dialog__title">نقشهٔ درس‌ها</h2>
+      <p class="toc-dialog__description">برای بستن، دوباره روی فهرست بزنید.</p>
+      <TocMap parts={parts} lessons={lessons} idPrefix="toc-fallback" />
+    </div>
+  </details>
+</noscript>

@@ -45,16 +45,13 @@ A manager who knows nothing about AI should be able to scroll this document once
 
 Four devices carry continuity across 35 lessons. They are the reason this reads as one document and not as 35 slides. **All four are mandatory.**
 
-### 2.1 The recurring map
+### 2.1 The shared navigation map
 
-Lesson **1.2** presents one master concept map: every term in the document, as a labeled node, grouped into zones (Agent layer / Model layer / Build layer / Run layer / Decide layer).
+The fixed **فهرست** button opens the document's map: six color-coded Part bands, all 35 lessons, and 53 concept links grouped from `src/data/concept-map.ts`. Every concept leads directly to its introducing lesson. Search supports Persian/English names and lesson numbers; the current reading location is highlighted.
 
-That *same* SVG is re-rendered six more times:
+Lessons **1.2** and **6.4** introduce and revisit this same navigator, without inline primary figures. Part dividers contain orienting text only. No map is repeated in the reading flow. The old `ConceptMap` SVG remains available to the development gallery, not the production book.
 
-- once at the opening of each Part, with that Part's zone lit and the rest dimmed to 20% opacity ("you are here"),
-- once at the very end (lesson 6.4) with everything lit.
-
-Implementation: a single `<ConceptMap>` component with a `highlight` prop taking a zone id. One source of truth, eight appearances. This is the single most important continuity device in the document.
+Implementation: `shell/TocMap.astro` renders the map-style links; `TocDrawer.astro` hosts the accessible dialog and a native no-JavaScript fallback. The book now has 33 primary figures (7 interactive), plus the unchanged 21 Context Lens/Lab pieces.
 
 ### 2.2 The running example
 
@@ -77,7 +74,7 @@ Every concept in Parts 2–5 is a way of putting text into one box. A recurring 
 
 The spine sentence closes every lens: «مدل فقط ادامهٔ متنی را می‌نویسد که جلویش گذاشته‌اند.» From 3.2 on, the cursor says «توکن بعدی» instead of «کلمهٔ بعدی».
 
-Rules: at most one lens per lesson; every frame is server-rendered; every lens is complete without interaction; the Lab is the only place the reader builds a context. Lenses are secondary figures and do not count against the eight primary interactive figures.
+Rules: at most one lens per lesson; every frame is server-rendered; every lens is complete without interaction; the Lab is the only place the reader builds a context. Lenses are secondary figures and do not count against the seven primary interactive figures.
 
 ### 2.4 Progressive zoom
 
@@ -109,7 +106,7 @@ Deliberately minimal — three elements only:
 
 - **Progress rail**: a 3px vertical bar pinned to the viewport edge (right edge, since RTL), filling as the reader descends. Six segments, one per Part. Purely informational; also clickable as a coarse jump.
 - **TOC drawer**: one icon, fixed, top-start corner. Opens a flat list of the six Parts with their lessons. Closes on selection. This is the only modal surface in the document.
-- **Part dividers**: full-viewport-height "breathing" sections between Parts — big Part number, Part title, one orienting sentence, and the recurring map with this Part's zone lit. These are the document's punctuation; they tell the reader they have finished something.
+- **Part dividers**: compact "breathing" sections between Parts — big Part number, Part title, and orienting text. The map lives only in the shared فهرست, not in the dividers.
 
 ### 3.4 Lesson rhythm
 
