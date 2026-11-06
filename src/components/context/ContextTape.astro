@@ -105,7 +105,7 @@ const feedKind = feedBlock ? kinds[feedBlock.kind] : undefined;
           </div>
           <p class="ctx-outside__label">{frame.outside.label}</p>
           {frame.outside.detail && <p class="ctx-outside__detail">{frame.outside.detail}</p>}
-          {feedKind && <p class="ctx-outside__feed">نتیجه به بلوک «{feedKind.label}» می‌رسد.</p>}
+          {feedKind && <p class="ctx-outside__feed">نتیجه به بلوک {feedKind.label} می‌رسد.</p>}
         </aside>
       )
     }

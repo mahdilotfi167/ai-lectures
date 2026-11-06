@@ -48,15 +48,15 @@ Examples may be localized where it carries meaning (3.2's Persian token counts; 
 ```yaml
 - id: context-window                 # kebab-case, stable, referenced by <Term id="...">
   en: Context window
-  fa: پنجرهٔ زمینه
+  fa: ظرفیت کانتکست
   style: translate-plus-latin        # translate | transliterate | keep-latin | translate-plus-latin
-  first_use: «پنجرهٔ زمینه (Context Window)»
-  short: پنجرهٔ زمینه
+  first_use: ظرفیت کانتکست (Context Window)
+  short: ظرفیت کانتکست
   not_before: "3.3"
-  def_fa: هر چیزی که مدل در یک نوبت می‌تواند «ببیند» — مجموع دستور سیستم، تاریخچه، اسناد و پرسش.
-  def_en: The total text a model considers in one pass.
+  def_fa: حداکثر اندازهٔ کانتکست؛ مدل در یک نوبت بیشتر از این نمی‌بیند.
+  def_en: The maximum amount of context a model can consider in a single pass.
   status: confirmed                  # proposed | confirmed
-  aliases: [context length, پنجره زمینه]
+  aliases: [context length]
   zone: model                        # concept-map zone
 ```
 
@@ -64,6 +64,7 @@ Field notes:
 
 - **`style`** — `keep-latin` keeps the Latin acronym as the running form (LLM, MCP, RAG, API). `translate-plus-latin` uses Persian with a Latin gloss on first use. `transliterate` writes the English word in Persian script (توکن, پرامپت).
 - **`first_use`** — the exact string at the term's first appearance. Rendered by `<Term>`.
+- **Presentation punctuation** — do not wrap terms or labels in quotation marks. Use one pair of parentheses for a first-use gloss, never nested parentheses around `<Term>`. Reserve quotation marks for actual quoted speech or sample text.
 - **`short`** — every later appearance.
 - **`not_before`** — the lesson id where the term is introduced. Appearing earlier is a build failure.
 - **`def_fa`** — ≤ 25 words, understandable standalone. Used in 6.4's clickable map, so it must read well out of context.
@@ -103,7 +104,7 @@ Any term with `status: proposed` → fails the **release** build (Phase 5) but n
 
 ### Warnings (non-blocking)
 
-- Known compound written without ZWNJ (`میشود`, `گردشکار`).
+- Known compound written without ZWNJ (`میشود`, `ورکفلو`).
 - A term defined in the glossary but never used in any lesson — dead vocabulary, probably should be cut.
 - Sentences over 22 words.
 - Latin digits in prose outside an LTR island.
@@ -149,7 +150,7 @@ Beyond the brief's 23, the curriculum introduces these — all seeded as `propos
 | Chatbot | چت‌بات | transliterate | 2.1 |
 | Function calling | فراخوانی تابع | translate | 2.2 |
 | Stateless | بی‌حافظه / بدون وضعیت | translate | 2.5 |
-| Context | زمینه | translate | 1.3 |
+| Context | کانتکست | transliterate | 1.3 |
 | System prompt | دستور سیستم | translate | 1.3 |
 | Pre-training | پیش‌آموزش | translate | 3.4 |
 | Alignment | هم‌راستاسازی (Alignment) | translate-plus-latin | 3.4 |
@@ -157,7 +158,7 @@ Beyond the brief's 23, the curriculum introduces these — all seeded as `propos
 | Reasoning | استدلال | translate | 3.7 |
 | Temperature | دما (Temperature) | translate-plus-latin | 4.1 |
 | Few-shot | چند-نمونه (Few-shot) | translate-plus-latin | 4.2 |
-| Context engineering | مهندسی زمینه | translate | 4.3 |
+| Context engineering | چیدمان کانتکست | translate | 4.3 |
 | Chunking | تکه‌تکه‌کردن (Chunking) | translate-plus-latin | 4.4 |
 | Vector database | پایگاه داده برداری | translate | 4.4 |
 | Semantic search | جست‌وجوی معنایی | translate | 4.4 |
@@ -173,7 +174,7 @@ Beyond the brief's 23, the curriculum introduces these — all seeded as `propos
 | Cost | هزینه | translate | 5.2 |
 | API | API | keep-latin + gloss | 4.1 |
 
-**`context` vs `context-window`.** `context` (زمینه, 1.3) is the text placed in front of the model for one call. `context-window` (پنجرهٔ زمینه, 3.3) is the *size limit* of that text. The first Context Lens in 1.3 needs the former; the eviction figure in 3.3 needs the latter. Do not use «پنجرهٔ زمینه» before 3.3.
+**`context` vs `context-window`.** `context` (کانتکست, 1.3) is the text placed in front of the model for one call. `context-window` (ظرفیت کانتکست, 3.3) is the *size limit* of that text. The first Context Lens in 1.3 needs the former; the eviction figure in 3.3 needs the latter. Do not use the size-limit term before 3.3.
 
 ---
 

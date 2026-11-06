@@ -49,12 +49,12 @@ import { apiBlocks } from '../data/figures/api';
         desc="سه بازیگر و سه پیام نمونه."
         actors={[
           { id: 'u', label: 'کاربر', kind: 'user' },
-          { id: 'a', label: 'عامل', kind: 'system' },
+          { id: 'a', label: 'ایجنت', kind: 'system' },
           { id: 'm', label: 'مدل', kind: 'model' }
         ]}
         steps={[
           { from: 'u', to: 'a', label: 'پرسش' },
-          { from: 'a', to: 'm', label: 'زمینه' },
+          { from: 'a', to: 'm', label: 'کانتکست' },
           { from: 'm', to: 'a', label: 'پاسخ', dashed: true }
         ]}
       />

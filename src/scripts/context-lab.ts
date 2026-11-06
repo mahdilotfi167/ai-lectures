@@ -101,7 +101,7 @@ function initLab(root: HTMLElement) {
         const key = toggle.dataset.labToggle as LabKey;
         if (key) toggle.checked = preset.state[key];
       });
-      apply(`حالت «${button.textContent?.trim() ?? ''}» اعمال شد.`);
+      apply(`حالت ${button.textContent?.trim() ?? ''} اعمال شد.`);
     });
   });
 

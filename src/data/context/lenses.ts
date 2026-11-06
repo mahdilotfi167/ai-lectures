@@ -250,7 +250,7 @@ export const lenses: LensDef[] = [
         ],
         outside: {
           icon: 'document',
-          label: 'چارچوب اجرا فایل مهارت «مرجوعی» را باز می‌کند',
+          label: 'چارچوب اجرا فایل مهارت مرجوعی را باز می‌کند',
           detail: 'مهارت خودش کدی اجرا نمی‌کند.',
           feeds: 'skill.full',
         },
@@ -335,7 +335,7 @@ export const lenses: LensDef[] = [
         id: 'f1',
         title: 'خواندن فایل',
         actor: 'tool',
-        narration: 'عامل فایل را می‌خواند؛ خروجی فقط متن است.',
+        narration: 'ایجنت فایل را می‌خواند؛ خروجی فقط متن است.',
         blocks: [{ id: 'sys' }, { id: 'u.task', state: 'new' }],
         outside: {
           icon: 'document',
@@ -378,13 +378,13 @@ export const lenses: LensDef[] = [
     lesson: '2.8',
     mode: 'static',
     rawView: true,
-    narration: 'عامل برنامه‌ای است که این متن را می‌چیند، به مدل می‌دهد و پاسخ را به آن اضافه می‌کند.',
+    narration: 'ایجنت برنامه‌ای است که این متن را می‌چیند، به مدل می‌دهد و پاسخ را به آن اضافه می‌کند.',
     frames: [
       {
         id: 'f1',
         title: 'همهٔ قطعه‌ها در یک متن',
         actor: 'harness',
-        narration: 'عامل برنامه‌ای است که این متن را می‌چیند، به مدل می‌دهد و پاسخ را به آن اضافه می‌کند.',
+        narration: 'ایجنت برنامه‌ای است که این متن را می‌چیند، به مدل می‌دهد و پاسخ را به آن اضافه می‌کند.',
         blocks: [
           { id: 'sys', lessonRef: '1.3' },
           { id: 'tools', lessonRef: '2.2' },
@@ -417,7 +417,7 @@ export const lenses: LensDef[] = [
           { id: 'hist.early', state: 'new' },
           { id: 'u.cancel', state: 'new' },
         ],
-        edge: 'لبهٔ پنجرهٔ زمینه',
+        edge: 'لبهٔ کانتکست',
         meter: { used: 4200, capacity: 8000 },
         output: { text: t('a.cancel123'), tone: 'ok' },
       },
@@ -433,7 +433,7 @@ export const lenses: LensDef[] = [
           { id: 'hist.late', state: 'new' },
           { id: 'u.cancel' },
         ],
-        edge: 'لبهٔ پنجرهٔ زمینه',
+        edge: 'لبهٔ کانتکست',
         meter: { used: 8600, capacity: 8000 },
         output: { text: t('a.nomem'), tone: 'danger' },
       },
@@ -449,7 +449,7 @@ export const lenses: LensDef[] = [
           { id: 'hist.late' },
           { id: 'u.cancel' },
         ],
-        edge: 'لبهٔ پنجرهٔ زمینه',
+        edge: 'لبهٔ کانتکست',
         meter: { used: 7900, capacity: 8000 },
         output: { text: t('a.mem'), tone: 'ok' },
       },
@@ -552,7 +552,7 @@ export const lenses: LensDef[] = [
         narration: 'درخواست اول فقط دو پیام دارد: دستور سیستم و پرسش شما.',
         blocks: [{ id: 'sys', state: 'new' }, { id: 'u.where123', state: 'new' }],
         messages:
-          '[\n  {"role": "system", "content": "تو دستیار فروشگاه «بازار» هستی."},\n  {"role": "user", "content": "سفارش ۱۲۳ کجاست؟"}\n]',
+          '[\n  {"role": "system", "content": "تو دستیار فروشگاه بازار هستی."},\n  {"role": "user", "content": "سفارش ۱۲۳ کجاست؟"}\n]',
         messagesNote: 'برای خوانایی، متن دستور کوتاه شده است.',
       },
       {
@@ -567,7 +567,7 @@ export const lenses: LensDef[] = [
           { id: 'u.followup', state: 'new' },
         ],
         messages:
-          '[\n  {"role": "system", "content": "تو دستیار فروشگاه «بازار» هستی."},\n  {"role": "user", "content": "سفارش ۱۲۳ کجاست؟"},\n  {"role": "assistant", "content": "سفارش ۱۲۳ شما ارسال شده و فردا می‌رسد."},\n  {"role": "user", "content": "پس چرا هنوز نرسیده؟"}\n]',
+          '[\n  {"role": "system", "content": "تو دستیار فروشگاه بازار هستی."},\n  {"role": "user", "content": "سفارش ۱۲۳ کجاست؟"},\n  {"role": "assistant", "content": "سفارش ۱۲۳ شما ارسال شده و فردا می‌رسد."},\n  {"role": "user", "content": "پس چرا هنوز نرسیده؟"}\n]',
         messagesNote: 'همان متن قبلی، به‌علاوهٔ پاسخ و پرسش تازه.',
       },
       {
@@ -584,8 +584,8 @@ export const lenses: LensDef[] = [
           { id: 'u.return', state: 'new' },
         ],
         messages:
-          '[\n  {"role": "system", "content": "تو دستیار فروشگاه «بازار» هستی."},\n  {"role": "user", "content": "سفارش ۱۲۳ کجاست؟"},\n  {"role": "assistant", "content": "سفارش ۱۲۳ شما ارسال شده و فردا می‌رسد."},\n  {"role": "user", "content": "پس چرا هنوز نرسیده؟"},\n  {"role": "assistant", "content": "چون هنوز در مسیر است و فردا می‌رسد."},\n  {"role": "user", "content": "پس مرجوعش کن."}\n]',
-        messagesNote: 'شش پیام. مدل هیچ‌کدام را «به یاد ندارد»؛ همه در این درخواست هستند.',
+          '[\n  {"role": "system", "content": "تو دستیار فروشگاه بازار هستی."},\n  {"role": "user", "content": "سفارش ۱۲۳ کجاست؟"},\n  {"role": "assistant", "content": "سفارش ۱۲۳ شما ارسال شده و فردا می‌رسد."},\n  {"role": "user", "content": "پس چرا هنوز نرسیده؟"},\n  {"role": "assistant", "content": "چون هنوز در مسیر است و فردا می‌رسد."},\n  {"role": "user", "content": "پس مرجوعش کن."}\n]',
+        messagesNote: 'شش پیام. مدل هیچ‌کدام را به یاد ندارد؛ همه در این درخواست هستند.',
       },
     ],
   },
@@ -596,7 +596,7 @@ export const lenses: LensDef[] = [
     lesson: '4.3',
     mode: 'lab',
     rawView: false,
-    title: 'آزمایشگاه زمینه',
+    title: 'آزمایشگاه کانتکست',
     narration: 'متن را خودتان بچینید و ببینید پاسخ چطور عوض می‌شود.',
   },
 
@@ -673,7 +673,7 @@ export const lenses: LensDef[] = [
     narration: 'پرامپت و RAG متن را عوض می‌کنند؛ فاین‌تیون خود مدل را.',
     panels: [
       {
-        label: 'تغییر متن: پرامپت، زمینه، RAG',
+        label: 'تغییر متن: پرامپت، کانتکست، RAG',
         modelLabel: 'همان مدل',
         blocks: [{ id: 'sys' }, { id: 'doc.refund', state: 'new' }, { id: 'u.policy' }],
         output: { text: t('a.policy'), tone: 'ok' },
@@ -780,7 +780,7 @@ export const lenses: LensDef[] = [
         id: 'f2',
         title: 'یک متن، بدون مرز',
         actor: 'model',
-        narration: 'مدل در متن مرزی بین «داده» و «دستور» نمی‌بیند؛ همه‌اش یک متن است.',
+        narration: 'مدل در متن مرزی بین داده و دستور نمی‌بیند؛ همه‌اش یک متن است.',
         blocks: [
           { id: 'sys' },
           { id: 'tools' },

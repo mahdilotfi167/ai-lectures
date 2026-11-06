@@ -84,7 +84,7 @@ const money = (n: number) => `$${n.toLocaleString('en-US', { maximumFractionDigi
         </table>
       </div>
       <p class="fig-cost__note">
-        با {faNum(defaults.requestsPerDay)} درخواست در روز، {faNum(defaults.tokensPerRequest)} توکن زمینه و
+        با {faNum(defaults.requestsPerDay)} درخواست در روز، {faNum(defaults.tokensPerRequest)} توکن کانتکست و
         {' '}{faNum(defaults.cacheHitRate)}٪ کش.
       </p>
     </div>
@@ -110,7 +110,7 @@ const money = (n: number) => `$${n.toLocaleString('en-US', { maximumFractionDigi
       <output data-role="cost-requests-out">{faNum(defaults.requestsPerDay)}</output>
     </label>
     <label class="figure__control">
-      <span>اندازهٔ زمینه (توکن در هر درخواست)</span>
+      <span>اندازهٔ کانتکست (توکن در هر درخواست)</span>
       <input type="range" min="500" max="8000" step="100" value={defaults.tokensPerRequest} data-role="cost-tokens" />
       <output data-role="cost-tokens-out">{faNum(defaults.tokensPerRequest)}</output>
     </label>

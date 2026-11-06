@@ -181,7 +181,7 @@ The central technical decision: **lessons do not author SVG.** They call a param
 <SequenceFlow
   actors={[
     { id: 'user',  label: 'کاربر' },
-    { id: 'agent', label: 'عامل' },
+    { id: 'agent', label: 'ایجنت' },
     { id: 'tool',  label: 'ابزار سفارش' },
   ]}
   steps={[
@@ -330,13 +330,13 @@ The mechanism that prevents the #1 failure mode of AI explainers — using a wor
 ```yaml
 - id: context-window
   en: Context window
-  fa: پنجرهٔ زمینه
+  fa: ظرفیت کانتکست
   style: translate-plus-latin        # translate | transliterate | keep-latin | translate-plus-latin
-  first_use: «پنجرهٔ زمینه (Context Window)»
-  short: پنجرهٔ زمینه
+  first_use: ظرفیت کانتکست (Context Window)
+  short: ظرفیت کانتکست
   not_before: "3.3"
-  def_fa: هر چیزی که مدل در یک نوبت می‌تواند «ببیند» — مجموع پرسش، تاریخچه و اسناد.
-  def_en: The total amount of text a model can consider in a single pass.
+  def_fa: حداکثر اندازهٔ کانتکست؛ مدل در یک نوبت بیشتر از این نمی‌بیند.
+  def_en: The maximum amount of context a model can consider in a single pass.
   status: confirmed                  # proposed | confirmed
   aliases: [context length]
 ```

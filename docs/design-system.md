@@ -189,7 +189,7 @@ A remark plugin converts Latin→Persian digits in MDX text nodes, skipping `cod
 
 ### 4.4 Punctuation and shaping
 
-- Persian comma `،` and semicolon `؛`. Persian question mark `؟`. ZWNJ (`\u200C`) in compounds: `می‌شود`, `گردش‌کار`, `پنجرهٔ`.
+- Persian comma `،` and semicolon `؛`. Persian question mark `؟`. ZWNJ (`\u200C`) in compounds: `می‌شود`, `ورک‌فلو`, `پنجرهٔ`.
 - Persian quotation marks `«»`. Latin `""` only inside code.
 - Authors type ZWNJ directly. `check-glossary.ts` flags known compounds written without it (`میشود` → warn), since this is both a correctness and a search issue.
 - `text-rendering: optimizeLegibility`. No letter-spacing on Persian — it breaks cursive joining.

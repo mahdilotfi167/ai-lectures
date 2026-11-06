@@ -398,11 +398,11 @@ Prose must state: facts are short and *chosen* (what to store, when to forget, w
 
 | # | Tape | Output | Narration (draft) |
 |---|---|---|---|
-| 1 | `sys`, edge «لبهٔ پنجره», `hist` turns 1–3 (turn 1 contains «سفارش ۱۲۳»), `u.cancel` — all inside | typed: «سفارش ۱۲۳ را لغو می‌کنم.» | همه‌چیز جا می‌شود و مدل هر چه لازم دارد می‌بیند. |
+| 1 | `sys`, edge «لبهٔ کانتکست», `hist` turns 1–3 (turn 1 contains «سفارش ۱۲۳»), `u.cancel` — all inside | typed: «سفارش ۱۲۳ را لغو می‌کنم.» | همه‌چیز جا می‌شود و مدل هر چه لازم دارد می‌بیند. |
 | 2 | `sys`, then turns 1–2 `evicted`, edge, turns 3–9, `u.cancel` | typed: «کدام سفارش را می‌گویید؟» tone danger | گفت‌وگو بلند شد. قدیمی‌ترین متن از لبه بیرون افتاد و با آن شمارهٔ سفارش. |
 | 3 | as 2 + `mem`(new) pinned under `sys` | typed: «سفارش ۱۲۳ را لغو می‌کنم.» tone ok | چیزی که نباید فراموش شود را در حافظه بگذارید؛ آن را هر بار دوباره به متن می‌آورند. |
 
-`edge_fa` carries the text «لبهٔ پنجرهٔ زمینه». The `evicted` state strikes through and says «بیرون‌افتاده». From this lens on, per-block approximate token counts appear (§3.6). The existing `StackedBar` slider remains the lesson's one control.
+`edge_fa` carries the text «لبهٔ کانتکست». The `evicted` state strikes through and says «بیرون‌افتاده». From this lens on, per-block approximate token counts appear (§3.6). The existing `StackedBar` slider remains the lesson's one control.
 
 #### 3.5 · `no-fact-fluent-guess` — compare, user `u.orderno`
 
@@ -453,10 +453,10 @@ Render the `prefix` as the tail of a tape block: header «ورودی مدل (ت�
 | **1.4 `slots`** (static) | `sys`, `u.where`; then four `ghost` slots, each labeled with the *existing wording of 1.4's five requirement cards* and tagged «بخش ۲», «بخش ۲», «بخش ۴»… as the cards already are. Never introduce term names in a ghost label. |
 | **2.3 `mcp-fills-tools`** (steps 3) | (1) `sys`, `tools` + outside «سرور MCP — هنوز وصل نشده»; (2) outside «چارچوب اجرا می‌پرسد: چه ابزارهایی داری؟» detail shows a 3-line JSON listing `trackShipment`; (3) `tools.mcp` with the new line `changed`. Narration 3: «مدل نمی‌داند MCP وجود دارد؛ فقط یک خط تازه در فهرست می‌بیند.» Note: «ابزار بیشتر، متن بیشتر.» |
 | **2.7 `tests-as-text`** (steps 3) | tape of one-line chips: read file → edit → run tests: result block shows `FAIL: expected 200, got 401` → model reads it as text, edits → `PASS`. Narration: «خروجی تست فقط یک متن است که مدل در گام بعد می‌خواند.» No window/eviction mention (term gated to 3.3). |
-| **2.8 `anatomy-recap`** (static) | Full context `sys`, `tools`, `skill.menu`, `mem`, `u.where`, `a.call`, `r.order` with each block carrying a `lessonRef` link to 2.2/2.4/2.5. Caption: «عامل برنامه‌ای است که این متن را می‌چیند، به مدل می‌دهد و پاسخ را به آن اضافه می‌کند.» Sits under the existing `ExplodedView`; colors of exploded parts match block rails. |
+| **2.8 `anatomy-recap`** (static) | Full context `sys`, `tools`, `skill.menu`, `mem`, `u.where`, `a.call`, `r.order` with each block carrying a `lessonRef` link to 2.2/2.4/2.5. Caption: «ایجنت برنامه‌ای است که این متن را می‌چیند، به مدل می‌دهد و پاسخ را به آن اضافه می‌کند.» Sits under the existing `ExplodedView`; colors of exploded parts match block rails. |
 | **3.4 `learned-vs-given`** (compare) | Panel 1 «آنچه مدل در آموزش یاد گرفته»: fixed, "تا تاریخ آموزش"; Panel 2 «آنچه در متن همین نوبت آمده»: `r.order`. Question `u.where123`. Narration: «وضعیت سفارش امروز شما در آموزش مدل نبوده؛ فقط می‌تواند از متن بیاید.» Do not use "وزن‌ها". |
 | **3.7 `thinking-text`** (compare) | Question: «۳ کالای ۴۵۰٬۰۰۰ تومانی و ۲ کالای ۱۲۰٬۰۰۰ تومانی با ۱۰٪ تخفیف؛ جمع؟» Left: output «۱٬۴۹۰٬۰۰۰ تومان» (wrong, tone danger). Right: `thinking` block (model-authored): «۳×۴۵۰٬۰۰۰ = ۱٬۳۵۰٬۰۰۰. ۲×۱۲۰٬۰۰۰ = ۲۴۰٬۰۰۰. جمع ۱٬۵۹۰٬۰۰۰. ده درصد ۱۵۹٬۰۰۰. باقی‌مانده ۱٬۴۳۱٬۰۰۰.» then output «۱٬۴۳۱٬۰۰۰ تومان» (tone ok). Arithmetic is verified: 1,590,000 − 159,000 = 1,431,000. Narration: «مدل اول متن بیشتری می‌نویسد و بعد از روی همان می‌نویسد؛ استدلال یعنی متن بیشتر، زمان و هزینهٔ بیشتر.» |
-| **4.5 `where-it-changes`** (compare) | Left «پرامپت، زمینه، RAG»: tape changes (a block appears), model unchanged. Right «فاین‌تیون»: tape identical, the *model chip* changes. Use only for the knowledge-vs-behavior point. |
+| **4.5 `where-it-changes`** (compare) | Left «پرامپت، کانتکست، RAG»: tape changes (a block appears), model unchanged. Right «فاین‌تیون»: tape identical, the *model chip* changes. Use only for the knowledge-vs-behavior point. |
 | **5.1 `who-writes-what`** (static) | Full tape; each block has a callout naming the architecture box that fills it (gateway→user, orchestrator→assembly, vector store→retrieved, memory store→memory, tool APIs→tool_result) with `lessonRef`. |
 | **5.2 `cache-prefix`** (compare) | Panel A «ترتیب خوب»: `sys`, `tools`, `skill.menu` (stable) | `mem`, `hist`, `u` (changing). Panel B «ترتیب بد»: a clock line «اکنون: ۱۴:۰۵» at the very top, so *nothing* after it can be reused. Mark the reusable prefix «کش‌شده». Per-block token counts shown. |
 | **5.4 `read-the-trace`** (static) | `mem.stale` with the stale line `danger`, answer «سفارش به خیابان قدیم ارسال می‌شود.» `danger`; one callout «علت: یادداشت قدیمی در حافظه». Narration: «برای فهمیدن چرا مدل اشتباه کرد، متنی را بخوانید که دیده است.» |
@@ -539,12 +539,12 @@ Each lens lesson gets 1–3 added or rewritten sentences. Keep to the existing v
 
 | Lesson | Change |
 |---|---|
-| 1.3 | Add paragraph introducing `<Term id="context" />` and `<Term id="system-prompt" />`: «هر بار که از مدل می‌پرسید، برنامه یک متن کامل می‌چیند — اسمش <زمینه> است — و مدل فقط ادامهٔ آن را می‌نویسد.» Add the lens after the harness paragraph. Extend the aside with «آنچه ساده کرده‌ایم» (§3.7). Amend takeaway candidate: «مدل فقط ادامهٔ متنی را می‌نویسد که چارچوب اجرا جلویش می‌گذارد؛ محصول چیزی است که شما می‌بینید.» (to be approved) |
-| 2.1 | One sentence only: «هر گام عامل، یک بار دیگر دادن همان متن بزرگ‌تر به مدل است.» (no lens) |
+| 1.3 | Add paragraph introducing `<Term id="context" />` and `<Term id="system-prompt" />`: «هر بار که از مدل می‌پرسید، برنامه یک متن کامل می‌چیند — اسمش <کانتکست> است — و مدل فقط ادامهٔ آن را می‌نویسد.» Add the lens after the harness paragraph. Extend the aside with «آنچه ساده کرده‌ایم» (§3.7). Amend takeaway candidate: «مدل فقط ادامهٔ متنی را می‌نویسد که چارچوب اجرا جلویش می‌گذارد؛ محصول چیزی است که شما می‌بینید.» (to be approved) |
+| 2.1 | One sentence only: «هر گام ایجنت، یک بار دیگر دادن همان متن بزرگ‌تر به مدل است.» (no lens) |
 | 2.2 | Replace «اجرای واقعی کار چارچوب اجراست» paragraph flow so the lens follows it; add: «از دید مدل، فهرست ابزارها، درخواست و نتیجه هر سه فقط متن‌اند.» |
 | 2.4 | Add: «مهارت و ابزار هر دو به متن می‌رسند؛ ابزار فهرست کارهاست، مهارت توضیح روش.» |
 | 2.5 | Rewrite hook so "حافظه" = «چند خط متن که پیش از پرسش شما گذاشته می‌شود»; keep the stateless definition. |
-| 3.1 | One sentence tying `prefix` to the context: «متنی که بالا می‌بینید همان زمینهٔ مدل است.» |
+| 3.1 | One sentence tying `prefix` to the context: «متنی که بالا می‌بینید همان کانتکست مدل است.» |
 | 3.3 | Replace `system-prompt` first-use with its short form; keep `context-window` as the **size limit** of the `context`. Add lens after the second paragraph. |
 | 3.5 | Add: «اگر واقعیت در متن نباشد، مدل باز هم باید متن را ادامه دهد.» |
 | 4.1 | Reframe: «فهرست <messages> همان متنی است که مدل خواهد دید.» |
@@ -559,7 +559,7 @@ Takeaway changes require human approval; if any change, regenerate `docs/takeawa
 
 ### 8.3 ConceptMap — one new hub node
 
-In `src/data/concept-map.ts` add node **`context`** (label «زمینه», zone `model`, `lessonRef: 1.3`), with at most six edges: `system-prompt`, `tool-calling` (or the existing tools node), `skill`, `memory`, `rag` → `context`, and `context` → `llm`. This renders the thesis on the master map: *all the agent-side ideas feed one hub, which feeds the model.* Rules:
+In `src/data/concept-map.ts` add node **`context`** (label «کانتکست», zone `model`, `lessonRef: 1.3`), with at most six edges: `system-prompt`, `tool-calling` (or the existing tools node), `skill`, `memory`, `rag` → `context`, and `context` → `llm`. This renders the thesis on the master map: *all the agent-side ideas feed one hub, which feeds the model.* Rules:
 
 - coordinates are hand-tuned (existing rule);
 - update the `stacked` (< 600 px) variant: one extra chip in the model zone;
@@ -573,10 +573,10 @@ Edit `glossary.yml` (requires `[H]` sign-off per `docs/terminology.md`). New / c
 ```yaml
   - id: context
     en: Context
-    fa: زمینه
-    style: translate
-    first_use: «زمینه (Context)»
-    short: زمینه
+    fa: کانتکست
+    style: transliterate
+    first_use: کانتکست (Context)
+    short: کانتکست
     not_before: "1.3"
     def_fa: "همهٔ متنی که در یک نوبت جلوی مدل گذاشته می‌شود: دستور، تاریخچه، اسناد و پرسش."
     def_en: "All the text placed in front of the model for one call."
@@ -586,12 +586,15 @@ Edit `glossary.yml` (requires `[H]` sign-off per `docs/terminology.md`). New / c
 
   # changed
   - id: context-window
-    def_fa: "حداکثر اندازهٔ زمینه؛ مدل در یک نوبت بیشتر از این نمی‌بیند."
+    fa: ظرفیت کانتکست
+    first_use: ظرفیت کانتکست (Context Window)
+    short: ظرفیت کانتکست
+    def_fa: "حداکثر اندازهٔ کانتکست؛ مدل در یک نوبت بیشتر از این نمی‌بیند."
   - id: system-prompt
     not_before: "1.3"
 ```
 
-Follow-ups: 3.3 `terms_introduced` → `[context-window]` (and system-prompt removed); 1.3 `terms_introduced` → `[harness, llm, model, context, system-prompt]`; grep all lessons for bare «زمینه» before 1.3 (rule 1 will flag them — rewrite or exempt map labels); verify the validator's longest-match handling so «پنجرهٔ زمینه» and «مهندسی زمینه» are not double-counted as the short term.
+Follow-ups: 3.3 `terms_introduced` → `[context-window]` (and system-prompt removed); 1.3 `terms_introduced` → `[harness, llm, model, context, system-prompt]`; grep all lessons for bare «کانتکست» before 1.3 (rule 1 will flag them — rewrite or exempt map labels); verify the validator's longest-match handling so «ظرفیت کانتکست» and «چیدمان کانتکست» are not double-counted as the short term.
 
 Update `allowed-latin.txt` with every Latin token that appears in lens narration: `getOrder`, `refundOrder`, `trackShipment`, `MCP`, `messages`, `FAIL`, `PASS`, and role tags if shown in prose.
 
@@ -730,7 +733,7 @@ After Part 2 they should be able to answer, unprompted: (1) «مدل چطور ا
 
 | # | Decision | Recommendation |
 |---|---|---|
-| **D1** | Add glossary term `context` (زمینه) at 1.3? | **Yes.** Without it Part 2 lenses have no word for what they show. Distinguish it from `context-window` (the size limit). |
+| **D1** | Add glossary term `context` (کانتکست) at 1.3? | **Yes.** Without it Part 2 lenses have no word for what they show. Distinguish it from `context-window` (the size limit). |
 | **D2** | Move `system-prompt` from 3.3 to 1.3? | **Yes.** The first lens shows it. Alternative: label the first block «دستور ثابت» until 3.3 — rejected (two names for one thing). |
 | **D3** | Accept the amended cap (8 primary + bounded lens controls)? | **Yes**, as written in §2. The alternative — a 9th+ primary interactive figure — violates the plan's own rule. |
 | **D4** | Raw view default off? | **Off** (labels first). Revisit after the teaching test. |
@@ -759,7 +762,7 @@ A live model, a real tokenizer, free-text editing of the context, drag-and-drop 
 
 | # | Decision | Date | By |
 |---|---|---|---|
-| D1 | Add `context` (زمینه) at 1.3. **Yes**, as recommended. | 2026-11-05 | implementation |
+| D1 | Add `context` (کانتکست) at 1.3. **Yes**, as recommended. | 2026-11-05 | implementation |
 | D2 | Move `system-prompt` to 1.3. **Yes**, as recommended. | 2026-11-05 | implementation |
 | D3 | 8 primary figures + bounded lens controls. **Yes**; 2 predict lenses (2.2, 5.3), 1 Lab (4.3). | 2026-11-05 | implementation |
 | D4 | Raw view defaults **off** (labels first). | 2026-11-05 | implementation |

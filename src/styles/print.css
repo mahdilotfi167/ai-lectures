@@ -221,7 +221,7 @@
 
   /* Page footer with the document title. */
   .book::after {
-    content: 'هوش مصنوعی، از بالا به پایین';
+    content: 'هوش مصنوعی؛ از شناخت تا کاربرد';
     display: block;
     text-align: center;
     font-size: 8pt;

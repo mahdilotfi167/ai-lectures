@@ -36,7 +36,7 @@ export const labToggles: LabToggle[] = [
   },
   {
     id: 'skill',
-    label: 'مهارت «مرجوعی»',
+    label: 'مهارت مرجوعی',
     hint: 'بدون مهارت، روش مرجوعی و قاعدهٔ تأیید مدیر در متن نیست.',
     blockId: 'skill.full',
     tokens: 95,
@@ -110,13 +110,13 @@ export const labSentences: LabSentence[] = [
     variants: [
       {
         when: { sys: true, mem: true },
-        text: 'سارا، سلام؛ از فروشگاه «بازار».',
+        text: 'سارا، سلام؛ از فروشگاه بازار.',
         status: 'ok',
         sources: ['sys', 'mem'],
       },
       {
         when: { sys: true },
-        text: 'سلام؛ از فروشگاه «بازار».',
+        text: 'سلام؛ از فروشگاه بازار.',
         status: 'ok',
         sources: ['sys'],
       },

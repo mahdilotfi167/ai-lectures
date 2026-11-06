@@ -49,7 +49,7 @@ const conceptNode = (
 export const mapZones: MapZone[] = [
   {
     id: 'agents',
-    label: 'عامل‌ها',
+    label: 'ایجنت‌ها',
     part: 2,
     color: 'var(--part-2)',
     nodes: [

@@ -122,7 +122,13 @@ for (const term of terms) {
   }
   for (const lesson of parsed) {
     if (compareLessonId(lesson.data.id, term.not_before) <= 0) continue;
-    if (lesson.body.includes(term.first_use)) {
+    const repeatedFirstUse = [...lesson.body.matchAll(/<Term\b[^>]*\/>/g)].some(([tag]) => {
+      const id = tag.match(/\bid\s*=\s*["']([^"']+)["']/)?.[1];
+      const form = tag.match(/\bform\s*=\s*["']([^"']+)["']/)?.[1];
+      return id === term.id && form !== 'short';
+    });
+    const repeatedGloss = term.first_use !== term.short && lesson.body.includes(term.first_use);
+    if (repeatedFirstUse || repeatedGloss) {
       errors.push(`first-use: ${term.id} re-glossed in ${lesson.data.id}`);
     }
     if (term.style !== 'keep-latin') {
@@ -164,7 +170,7 @@ const zwnjless = [
   'میگوید',
   'میآید',
   'میخواهد',
-  'گردشکار',
+  'ورکفلو',
   'چتبات',
   'همراستاسازی',
   'فاینتیونینگ',
