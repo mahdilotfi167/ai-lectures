@@ -1,5 +1,6 @@
 ---
 import { faNum } from '../../lib/format';
+import { lessons, parts } from '../../data/lessons';
 ---
 
 <section class="cover full" aria-labelledby="cover-title">
@@ -11,8 +12,8 @@ import { faNum } from '../../lib/format';
       راهنمایی ساده برای فهمیدن هوش مصنوعی و تصمیم‌گیری آگاهانه دربارهٔ آن.
     </p>
     <div class="cover__meta" aria-label="مشخصات سند">
-      <span>{faNum(6)} بخش</span>
-      <span>{faNum(35)} درس</span>
+      <span>{faNum(parts.length)} بخش</span>
+      <span>{faNum(lessons.length)} درس</span>
     </div>
     <p class="cover__scroll">برای شروع، اسکرول کنید</p>
   </div>

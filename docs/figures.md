@@ -78,21 +78,21 @@ No figure may cause horizontal scroll at 360px. Checked at Gate 2 and per-lesson
 
 ### 1. `ConceptMap` — the master map
 
-**Used by**: 1.2, 6.4, and all 6 Part dividers. **The most important component in the document.**
+**Used by**: the development gallery. Production navigation uses `shell/TocMap.astro` with the same concept data; the map is not repeated inside lessons or Part dividers.
 
 ```ts
 interface ConceptMapProps extends FigureBase {
   highlight: 'none' | 'all' | ZoneId;    // ZoneId = 'overview'|'agents'|'model'|'build'|'run'|'decide'
-  revealZones?: boolean;                 // true only in 1.2: draw zones in sequence
-  clickable?: boolean;                   // true only in 6.4: node → definition popover
+  revealZones?: boolean;                 // draw zones in sequence in the gallery
+  clickable?: boolean;                   // node → definition readout
 }
 ```
 
-Nodes, edges, and zones live in `src/data/concept-map.ts` — **one source of truth for all 8 appearances**. Node labels come from `glossary.yml` (`short` form) so the map can never drift from the glossary.
+Nodes, edges, and zones live in `src/data/concept-map.ts` — **one source of truth for navigation and the gallery**. Node labels come from `glossary.yml` (`short` form) so the map can never drift from the glossary.
 
 - `highlight: ZoneId` → that zone at full opacity, others at 0.2, edges crossing the boundary dashed.
-- 1.2: zones draw right-to-left, then edges fade in. ~3 s.
-- 6.4: everything lit; clicking a node shows `def_fa` + its lesson number. The popover is the only non-TOC overlay in the document; it is informational and requires no interaction to understand the figure.
+- `revealZones`: zones draw right-to-left, then edges fade in. ~3 s.
+- `clickable`: selecting a node shows `def_fa` and its lesson number in the readout below the map.
 - Layout coordinates are **hand-tuned and committed**, not force-directed at runtime. Determinism matters more than elegance across 8 appearances.
 
 **Risk note**: a 53-node map is the hardest thing to make legible at 360px. The `stacked` variant drops edges and shows zones as a vertical list of grouped chips. Prototype this early — it is on the critical path for Gate 1.
@@ -206,7 +206,7 @@ interface Side {
 
 ### 6. `CardGrid` — sets of discrete items
 
-**Used by**: 1.1 (capabilities), 1.4 (scenario requirements), 3.6 (failure modes), 6.3 (team roles).
+**Used by**: 1.1 (capabilities), 1.3 (scenario requirements), 3.6 (failure modes), 6.3 (team roles).
 
 ```ts
 interface CardGridProps extends FigureBase {
@@ -216,7 +216,7 @@ interface CardGridProps extends FigureBase {
     example?: string;              // rendered in a distinct "for instance" style
     icon?: IconName;
     tone?: 'normal'|'muted'|'danger'|'ok'|'new';
-    badge?: string;                // e.g. the Part that covers it (1.4), or «تازه» (6.3)
+    badge?: string;                // e.g. the Part that covers it (1.3), or «تازه» (6.3)
   }[];
   groups?: { label: string; cardIds: number[] }[];   // 1.1: "can" vs "cannot yet"
   stackAt?: number;
@@ -233,7 +233,7 @@ interface CardGridProps extends FigureBase {
 
 ### 7. `LayerStack` — stacked bands
 
-**Used by**: 1.3 (product / harness / model), 4.2 (prompt layers).
+**Used by**: 1.2 (product / harness / model), 4.2 (prompt layers).
 
 ```ts
 interface LayerStackProps extends FigureBase {
@@ -246,7 +246,7 @@ interface LayerStackProps extends FigureBase {
 
 Neither use is interactive: 4.2's accumulating layers already show the output improving, so a control would add nothing the animation does not.
 
-- 1.3: three bands revealing top-down, with `pointer` on the top band saying «وقتی می‌گوییم هوش مصنوعی، معمولاً منظورمان این است».
+- 1.2: three bands revealing top-down, with `pointer` on the top band saying «وقتی می‌گوییم هوش مصنوعی، معمولاً منظورمان این است».
 - 4.2: four layers accumulating, each with its resulting output in `outputs` — the reader sees output quality improve as layers are added.
 
 ---
@@ -472,7 +472,7 @@ interface TradeoffTriangleProps extends FigureBase {
 
 ### 19. `RoadStrip` — the route
 
-**Used by**: 1.5.
+**Used by**: 1.4.
 
 ```ts
 interface RoadStripProps extends FigureBase {
@@ -480,7 +480,7 @@ interface RoadStripProps extends FigureBase {
 }
 ```
 
-- A path with six markers, filling right→left. Colors match the progress rail's Part segments, so lesson 1.5 teaches the reader to read the rail without mentioning it.
+- A path with six markers, filling right→left. Colors match the progress rail's Part segments, so lesson 1.4 teaches the reader to read the rail without mentioning it.
 
 ---
 
@@ -547,12 +547,12 @@ Icons are always paired with a text label. No icon-only meaning.
 | Primitive | Lessons | Count |
 |---|---|---|
 | `ConceptMap` | Development gallery only; production navigation uses `shell/TocMap.astro` and the same map data | 0 inline |
-| `CardGrid` | 1.1, 1.4, 3.6, 6.3 | 4 |
+| `CardGrid` | 1.1, 1.3, 3.6, 6.3 | 4 |
 | `FlowPipeline` | 3.4, 4.4, 5.1 | 3 |
 | `SequenceFlow` | 2.2, 5.3 | 2 |
 | `LoopTrace` | 2.5, 2.7 | 2 |
 | `SplitCompare` | 2.1, 2.4 | 2 |
-| `LayerStack` | 1.3, 4.2 | 2 |
+| `LayerStack` | 1.2, 4.2 | 2 |
 | `StackedBar` | 3.3, 4.3 | 2 |
 | `ProbabilityBars` | 3.1, 3.5 | 2 |
 | `BranchDiagram` | 2.6, 6.2 | 2 |
@@ -564,9 +564,9 @@ Icons are always paired with a text label. No icon-only meaning.
 | `Matrix2x2` | 6.1 | 1 |
 | `AnnotatedCode` | 4.1 | 1 |
 | `TradeoffTriangle` | 3.7 | 1 |
-| `RoadStrip` | 1.5 | 1 |
+| `RoadStrip` | 1.4 | 1 |
 | `CostCalculator` | 5.2 | 1 |
-| `ContextLens` | 20 lessons (1.3, 1.4, 2.2–2.5, 2.7, 2.8, 3.3–3.5, 3.7, 4.1, 4.4, 4.5, 5.1–5.4, 6.4) | 20 (secondary) |
+| `ContextLens` | 20 lessons (1.2, 1.3, 2.2–2.5, 2.7, 2.8, 3.3–3.5, 3.7, 4.1, 4.4, 4.5, 5.1–5.4, 6.4) | 20 (secondary) |
 | `ContextLab` | 4.3 | 1 (secondary) |
 | | **Total primary** | **33** |
 | | **Total context** | **21** |

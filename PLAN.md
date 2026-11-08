@@ -2,13 +2,15 @@
 
 > **Product**: one self-contained, interactive, Persian (RTL) HTML document that teaches AI top-down to a mixed audience led by non-technical business readers.
 > **Deliverable**: `dist/index.html` — a single file, no network needed, openable from a USB stick or an email attachment.
-> **Source**: modular. 35 lesson files + a reusable figure component library + a build that inlines everything.
+> **Source**: modular. 34 lesson files + a reusable figure component library + a build that inlines everything.
+>
+> **Curriculum update**: the redundant map lesson was removed. Part 1 is now numbered 1.1–1.4; other Parts are unchanged. Older phase descriptions below retain the original 35-lesson scope; `src/data/lessons.ts` and `docs/curriculum.md` define the current curriculum.
 
 This file is the master plan. Four companion documents hold the detail:
 
 | Doc | Contents |
 |---|---|
-| [`docs/curriculum.md`](docs/curriculum.md) | The 35-lesson skeleton. One row per lesson: objective, figure, terms, budget. **The authoring contract.** |
+| [`docs/curriculum.md`](docs/curriculum.md) | The 34-lesson skeleton. One row per lesson: objective, figure, terms, budget. **The authoring contract.** |
 | [`docs/figures.md`](docs/figures.md) | The figure component library. Props, animation behavior, RTL rules. |
 | [`docs/design-system.md`](docs/design-system.md) | Tokens, typography, RTL/LTR handling, motion, a11y, print. |
 | [`docs/terminology.md`](docs/terminology.md) | Persian content rules, glossary schema, validator rules. |
@@ -47,15 +49,15 @@ Four devices carry continuity across 35 lessons. They are the reason this reads 
 
 ### 2.1 The shared navigation map
 
-The fixed **فهرست** button opens the document's map: six color-coded Part bands, all 35 lessons, and 53 concept links grouped from `src/data/concept-map.ts`. Every concept leads directly to its introducing lesson. Search supports Persian/English names and lesson numbers; the current reading location is highlighted.
+The fixed **فهرست** button opens the document's map: six color-coded Part bands, all 34 lessons, and 53 concept links grouped from `src/data/concept-map.ts`. Every concept leads directly to its introducing lesson. Search supports Persian/English names and lesson numbers; the current reading location is highlighted.
 
-Lessons **1.2** and **6.4** introduce and revisit this same navigator, without inline primary figures. Part dividers contain orienting text only. No map is repeated in the reading flow. The old `ConceptMap` SVG remains available to the development gallery, not the production book.
+Lesson **6.4** revisits this navigator without an inline primary figure; the separate introductory map lesson was removed. Part dividers contain orienting text only. No map is repeated in the reading flow. The old `ConceptMap` SVG remains available to the development gallery, not the production book.
 
 Implementation: `shell/TocMap.astro` renders the map-style links; `TocDrawer.astro` hosts the accessible dialog and a native no-JavaScript fallback. The book now has 33 primary figures (7 interactive), plus the unchanged 21 Context Lens/Lab pieces.
 
 ### 2.2 The running example
 
-One scenario threads through all six parts: **a customer-support assistant for an online retail store** (`فروشگاه آنلاین`). It is introduced in lesson 1.4 and revisited in every part:
+One scenario threads through all six parts: **a customer-support assistant for an online retail store** (`فروشگاه آنلاین`). It is introduced in lesson 1.3 and revisited in every part:
 
 | Part | How the example appears |
 |---|---|
@@ -235,7 +237,7 @@ ai-interactive/
 │  ├─ content.config.ts        # Zod schema for lesson frontmatter
 │  ├─ content/lessons/
 │  │  ├─ 1-1-what-ai-does-today.mdx
-│  │  ├─ 1-2-the-map.mdx
+│  │  ├─ 1-2-three-layers.mdx
 │  │  └─ ... 35 files
 │  ├─ data/
 │  │  ├─ concept-map.ts        # master map nodes/edges/zones (single source of truth)
@@ -340,7 +342,7 @@ The mechanism that prevents the #1 failure mode of AI explainers — using a wor
 
 ### 6.2 `check-glossary.ts` — four rules, all build-failing
 
-1. **`not_before`** — if a term's Persian or English surface form appears in a lesson earlier than its `not_before`, fail. Exception: lesson 1.2, the master map, may show any term as a bare node label (maps are allowed to contain words you do not understand yet — that is their purpose). Exception is scoped to `src/data/concept-map.ts` only.
+1. **`not_before`** — if a term's Persian or English surface form appears in a lesson earlier than its `not_before`, fail. Exception: the shared navigation map may show any term as a bare node label so readers can find its introducing lesson. Exception is scoped to `src/data/concept-map.ts` only.
 2. **First use** — the first occurrence of a term at or after `not_before` must use the `first_use` form. Every later occurrence must use `short`. Catches both "never glossed" and "glossed four times".
 3. **Unknown Latin** — any Latin-script token ≥3 chars in Persian prose that is not in the glossary, not in `allowed-latin.txt`, and not inside `<Ltr>`/code → fail. Forces every acronym through the glossary.
 4. **Unconfirmed terms** — any term with `status: proposed` blocks the Phase 5 release build (but not dev builds).

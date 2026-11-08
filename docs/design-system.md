@@ -249,7 +249,7 @@ Six stacked segments in Part colors, filled portion at full opacity, unfilled at
 
 ### 5.5 TOC drawer
 
-One fixed icon button, top inline-start. Opens a wide `<dialog>` containing six color-coded Part bands, all 35 lesson links, and 53 concept links from the map data. A search field filters Persian/English names and lesson numbers; the current lesson is marked. On mobile the bands stack and lesson cards become a single column. Selection closes the map and focuses the destination. Escape, the close button, and backdrop clicks restore opener focus. Native `<dialog>` traps focus; a native `<details>` version provides no-JavaScript navigation. Hidden in print. The map is not repeated inside the book.
+One fixed icon button, top inline-start. Opens a wide `<dialog>` containing six color-coded Part bands, all 34 lesson links, and 53 concept links from the map data. A search field filters Persian/English names and lesson numbers; the current lesson is marked. On mobile the bands stack and lesson cards become a single column. Selection closes the map and focuses the destination. Escape, the close button, and backdrop clicks restore opener focus. Native `<dialog>` traps focus; a native `<details>` version provides no-JavaScript navigation. Hidden in print. The map is not repeated inside the book.
 
 ### 5.6 Part divider
 

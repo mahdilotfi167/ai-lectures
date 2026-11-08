@@ -1,11 +1,11 @@
-# Curriculum — the 35-lesson skeleton
+# Curriculum — the 34-lesson skeleton
 
 This is the **authoring contract**. One row per lesson. An agent authoring a lesson needs this file, `terminology.md`, `glossary.yml`, and `figures.md` — nothing else.
 
 Column meanings:
 
 - **Objective** — what the reader can do afterwards. Written as a capability, not a topic.
-- **Figure** — the primary primitive from `figures.md` plus what it shows. Lessons 1.2 and 6.4 link to the shared navigation map instead of rendering a primary figure; a Context Lens may be a secondary figure.
+- **Figure** — the primary primitive from `figures.md` plus what it shows. Lesson 6.4 links to the shared navigation map instead of rendering a primary figure; a Context Lens may be a secondary figure.
 - **Terms** — terms whose `not_before` equals this lesson. First use here, glossed via `<Term>`.
 - **Words** — Persian word budget for prose (hook + body + takeaway, excluding figure labels and asides). ±10%.
 - **✋** — marked lessons have an optional primary-figure control. Current total: 7. The shared navigation map and lens controls are separate.
@@ -13,6 +13,8 @@ Column meanings:
 - **🔎** — this lesson has a Context Lens (a secondary figure; see `PLAN-CONTEXT.md` and the table below). The **Lens** column names its key.
 
 Lesson files: `src/content/lessons/{part}-{n}-{slug}.mdx`.
+
+The separate map lesson was removed as redundant with the shared فهرست. Part 1 is numbered consecutively from 1.1 to 1.4; figure IDs, links, and terminology introduction points use the updated numbers. Other Parts are unchanged.
 
 ---
 
@@ -44,15 +46,14 @@ status: draft                    # draft | reviewed | confirmed
 
 # Part 1 — تصویر کلی (The Picture)
 
-**Zone**: `overview`. **Lessons**: 5. **Purpose**: by the end, the reader knows what AI does today, owns a map of every word in the document, and knows the one example we will follow.
+**Zone**: `overview`. **Lessons**: 4. **Purpose**: by the end, the reader knows what AI does today, understands the three layers, and knows the one example we will follow. The shared فهرست provides the map of lessons and concepts.
 
 | # | Lesson | Objective | Figure | Terms | Words | Flags | Lens |
 |---|---|---|---|---|---|---|---|
 | 1.1 | هوش مصنوعی امروز واقعاً چه کاری می‌کند | Name the four things today's AI is actually good at, and three it is not. Deflates both hype and dismissal before any vocabulary arrives. | `CardGrid` — 4 capability cards (writing/summarizing, answering from documents, writing code, ordering multi-step work) each with a concrete one-line example; then 3 dimmed "not yet" cards (guaranteed accuracy, true novelty, acting unsupervised). Cards fade in staggered. | — | 240 | | — |
-| 1.2 | **یک نقشه برای همهٔ واژه‌ها** | Locate any term or lesson in the shared map. | No inline figure. Introduces the map-style فهرست: six Part bands, all 35 lesson links and 53 concept links from `concept-map.ts`, with search and current-lesson highlighting. | — (navigation labels are exempt from `not_before`) | 200 | | — |
-| 1.3 | سه لایه: مدل، چارچوب اجرا، محصول | Distinguish "the model" from "the thing you use". The single most common confusion among non-technical readers, cleared early. | `LayerStack` — three stacked bands: محصول (ChatGPT, Copilot) / چارچوب اجرا / مدل. Animated top-down. A pointer shows "when people say 'AI', they usually mean the top band". | harness, llm, model | 260 | 🔎 | text-loop |
-| 1.4 | **مثالی که تا آخر همراه ماست** | Hold one concrete scenario to attach everything else to. Introduces the retail assistant (PLAN §2.2). | `CardGrid` — the online store, the customer, the question «سفارش من کجاست؟», and the five things a good answer requires. Each requirement fades in and is tagged with the Part that will cover it. | — | 220 | 🛍 🔎 | slots |
-| 1.5 | این سند چطور خوانده می‌شود | Know the route and that scrolling is the only required action. | `RoadStrip` — six Part markers along a path with a one-line promise each. Fills as it reveals; visually echoes the progress rail. | — | 150 | | — |
+| 1.2 | سه لایه: مدل، چارچوب اجرا، محصول | Distinguish "the model" from "the thing you use". The single most common confusion among non-technical readers, cleared early. | `LayerStack` — three stacked bands: محصول (ChatGPT, Copilot) / چارچوب اجرا / مدل. Animated top-down. A pointer shows "when people say 'AI', they usually mean the top band". | harness, llm, model | 260 | 🔎 | text-loop |
+| 1.3 | **مثالی که تا آخر همراه ماست** | Hold one concrete scenario to attach everything else to. Introduces the retail assistant (PLAN §2.2). | `CardGrid` — the online store, the customer, the question «سفارش من کجاست؟», and the five things a good answer requires. Each requirement fades in and is tagged with the Part that will cover it. | — | 220 | 🛍 🔎 | slots |
+| 1.4 | این سند چطور خوانده می‌شود | Know the route and that scrolling is the only required action. | `RoadStrip` — six Part markers along a path with a one-line promise each. Fills as it reveals; visually echoes the progress rail. | — | 150 | | — |
 
 ---
 
@@ -120,7 +121,7 @@ status: draft                    # draft | reviewed | confirmed
 
 # Part 6 — رهبری (Leading)
 
-**Zone**: `decide`. **Lessons**: 4. **Purpose**: the decisions the primary audience actually owns. Ends by closing the map opened in 1.2.
+**Zone**: `decide`. **Lessons**: 4. **Purpose**: the decisions the primary audience actually owns. Ends by revisiting the shared navigation map.
 
 | # | Lesson | Objective | Figure | Terms | Words | Flags | Lens |
 |---|---|---|---|---|---|---|---|
@@ -137,8 +138,8 @@ Twenty lessons carry one Context Lens, plus the Lab in 4.3. A lens is **not** th
 
 | Lesson | Key | Mode | Control | The one "aha" |
 |---|---|---|---|---|
-| 1.3 | `text-loop` | steps (4) | stepper + raw | The model continues a text; change the text, the answer changes. |
-| 1.4 | `slots` | static | — | The five requirements are five places in one text. |
+| 1.2 | `text-loop` | steps (4) | stepper + raw | The model continues a text; change the text, the answer changes. |
+| 1.3 | `slots` | static | — | The five requirements are five places in one text. |
 | 2.2 | `tool-call` | steps (5) | stepper + raw + predict | A tool call is the model writing JSON; the harness runs it outside. |
 | 2.3 | `mcp-fills-tools` | steps (3) | stepper + raw | MCP only changes who fills the tools block. |
 | 2.4 | `skill-loading` | steps (3) | stepper + raw | A skill is instructions pasted in only when needed. |
@@ -167,15 +168,15 @@ Twenty lessons carry one Context Lens, plus the Lab in 4.3. A lens is **not** th
 
 | Part | Lessons | Words | Interactive (✋) | Retail example (🛍) | Lenses (🔎) |
 |---|---|---|---|---|---|
-| 1 | 5 | 1,070 | 0 | 1 | 2 |
+| 1 | 4 | 870 | 0 | 1 | 2 |
 | 2 | 8 | 2,050 | 1 | 4 | 6 |
 | 3 | 7 | 1,980 | 3 | 1 | 4 |
 | 4 | 7 | 2,010 | 1 | 4 | 4 |
 | 5 | 4 | 1,210 | 1 | 3 | 4 |
 | 6 | 4 | 1,080 | 1 | 1 | 1 |
-| **Total** | **35** | **≈9,400** | **7** | **14** | 21 |
+| **Total** | **34** | **≈9,200** | **7** | **14** | 21 |
 
-**Authored**: 6,340 Persian words, plus figure time. The per-lesson numbers above are ceilings; the draft sits below most of them. Appropriate for one sitting by a motivated reader, or six sittings by a busy one.
+**Authored**: approximately 6,191 Persian words, plus figure time. The per-lesson numbers above are ceilings; the draft sits below most of them. Appropriate for one sitting by a motivated reader, or six sittings by a busy one.
 
 The interaction budget holds with **7** primary interactive figures; **every Part** carries the running example (PLAN §2.2). The 21 Context Lenses are secondary and bounded by `PLAN-CONTEXT.md`.
 
@@ -189,8 +190,8 @@ Four deliberate visual callbacks. They are a primary teaching mechanism, not a s
 
 | Later lesson | Reuses | Why it matters |
 |---|---|---|
-| 3.1 مدل زبانی | 1.3's Context Lens visual language | The sentence is framed as the model's input: author underlines (کاربر / مدل) and a caret at the end. |
+| 3.1 مدل زبانی | 1.2's Context Lens visual language | The sentence is framed as the model's input: author underlines (کاربر / مدل) and a caret at the end. |
 | 3.5 توهم | 3.1's `ProbabilityBars` visual language | Hallucination must *look like* next-token prediction, because it is. |
 | 4.3 کانتکست | 3.3's `StackedBar` | Context engineering is literally filling that bar. |
 | 5.1 معماری | Boxes from 2.2, 2.5, 4.4 | The architecture is assembled from parts the reader already owns. |
-| 6.4 نقشه | The shared فهرست introduced in 1.2 | Closes the document's frame without repeating the diagram. |
+| 6.4 نقشه | The shared فهرست | Closes the document's frame without repeating the diagram. |

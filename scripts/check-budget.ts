@@ -68,7 +68,7 @@ if (post) {
   if (!html.includes('lang="fa"') || !html.includes('dir="rtl"')) errors.push('missing lang="fa" or dir="rtl"');
   const lessonCount = (html.match(/class="lesson"/g) ?? []).length;
   const partCount = (html.match(/class="part-divider full"/g) ?? []).length;
-  if (lessonCount !== 35) errors.push(`expected 35 lesson articles in output, found ${lessonCount}`);
+  if (lessonCount !== lessons.length) errors.push(`expected ${lessons.length} lesson articles in output, found ${lessonCount}`);
   if (partCount !== 6) errors.push(`expected 6 part dividers in output, found ${partCount}`);
 
   const lensCount = (html.match(/data-context-lens=/g) ?? []).length;

@@ -80,7 +80,7 @@ All four fail the build.
 
 For each term, scan lessons in order. If `fa`, `en`, `short`, or any alias appears in a lesson with `id < not_before` → **fail**.
 
-> *Exception*: `src/data/concept-map.ts` is exempt. The master map in 1.2 deliberately shows words the reader does not know yet — that is its pedagogical purpose (`PLAN §6.2`). The exemption is scoped to that file only, never to lesson prose.
+> *Exception*: `src/data/concept-map.ts` is exempt. The shared navigation map deliberately shows words the reader does not know yet so they can find the introducing lesson (`PLAN §6.2`). The exemption is scoped to that file only, never to lesson prose.
 
 ### Rule 2 — first use
 
@@ -146,12 +146,12 @@ Beyond the brief's 23, the curriculum introduces these — all seeded as `propos
 
 | EN | FA | Style | `not_before` |
 |---|---|---|---|
-| Model | مدل | translate | 1.3 |
+| Model | مدل | translate | 1.2 |
 | Chatbot | چت‌بات | transliterate | 2.1 |
 | Function calling | فراخوانی تابع | translate | 2.2 |
 | Stateless | بی‌حافظه / بدون وضعیت | translate | 2.5 |
-| Context | کانتکست | transliterate | 1.3 |
-| System prompt | دستور سیستم | translate | 1.3 |
+| Context | کانتکست | transliterate | 1.2 |
+| System prompt | دستور سیستم | translate | 1.2 |
 | Pre-training | پیش‌آموزش | translate | 3.4 |
 | Alignment | هم‌راستاسازی (Alignment) | translate-plus-latin | 3.4 |
 | RLHF | RLHF | keep-latin + gloss | 3.4 |
@@ -174,7 +174,7 @@ Beyond the brief's 23, the curriculum introduces these — all seeded as `propos
 | Cost | هزینه | translate | 5.2 |
 | API | API | keep-latin + gloss | 4.1 |
 
-**`context` vs `context-window`.** `context` (کانتکست, 1.3) is the text placed in front of the model for one call. `context-window` (ظرفیت کانتکست, 3.3) is the *size limit* of that text. The first Context Lens in 1.3 needs the former; the eviction figure in 3.3 needs the latter. Do not use the size-limit term before 3.3.
+**`context` vs `context-window`.** `context` (کانتکست, 1.2) is the text placed in front of the model for one call. `context-window` (ظرفیت کانتکست, 3.3) is the *size limit* of that text. The first Context Lens in 1.2 needs the former; the eviction figure in 3.3 needs the latter. Do not use the size-limit term before 3.3.
 
 ---
 

@@ -5,3 +5,4 @@ import './figures';
 import './context-lens';
 import './context-lab';
 import './print';
+import './reading-position';

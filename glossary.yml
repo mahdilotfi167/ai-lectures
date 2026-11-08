@@ -15,7 +15,7 @@ terms:
     style: keep-latin
     first_use: LLM — مدل زبانی بزرگ
     short: LLM
-    not_before: "1.3"
+    not_before: "1.2"
     def_fa: "برنامه‌ای که با خواندن حجم عظیمی از متن، یاد گرفته است کلمهٔ بعدی را حدس بزند."
     def_en: "A model trained on large text corpora to predict the next token."
     status: confirmed
@@ -28,7 +28,7 @@ terms:
     style: transliterate
     first_use: کانتکست (Context)
     short: کانتکست
-    not_before: "1.3"
+    not_before: "1.2"
     def_fa: "همهٔ متنی که در یک نوبت جلوی مدل گذاشته می‌شود: دستور، تاریخچه، اسناد و پرسش."
     def_en: "All the text placed in front of the model for one call."
     status: confirmed
@@ -41,7 +41,7 @@ terms:
     style: translate
     first_use: مدل
     short: مدل
-    not_before: "1.3"
+    not_before: "1.2"
     def_fa: "فایل‌های آموخته‌شده‌ای که ورودی متنی می‌گیرند و متن بیرون می‌دهند؛ خودش هیچ کاری انجام نمی‌دهد."
     def_en: "The trained weights that map input text to output text."
     status: confirmed
@@ -54,7 +54,7 @@ terms:
     style: translate-plus-latin
     first_use: چارچوب اجرا (Harness)
     short: چارچوب اجرا
-    not_before: "1.3"
+    not_before: "1.2"
     def_fa: "برنامه‌ای که دور مدل را گرفته است؛ ورودی را می‌سازد، ابزارها را اجرا می‌کند و خروجی را مدیریت می‌کند."
     def_en: "The program around the model that assembles input, runs tools, and handles output."
     status: confirmed      # decided in Phase 0
@@ -227,7 +227,7 @@ terms:
     style: translate
     first_use: دستور سیستم (System Prompt)
     short: دستور سیستم
-    not_before: "1.3"
+    not_before: "1.2"
     def_fa: "دستورالعمل ثابتی که در هر نوبت بالای کانتکست قرار می‌گیرد و نقش و قواعد را تعیین می‌کند."
     def_en: "Fixed instructions placed atop the context on every call."
     status: confirmed

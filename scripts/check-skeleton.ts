@@ -12,7 +12,7 @@ const errors: string[] = [];
 const warnings: string[] = [];
 
 const files = readdirSync(dir).filter((f) => f.endsWith('.mdx')).sort();
-if (files.length !== 35) errors.push(`expected 35 lesson files, found ${files.length}`);
+if (files.length !== lessons.length) errors.push(`expected ${lessons.length} lesson files, found ${files.length}`);
 
 const parsed = files.map((file) => {
   const raw = readFileSync(join(dir, file), 'utf8');

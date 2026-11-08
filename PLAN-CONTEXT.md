@@ -2,6 +2,8 @@
 
 > **Status**: implemented. 20 lenses + the 4.3 Lab are live in `dist/index.html`; this file remains the spec and the record of deviations.
 >
+> **Current numbering**: the separate map lesson was removed. Part 1 is now 1.1–1.4: the original 1.3 is 1.2, 1.4 is 1.3, and 1.5 is 1.4. Historical lesson references below use the original numbering; `src/data/lessons.ts` and `docs/curriculum.md` define the current IDs.
+>
 > **Built**: 20 lenses + 1 Lab (21 secondary pieces), all Tier A/B/C. `npm run build` green. axe-core 0 violations (whole document, Lab default/all-on/all-off, predict answered). `dist/index.html` ≈ 0.92 MB (328 KB over the 60 KB estimate; still under the 1.5 MB target). Print PDF ≈ 100 A4 pages with every frame expanded. Authored prose 6,381 words (≈55 min). **Native-reader review of the Persian narration is still pending** — the `[H]` items below were not signed off by a human.
 > **Extends**: `PLAN.md`, `docs/curriculum.md`, `docs/figures.md`, `docs/terminology.md`, `docs/design-system.md`.
 > **Read order for an implementing agent**: §0 → §1 → §2 (amendments are binding) → §3–§5 (spec) → §9 (tasks). §6–§8 are reference.

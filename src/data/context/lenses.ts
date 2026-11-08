@@ -9,10 +9,10 @@ const t = (id: string) => requireBlock(id).text;
  * glossary gate for the host lesson (checked by scripts/check-context.ts).
  */
 export const lenses: LensDef[] = [
-  // ── 1.3 ────────────────────────────────────────────────────────────────
+  // ── 1.2 ────────────────────────────────────────────────────────────────
   {
     key: 'text-loop',
-    lesson: '1.3',
+    lesson: '1.2',
     mode: 'steps',
     rawView: true,
     frames: [
@@ -52,10 +52,10 @@ export const lenses: LensDef[] = [
     ],
   },
 
-  // ── 1.4 ────────────────────────────────────────────────────────────────
+  // ── 1.3 ────────────────────────────────────────────────────────────────
   {
     key: 'slots',
-    lesson: '1.4',
+    lesson: '1.3',
     mode: 'static',
     rawView: false,
     narration: 'پنج چیز برای یک پاسخ خوب لازم است؛ هر پنج، جای مشخصی در یک متن دارند.',
@@ -386,7 +386,7 @@ export const lenses: LensDef[] = [
         actor: 'harness',
         narration: 'ایجنت برنامه‌ای است که این متن را می‌چیند، به مدل می‌دهد و پاسخ را به آن اضافه می‌کند.',
         blocks: [
-          { id: 'sys', lessonRef: '1.3' },
+          { id: 'sys', lessonRef: '1.2' },
           { id: 'tools', lessonRef: '2.2' },
           { id: 'skill.menu', lessonRef: '2.4' },
           { id: 'mem', lessonRef: '2.5' },
@@ -704,14 +704,14 @@ export const lenses: LensDef[] = [
         actor: 'harness',
         narration: 'هر جعبه در معماری، یک تکه از این متن را می‌سازد.',
         blocks: [
-          { id: 'sys', note: 'از برنامه‌ریز', lessonRef: '1.3' },
+          { id: 'sys', note: 'از برنامه‌ریز', lessonRef: '1.2' },
           { id: 'tools', note: 'از فهرست ابزارها', lessonRef: '2.2' },
           { id: 'skill.menu', note: 'از مهارت‌ها', lessonRef: '2.4' },
           { id: 'mem', note: 'از انبار حافظه', lessonRef: '2.5' },
           { id: 'u.where', note: 'از دروازه', lessonRef: '2.5' },
           { id: 'a.call', note: 'نوشتهٔ مدل', lessonRef: '2.2' },
           { id: 'r.order', note: 'از API ابزار', lessonRef: '2.2' },
-          { id: 'a.final', note: 'نوشتهٔ مدل', lessonRef: '1.3' },
+          { id: 'a.final', note: 'نوشتهٔ مدل', lessonRef: '1.2' },
         ],
       },
     ],
@@ -874,14 +874,14 @@ export const lenses: LensDef[] = [
         actor: 'harness',
         narration: 'همهٔ این سند، یک ایده: مدل فقط ادامهٔ متنی را می‌نویسد که جلویش گذاشته‌اند.',
         blocks: [
-          { id: 'sys', lessonRef: '1.3' },
+          { id: 'sys', lessonRef: '1.2' },
           { id: 'tools', lessonRef: '2.2' },
           { id: 'skill.menu', lessonRef: '2.4' },
           { id: 'mem', lessonRef: '2.5' },
           { id: 'u.where', lessonRef: '2.5' },
           { id: 'a.call', lessonRef: '2.2' },
           { id: 'r.order', lessonRef: '2.2' },
-          { id: 'a.final', lessonRef: '1.3' },
+          { id: 'a.final', lessonRef: '1.2' },
         ],
       },
     ],
