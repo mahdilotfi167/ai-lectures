@@ -39,7 +39,7 @@ status: confirmed
     { step: 'ساخت کانتکست', latency: '34ms', tokens: '812', tool: '—', score: '—' },
     { step: 'فراخوانی مدل', latency: '980ms', tokens: '812', tool: '—', score: '—' },
     { step: 'بازیابی سند', latency: '1240ms', tokens: '420', tool: 'search', score: '—', _tone: 'danger' },
-    { step: 'اجرای ابزار', latency: '210ms', tokens: '24', tool: 'getOrder', score: '—' },
+    { step: 'خواندن فایل پروژه', latency: '210ms', tokens: '24', tool: 'readFile', score: '—' },
     { step: 'پاسخ نهایی', latency: '18ms', tokens: '24', tool: '—', score: '0.42', _tone: 'danger' }
   ]}
   summary={[
@@ -62,7 +62,7 @@ status: confirmed
   id="fig-5-4-ctx"
   lens="read-the-trace"
   caption="برای فهمیدن چرا مدل اشتباه کرد، متنی را بخوانید که دیده است."
-  desc="یک متن کامل با حافظهٔ قدیمی: خط آدرس کهنه با هشدار مشخص شده، پرسش تازه، و پاسخ غلطی که از همان خط می‌آید. دلیل خطا در متن دیده می‌شود."
+  desc="یک متن کامل با حافظهٔ قدیمی: کامند npm run test:old هنوز در یادداشت مانده و مدل همان کامند منسوخ را پیشنهاد می‌کند. دلیل خطا در یادداشت ذخیره‌شده دیده می‌شود."
 />
 
 <Takeaway>در سیستم غیرقطعی، ردگیری گام‌به‌گام و مشاهده‌پذیری یعنی دیدن کانتکست، فراخوانی‌ها، تأخیر و نتیجهٔ هر درخواست.</Takeaway>

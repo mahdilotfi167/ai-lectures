@@ -4,8 +4,8 @@ interface Props {
 }
 
 const { text } = Astro.props;
-const parts = text.split(/(\b[A-Za-z][A-Za-z0-9_.+/-]*\b)/g).filter(Boolean);
-const isLatin = (s: string) => /^[A-Za-z]/.test(s);
+const parts = text.split(/((?:\/)?\b[A-Za-z][A-Za-z0-9_.+/-]*\b)/g).filter(Boolean);
+const isLatin = (s: string) => /^\/?[A-Za-z]/.test(s);
 ---
 
 {

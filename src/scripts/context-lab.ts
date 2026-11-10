@@ -31,6 +31,7 @@ function initLab(root: HTMLElement) {
   const live = root.querySelector<HTMLElement>('[data-lab-live]');
   const defaultState = JSON.parse(root.dataset.labDefault ?? '{}') as LabState;
   const presets = JSON.parse(root.dataset.labPresets ?? '[]') as Preset[];
+  const evidenceBlocks = JSON.parse(root.dataset.labEvidence ?? '[]') as string[];
 
   const readState = (): LabState => {
     const state = { ...defaultState };
@@ -49,6 +50,10 @@ function initLab(root: HTMLElement) {
       if (!blockId) return;
       const block = blocks.get(blockId);
       if (block) block.hidden = !toggle.checked;
+    });
+    evidenceBlocks.forEach((id) => {
+      const block = blocks.get(id);
+      if (block) block.hidden = !(state.tools && state.mem);
     });
 
     let total = 0;

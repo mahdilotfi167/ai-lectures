@@ -45,17 +45,21 @@ import { apiBlocks } from '../data/figures/api';
     <section class="gallery__item"><h2>۲. SequenceFlow</h2>
       <SequenceFlow
         id="fig-g-2"
-        caption="نمونهٔ نمودار ترتیبی"
-        desc="سه بازیگر و سه پیام نمونه."
+        caption="مدل درخواست می‌دهد؛ ایجنت فایل را می‌خواند و پاسخ را به کاربر می‌رساند."
+        desc="سه بازیگر: کاربر، ایجنت و مدل. درخواست خواندن فایل از مدل به ایجنت برمی‌گردد؛ خواندن فایل یک کار داخلی ایجنت است. ایجنت نتیجه را به مدل می‌دهد و پاسخ مدل را به کاربر می‌رساند."
         actors={[
-          { id: 'u', label: 'کاربر', kind: 'user' },
-          { id: 'a', label: 'ایجنت', kind: 'system' },
-          { id: 'm', label: 'مدل', kind: 'model' }
+          { id: 'u', label: 'کاربر', sublabel: 'درخواست و دریافت نتیجه', kind: 'user' },
+          { id: 'a', label: 'ایجنت', sublabel: 'چارچوب اجرا و ابزارها', kind: 'system' },
+          { id: 'm', label: 'مدل', sublabel: 'تصمیم و تولید پاسخ', kind: 'model' }
         ]}
         steps={[
-          { from: 'u', to: 'a', label: 'پرسش' },
-          { from: 'a', to: 'm', label: 'کانتکست' },
-          { from: 'm', to: 'a', label: 'پاسخ', dashed: true }
+          { from: 'u', to: 'a', label: 'این فایل را توضیح بده.' },
+          { from: 'a', to: 'm', label: 'درخواست و فهرست ابزارها' },
+          { from: 'm', to: 'a', label: 'readFile("src/utils.ts")', mono: true, dashed: true, note: 'درخواست، نه اجرا', pause: 'مدل در حال اجرا نیست' },
+          { from: 'a', to: 'a', label: 'بررسی مجوز و خواندن فایل', note: 'کار داخلی ایجنت' },
+          { from: 'a', to: 'm', label: 'فراخوانی دوباره، همراه متن فایل' },
+          { from: 'm', to: 'a', label: 'توضیح فایل', dashed: true },
+          { from: 'a', to: 'u', label: 'نمایش توضیح', dashed: true }
         ]}
       />
     </section>
@@ -144,9 +148,9 @@ import { apiBlocks } from '../data/figures/api';
         id="fig-g-9"
         caption="نمونهٔ احتمال"
         desc="یک قدم با سه گزینه."
-        prefix="سفارش "
+        prefix="تست‌ها "
         steps={[
-          { candidates: [{ token: 'فردا', p: 0.5 }, { token: 'امروز', p: 0.3 }, { token: 'بعد', p: 0.2 }], chosen: 0 }
+          { candidates: [{ token: 'گذشتند', p: 0.5 }, { token: 'شکست خوردند', p: 0.3 }, { token: 'اجرا شدند', p: 0.2 }], chosen: 0 }
         ]}
       />
     </section>

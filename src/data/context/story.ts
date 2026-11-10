@@ -1,12 +1,13 @@
-/** Story invariants enforced by scripts/check-context.ts. */
+/** Small illustrative fixtures for a general-purpose coding agent, not one project story. */
 export const story = {
-  orderId: '۱۲۳',
-  status: 'shipped',
-  eta: 'tomorrow',
-  refundDays: '۷',
-  inventedDays: '۳۰',
-  inventedOrderId: '۸۸۴۳۲۱',
-  attackOrderId: '999',
-  customer: 'سارا',
-  store: 'بازار',
+  file: 'src/utils.ts',
+  skillFile: '.agents/skills/fix-bug/SKILL.md',
+  testFile: 'utils.test.ts',
+  testCommand: 'npm test -- utils.test.ts',
+  staleTestCommand: 'npm run test:old',
+  originalCode: 'return items.length;',
+  fixedCode: 'return items?.length ?? 0;',
+  passedTests: 12,
+  inventedFile: 'project-helper.ts',
+  privateFile: '/private/secrets.env',
 } as const;

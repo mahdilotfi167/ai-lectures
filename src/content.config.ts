@@ -16,7 +16,7 @@ const lessons = defineCollection({
       interactive: z.boolean().default(false),
     }).optional(),
     terms_introduced: z.array(z.string()).default([]),
-    example: z.enum(['retail', 'none']).default('none'),
+    example: z.enum(['coding', 'none']).default('none'),
     words: z.number().int().positive(),
     has_aside: z.boolean().default(false),
     context_lens: z
@@ -25,7 +25,7 @@ const lessons = defineCollection({
         lens: z.string().min(1),
         caption_fa: z.string().min(1),
         interactive: z
-          .union([z.boolean(), z.enum(['stepper', 'predict', 'lab'])])
+          .union([z.boolean(), z.enum(['stepper', 'lab'])])
           .default(false),
       })
       .optional(),

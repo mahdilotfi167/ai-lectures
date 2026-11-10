@@ -53,7 +53,7 @@ Examples may be localized where it carries meaning (3.2's Persian token counts; 
   first_use: ظرفیت کانتکست (Context Window)
   short: ظرفیت کانتکست
   not_before: "3.3"
-  def_fa: حداکثر اندازهٔ کانتکست؛ مدل در یک نوبت بیشتر از این نمی‌بیند.
+  def_fa: حداکثر اندازهٔ کانتکست؛ مدل در یک فراخوانی بیشتر از این نمی‌بیند.
   def_en: The maximum amount of context a model can consider in a single pass.
   status: confirmed                  # proposed | confirmed
   aliases: [context length]
@@ -96,7 +96,7 @@ Any Latin-script token of ≥3 characters appearing in Persian prose that is **n
 
 → **fail**. This forces every acronym and product name through the glossary or an explicit allowlist.
 
-`allowed-latin.txt` seeds with: `ChatGPT, Claude, Gemini, Copilot, GitHub, OpenAI, Anthropic, Google, Microsoft, JSON, HTTP, API, SQL, PDF, CSV, GPU, URL, SDK`, plus the context-lens tokens (`getOrder`, `refundOrder`, `trackShipment`, `messages`, `FAIL`, `PASS`, `auth.ts`, `auth.test.ts`).
+`allowed-latin.txt` seeds with product names including `OpenCode` and `Hermes`, common protocols/formats, and teaching identifiers such as `readFile`, `editFile`, `runCommand`, `getIssue`, `messages`, `FAIL`, `PASS`, `src/utils.ts`, and `utils.test.ts`. The illustrative tool names are not the actual API contract of either product.
 
 ### Rule 4 — unconfirmed terms
 
@@ -151,6 +151,7 @@ Beyond the brief's 23, the curriculum introduces these — all seeded as `propos
 | Function calling | فراخوانی تابع | translate | 2.2 |
 | Stateless | بی‌حافظه / بدون وضعیت | translate | 2.5 |
 | Context | کانتکست | transliterate | 1.2 |
+| Turn | نوبت | translate | 1.2 |
 | System prompt | دستور سیستم | translate | 1.2 |
 | Pre-training | پیش‌آموزش | translate | 3.4 |
 | Alignment | هم‌راستاسازی (Alignment) | translate-plus-latin | 3.4 |
@@ -175,6 +176,10 @@ Beyond the brief's 23, the curriculum introduces these — all seeded as `propos
 | API | API | keep-latin + gloss | 4.1 |
 
 **`context` vs `context-window`.** `context` (کانتکست, 1.2) is the text placed in front of the model for one call. `context-window` (ظرفیت کانتکست, 3.3) is the *size limit* of that text. The first Context Lens in 1.2 needs the former; the eviction figure in 3.3 needs the latter. Do not use the size-limit term before 3.3.
+
+**Turn convention.** In this book, «نوبت» runs from a fresh user message to the assistant's final reply. A turn can contain multiple model calls and tool executions; do not use «نوبت» as a synonym for a model call. A `system` instruction is outside the user/assistant turn pairs. `assistant` is a message role, not a fourth participant beside the user, agent, and model. The simple two-turn example has five stored messages (`system → user → assistant → user → assistant`), but only four input messages before the second answer is generated.
+
+**History vs saved memory.** History includes both user messages and assistant replies. A separate memory note stores selected facts; it is not necessary if the relevant earlier messages are already in context. Neither mechanism requires the model itself to retain state between calls.
 
 ---
 

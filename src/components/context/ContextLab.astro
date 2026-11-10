@@ -1,6 +1,7 @@
 ---
 import FigureShell from '../shell/FigureShell.astro';
 import ContextTape from './ContextTape.astro';
+import ContextText from './ContextText.astro';
 import Icon from '../shell/Icon.astro';
 import { faNum } from '../../lib/format';
 import { requireBlock } from '../../data/context/blocks';
@@ -8,6 +9,8 @@ import {
   composeLab,
   labBlockOrder,
   labDefaultState,
+  labEvidenceBlocks,
+  labEvidenceRefs,
   labPresets,
   labSentences,
   labToggles,
@@ -28,7 +31,8 @@ const blockRefs: BlockRef[] = labBlockOrder.map((blockId) => {
   return {
     id: blockId,
     state: 'same',
-    hidden: toggle ? !state[toggle.id] : false,
+    note: labEvidenceRefs.find((ref) => ref.id === blockId)?.note,
+    hidden: toggle ? !state[toggle.id] : labEvidenceBlocks.includes(blockId) && !(state.tools && state.mem),
   };
 });
 
@@ -37,6 +41,7 @@ const labFrame: Frame = {
   title: 'کانتکست ساخته‌شده',
   narration: 'فقط بلوک‌های روشن در متن هستند.',
   actor: 'harness',
+  tapeLabel: 'نمای ورودی آماده — پس از آماده‌سازی برنامه و اجرای ابزارهای نمونه',
   blocks: blockRefs,
 };
 
@@ -53,6 +58,7 @@ const sourceLabel: Record<string, string> = {
   sys: 'دستور سیستم',
   mem: 'حافظه',
   tools: 'ابزارها',
+  results: 'متن فایل و خروجی تست',
   skill: 'مهارت',
   doc: 'سند',
 };
@@ -60,6 +66,7 @@ const sourceLabel: Record<string, string> = {
 const totalTokens = labBlockOrder.reduce((sum, blockId) => {
   const toggle = labToggles.find((t) => t.blockId === blockId);
   if (toggle && !state[toggle.id]) return sum;
+  if (labEvidenceBlocks.includes(blockId) && !(state.tools && state.mem)) return sum;
   return sum + requireBlock(blockId).tokens;
 }, 0);
 
@@ -85,13 +92,21 @@ const presetButtonLabels: Record<string, string> = {
     data-lab-default={JSON.stringify(state)}
     data-lab-presets={JSON.stringify(labPresets)}
     data-lab-tokens={totalTokens}
+    data-lab-evidence={JSON.stringify(labEvidenceBlocks)}
   >
     <p class="sr-only" id={`${id}-desc`}>{desc}</p>
 
     <div class="ctx-lab__question">
-      <span class="ctx-lab__question-label">سؤال مشتری</span>
+      <span class="ctx-lab__question-label">درخواست برنامه‌نویس</span>
       <p>{requireBlock('u.lab').text}</p>
     </div>
+
+    <p class="ctx-lab__preparation">
+      این آزمایشگاه ورودی آمادهٔ یک فراخوانی را مقایسه می‌کند، نه مراحل اجرای زنده را.
+      متن مهارت و راهنما از قبل توسط برنامه آماده شده‌اند؛ کلیدها فقط حضورشان را انتخاب می‌کنند.
+      در نمونهٔ خواندن کد و تست، درخواست مدل پیش از نتیجهٔ ایجنت آمده است.
+      مسیر کامل خواندن مهارت را در <a href="#lesson-2-4">درس ۲.۴</a> ببینید.
+    </p>
 
     <div class="ctx-lab__controls">
       <fieldset class="ctx-lab__toggles">
@@ -106,7 +121,6 @@ const presetButtonLabels: Record<string, string> = {
             />
             <span class="ctx-lab__toggle-main">
               <span class="ctx-lab__toggle-label">{toggle.label}</span>
-              <span class="ctx-lab__toggle-size">≈ {faNum(toggle.tokens)} توکن</span>
             </span>
             <span class="ctx-lab__toggle-hint">{toggle.hint}</span>
           </label>
@@ -127,7 +141,7 @@ const presetButtonLabels: Record<string, string> = {
 
     <div class="ctx-lab__grid">
       <div class="ctx-lab__tape">
-        <ContextTape frame={labFrame} lesson="4.3" showTokens={true} />
+        <ContextTape frame={labFrame} lesson="4.3" />
         <p class="ctx-lab__tokens">
           <Icon name="coin" size={15} />
           ≈ <strong data-lab-token-count>{faNum(totalTokens)}</strong> توکن در این متن
@@ -138,7 +152,7 @@ const presetButtonLabels: Record<string, string> = {
       <div class="ctx-lab__answer">
         <div class="ctx-lab__answer-head">
           <h4>پاسخ نمونه</h4>
-          <span>ساخته‌شده با قاعده، نه با مدل</span>
+          <span>برنامهٔ پیشنهادی، نه اجرای واقعی</span>
         </div>
 
         {
@@ -160,7 +174,7 @@ const presetButtonLabels: Record<string, string> = {
                     <span class:list={['ctx-lab__status', `is-${variant.status}`]}>
                       {statusLabel[variant.status]}
                     </span>
-                    <p class="ctx-lab__sentence-text">{variant.text}</p>
+                    <p class="ctx-lab__sentence-text"><ContextText text={variant.text} /></p>
                     {variant.sources.length > 0 && (
                       <p class="ctx-lab__sources">
                         پشتوانه: {variant.sources.map((s) => sourceLabel[s] ?? s).join('، ')}
@@ -175,7 +189,7 @@ const presetButtonLabels: Record<string, string> = {
         }
 
         <p class="ctx-lab__answer-note">
-          هر جمله از یک بلوک روشن می‌آید. بلوک را خاموش کنید تا ببینید کدام جمله عوض می‌شود.
+          هر جمله پشتوانه‌اش را نشان می‌دهد. اینجا هیچ فایلی تغییر نمی‌کند و هیچ تستی واقعاً اجرا نمی‌شود.
         </p>
         <p class="sr-only" aria-live="polite" data-lab-live></p>
       </div>
@@ -194,7 +208,7 @@ const presetButtonLabels: Record<string, string> = {
           {presetAnswers.map((preset) => (
             <tr>
               <th scope="row">{presetButtonLabels[preset.id] ?? preset.label}</th>
-              <td>{preset.text}</td>
+              <td><ContextText text={preset.text} /></td>
             </tr>
           ))}
         </tbody>
@@ -205,6 +219,6 @@ const presetButtonLabels: Record<string, string> = {
     </div>
 
     <p class="ctx-spine">مدل فقط ادامهٔ متنی را می‌نویسد که جلویش گذاشته‌اند.</p>
-    <p class="ctx-disclaimer">خروجی‌ها نمونهٔ ساخته‌شده‌اند؛ مدل زنده‌ای در کار نیست.</p>
+    <p class="ctx-disclaimer">نمای ساده‌شدهٔ متن و پاسخ نمونه؛ مدل زنده‌ای در کار نیست.</p>
   </div>
 </FigureShell>

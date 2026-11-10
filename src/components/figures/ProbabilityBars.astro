@@ -43,7 +43,7 @@ const liveStep = steps[0];
         <span
           class:list={['fig-prob__chosen', steps[i]?.tone === 'danger' && 'fig-prob__chosen--danger', 'fig-step']}
           style={`--i: ${i + 1}`}
-        >{token}</span>
+        ><bdi dir="auto">{token}</bdi></span>
       ))}
       <span class="ctx-caret" aria-hidden="true" />
     </div>
@@ -65,7 +65,7 @@ const liveStep = steps[0];
                     step.tone === 'danger' && c.index === step.chosen && 'is-danger',
                   ]}
                 >
-                  <span class="fig-prob__token">{c.token.trim() || '␣'}</span>
+                  <span class="fig-prob__token"><bdi dir="auto">{c.token.trim() || '␣'}</bdi></span>
                   <span class="fig-prob__track">
                     <span class="fig-prob__fill" style={`width: ${Math.round(c.p * 100)}%`} />
                   </span>
@@ -82,7 +82,7 @@ const liveStep = steps[0];
           <div class="fig-prob__rows">
             {liveStep.candidates.map((c, i) => (
               <div class:list={['fig-prob__row', i === 0 && 'is-chosen']} data-p={c.p} data-token={c.token}>
-                <span class="fig-prob__token">{c.token.trim() || '␣'}</span>
+                <span class="fig-prob__token"><bdi dir="auto">{c.token.trim() || '␣'}</bdi></span>
                 <span class="fig-prob__track">
                   <span class="fig-prob__fill" style={`width: ${Math.round(c.p * 100)}%`} />
                 </span>

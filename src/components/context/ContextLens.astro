@@ -2,7 +2,6 @@
 import FigureShell from '../shell/FigureShell.astro';
 import ContextTape from './ContextTape.astro';
 import { faNum } from '../../lib/format';
-import { compareLessonId } from '../../data/lessons';
 import { requireLens } from '../../data/context/lenses';
 import type { Frame, Panel } from '../../data/context/types';
 
@@ -18,8 +17,6 @@ const def = requireLens(lens);
 const lesson = def.lesson;
 const frames = def.frames ?? [];
 const panels = def.panels ?? [];
-const showTokens = compareLessonId(lesson, '3.2') >= 0;
-const raw = def.rawView !== false;
 const stepper = def.mode === 'steps' || def.mode === 'mapping';
 const staticMode = def.mode === 'static';
 
@@ -49,22 +46,12 @@ const spine = 'مدل فقط ادامهٔ متنی را می‌نویسد که �
     data-context-lens={def.key}
     data-mode={def.mode}
     data-lesson={lesson}
-    data-raw-default="false"
   >
     <p class="sr-only" id={`${id}-desc`}>{desc}</p>
 
     <div class="ctx-head">
       <span class="ctx-head__title">آنچه مدل می‌بیند</span>
-      <a class="ctx-head__simplified" href="#lesson-1-2">نسخهٔ ساده‌شده</a>
-      {
-        raw && (
-          <button type="button" class="ctx-raw" data-raw-toggle aria-pressed="false">
-            نمای خام
-          </button>
-        )
-      }
     </div>
-    <p class="ctx-raw-note">برچسب‌ها برای فهم ماست؛ مدل فقط همین متن پیوسته را می‌بیند.</p>
 
     {
       def.mode === 'compare' ? (
@@ -84,8 +71,6 @@ const spine = 'مدل فقط ادامهٔ متنی را می‌نویسد که �
                 <ContextTape
                   frame={frameForPanel(panel, i)}
                   lesson={lesson}
-                  showActors={false}
-                  showTokens={showTokens}
                 />
                 {panel.note && <p class="ctx-panel__note">{panel.note}</p>}
               </section>
@@ -95,7 +80,7 @@ const spine = 'مدل فقط ادامهٔ متنی را می‌نویسد که �
         </>
       ) : def.mode === 'static' ? (
         <>
-          {frames[0] && <ContextTape frame={frames[0]} lesson={lesson} showTokens={showTokens} />}
+          {frames[0] && <ContextTape frame={frames[0]} lesson={lesson} />}
           {def.slots && (
             <div class="ctx-slots">
               <p class="ctx-slots__title">جاهای خالی این متن</p>
@@ -104,7 +89,6 @@ const spine = 'مدل فقط ادامهٔ متنی را می‌نویسد که �
                   <div class="ctx-slot">
                     <span class="ctx-slot__label">{slot.label}</span>
                     {slot.badge && <span class="ctx-slot__badge">{slot.badge}</span>}
-                    <span class="ctx-slot__empty">جای خالی</span>
                   </div>
                 ))}
               </div>
@@ -118,7 +102,6 @@ const spine = 'مدل فقط ادامهٔ متنی را می‌نویسد که �
               <section
                 class:list={['ctx-frame', i === 0 && 'is-active']}
                 data-frame-index={i}
-                aria-hidden={i === 0 ? undefined : 'true'}
               >
                 <div class="ctx-frame__head">
                   <span class="ctx-frame__step">
@@ -131,7 +114,7 @@ const spine = 'مدل فقط ادامهٔ متنی را می‌نویسد که �
                   <div class="ctx-map-grid">
                     <div class="ctx-mapping">
                       <p class="ctx-mapping__title" dir="rtl">
-                        چیزی که فرستاده می‌شود: <code dir="ltr">messages</code>
+                         {frame.messagesLabel ?? 'چیزی که فرستاده می‌شود:'} <code dir="ltr">messages</code>
                       </p>
                       <pre class="ctx-code" dir="ltr"><code>{frame.messages}</code></pre>
                       {frame.messagesNote && <p class="ctx-mapping__note">{frame.messagesNote}</p>}
@@ -140,13 +123,11 @@ const spine = 'مدل فقط ادامهٔ متنی را می‌نویسد که �
                       <ContextTape
                         frame={frame}
                         lesson={lesson}
-                        showActors={false}
-                        showTokens={showTokens}
                       />
                     </div>
                   </div>
                 ) : (
-                  <ContextTape frame={frame} lesson={lesson} showTokens={showTokens} />
+                  <ContextTape frame={frame} lesson={lesson} />
                 )}
               </section>
             ))}
@@ -169,7 +150,7 @@ const spine = 'مدل فقط ادامهٔ متنی را می‌نویسد که �
     }
 
     <p class="ctx-spine">{spine}</p>
-    <p class="ctx-disclaimer">خروجی‌ها نمونهٔ ساخته‌شده‌اند؛ مدل زنده‌ای در کار نیست.</p>
+    <p class="ctx-disclaimer">نمای ساده‌شدهٔ متن و پاسخ نمونه؛ مدل زنده‌ای در کار نیست.</p>
     <p class="sr-only" aria-live="polite" data-ctx-live></p>
   </div>
 </FigureShell>

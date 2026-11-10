@@ -46,25 +46,16 @@ export interface BlockRef {
   cached?: boolean;
   /** server-rendered hidden state, used by the Lab's default view */
   hidden?: boolean;
+  /** Start a conversational turn before this user message, not a model call. */
+  turnStart?: number;
 }
 
 export interface FrameOutput {
   text: string;
+  /** Optional teaching label; otherwise the shared model-continuation label. */
+  label?: string;
   tone?: 'normal' | 'ok' | 'danger';
   note?: string;
-  /** default true; false renders the text without the typing animation */
-  typed?: boolean;
-}
-
-export interface PredictOption {
-  text: string;
-  correct?: boolean;
-  why: string;
-}
-
-export interface Predict {
-  question: string;
-  options: PredictOption[];
 }
 
 export interface Outside {
@@ -83,15 +74,20 @@ export interface Frame {
   narration: string;
   actor?: 'harness' | 'model' | 'tool' | 'store';
   blocks: BlockRef[];
+  /** Opt-in role names for the lessons explicitly teaching message order. */
+  showMessageRoles?: boolean;
+  /** Distinguish model input from a stored transcript after an answer. */
+  tapeLabel?: string;
   output?: FrameOutput;
   outside?: Outside;
-  predict?: Predict;
   meter?: { used: number; capacity?: number };
   /** edge divider AFTER all blocks */
   edge?: string;
-  /** mapping mode only: the JSON messages array for this call */
+  /** Mapping mode: JSON request messages or an explicitly labelled transcript. */
   messages?: string;
   messagesNote?: string;
+  /** Mapping may show a saved transcript, not just an outgoing request. */
+  messagesLabel?: string;
 }
 
 export interface Panel {
@@ -117,8 +113,6 @@ export interface LensDef {
   title?: string;
   /** compare / static summary sentence */
   narration?: string;
-  /** default true; raw view is offered when this is not false */
-  rawView?: boolean;
   frames?: Frame[];
   panels?: [Panel, Panel];
   slots?: Slot[];

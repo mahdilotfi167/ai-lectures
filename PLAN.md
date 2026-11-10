@@ -2,15 +2,15 @@
 
 > **Product**: one self-contained, interactive, Persian (RTL) HTML document that teaches AI top-down to a mixed audience led by non-technical business readers.
 > **Deliverable**: `dist/index.html` — a single file, no network needed, openable from a USB stick or an email attachment.
-> **Source**: modular. 34 lesson files + a reusable figure component library + a build that inlines everything.
+> **Source**: modular. 33 lesson files + a reusable figure component library + a build that inlines everything.
 >
-> **Curriculum update**: the redundant map lesson was removed. Part 1 is now numbered 1.1–1.4; other Parts are unchanged. Older phase descriptions below retain the original 35-lesson scope; `src/data/lessons.ts` and `docs/curriculum.md` define the current curriculum.
+> **Curriculum update**: the redundant map and reading-guide lessons were removed. Part 1 is now numbered 1.1–1.3; other Parts are unchanged. Older phase descriptions below retain the original 35-lesson scope; `src/data/lessons.ts` and `docs/curriculum.md` define the current curriculum.
 
 This file is the master plan. Four companion documents hold the detail:
 
 | Doc | Contents |
 |---|---|
-| [`docs/curriculum.md`](docs/curriculum.md) | The 34-lesson skeleton. One row per lesson: objective, figure, terms, budget. **The authoring contract.** |
+| [`docs/curriculum.md`](docs/curriculum.md) | The 33-lesson skeleton. One row per lesson: objective, figure, terms, budget. **The authoring contract.** |
 | [`docs/figures.md`](docs/figures.md) | The figure component library. Props, animation behavior, RTL rules. |
 | [`docs/design-system.md`](docs/design-system.md) | Tokens, typography, RTL/LTR handling, motion, a11y, print. |
 | [`docs/terminology.md`](docs/terminology.md) | Persian content rules, glossary schema, validator rules. |
@@ -49,32 +49,32 @@ Four devices carry continuity across 35 lessons. They are the reason this reads 
 
 ### 2.1 The shared navigation map
 
-The fixed **فهرست** button opens the document's map: six color-coded Part bands, all 34 lessons, and 53 concept links grouped from `src/data/concept-map.ts`. Every concept leads directly to its introducing lesson. Search supports Persian/English names and lesson numbers; the current reading location is highlighted.
+The fixed **فهرست** button opens the document's map: six color-coded Part bands, all 33 lessons, and 54 concept links grouped from `src/data/concept-map.ts`. Every concept leads directly to its introducing lesson. Search supports Persian/English names and lesson numbers; the current reading location is highlighted.
 
 Lesson **6.4** revisits this navigator without an inline primary figure; the separate introductory map lesson was removed. Part dividers contain orienting text only. No map is repeated in the reading flow. The old `ConceptMap` SVG remains available to the development gallery, not the production book.
 
-Implementation: `shell/TocMap.astro` renders the map-style links; `TocDrawer.astro` hosts the accessible dialog and a native no-JavaScript fallback. The book now has 33 primary figures (7 interactive), plus the unchanged 21 Context Lens/Lab pieces.
+Implementation: `shell/TocMap.astro` renders the map-style links; `TocDrawer.astro` hosts the accessible dialog and a native no-JavaScript fallback. The book now has 32 primary figures (7 interactive), plus the unchanged 21 Context Lens/Lab pieces.
 
 ### 2.2 The running example
 
-One scenario threads through all six parts: **a customer-support assistant for an online retail store** (`فروشگاه آنلاین`). It is introduced in lesson 1.3 and revisited in every part:
+The recurring example is **a general-purpose coding agent like OpenCode or Hermes**, not a fictional project's single bug. Introduced in lesson 1.3, it illustrates everyday work: understanding a repository, finding relevant files, adding a feature, fixing a test, running commands, and reviewing changes. Small independent fixtures make each mechanism concrete; no code literacy or knowledge of one domain is required.
 
 | Part | How the example appears |
 |---|---|
-| 1 | A customer asks "where is my order?" — the assistant answers. |
-| 2 | The assistant becomes an agent: it calls an order-lookup tool, then issues a refund. |
-| 3 | It invents an order number that does not exist. Why? |
-| 4 | We ground it in the real return-policy documents with RAG, then measure whether it got better. |
-| 5 | It is handling 10,000 chats a day. What does it cost, how does it fail, how is it attacked. |
-| 6 | Build it or buy it. Who is on the team. |
+| 1 | Meet the coding assistant, the project folder, the request, and the difference between product, harness, and model. |
+| 2 | Read a file, edit it, run a command, use project instructions, and review actual results; add dark mode as a feature example. |
+| 3 | Invent a file name, forget a previous path, or plan a cross-file change without checking dependencies. |
+| 4 | Use project guides, relevant files, command output, clear instructions, and a fixed evaluation set. |
+| 5 | We inspect repeated model calls, an outdated test command, and an injected request to read `/private/secrets.env`. |
+| 6 | Buy a coding-agent core or combine it with project-specific guides, tools, and approval rules. |
 
-Every lesson that uses the example tags itself `example: retail` in frontmatter. The validator warns if a Part has zero `example: retail` lessons.
+Every tagged lesson uses `example: coding` in frontmatter. The validator warns if a Part has zero `example: coding` lessons. `src/data/context/story.ts` holds a few consistent illustrative paths, commands, and outputs; it is not a narrative every example must follow. Tool definitions are not evidence: claims of reading, edits, or test success require result blocks. Names such as `readFile`, `editFile`, and `runCommand` are teaching shorthand, not product-specific tool APIs.
 
 ### 2.3 The text-loop spine (Context Lens)
 
 Every concept in Parts 2–5 is a way of putting text into one box. A recurring **Context Lens** — a secondary figure — shows the actual text the model receives, who wrote each block, and what the model writes next. It appears in 20 lessons plus one Lab in 4.3. The full spec is `PLAN-CONTEXT.md`; it is implemented.
 
-The spine sentence closes every lens: «مدل فقط ادامهٔ متنی را می‌نویسد که جلویش گذاشته‌اند.» From 3.2 on, the cursor says «توکن بعدی» instead of «کلمهٔ بعدی».
+The spine sentence closes every lens: «مدل فقط ادامهٔ متنی را می‌نویسد که جلویش گذاشته‌اند.» Lenses use one quiet reading view: short Persian block labels, actual input text, compact outside-action notes, and a separate complete model response. There is no labeled/raw switch, actor strip, per-block token counter, or typing animation; capacity meters and the Lab total remain.
 
 Rules: at most one lens per lesson; every frame is server-rendered; every lens is complete without interaction; the Lab is the only place the reader builds a context. Lenses are secondary figures and do not count against the seven primary interactive figures.
 
@@ -97,7 +97,7 @@ The document is a **single continuous vertical scroll**. No tabs. No pagination.
 ### 3.2 The interaction budget — hard rules
 
 1. **Animations auto-play.** When a figure scrolls into view, it animates once, on its own. The reader never presses "play".
-2. **At most one optional control per figure**, and only when exploration genuinely teaches something a passive animation cannot (e.g. the cost calculator in 5.2, the tokenizer in 3.2). Target: **no more than 8 of the 35 primary figures have any control at all.** `docs/curriculum.md` marks which ones; adding a ninth requires removing one. The 20 Context Lenses are secondary figures with their own bounded controls (stepper, raw-view toggle, at most two predict lenses, one Lab) and do not count against this cap.
+2. **At most one optional control per figure**, and only when exploration genuinely teaches something a passive animation cannot (e.g. the cost calculator in 5.2, the tokenizer in 3.2). Target: **no more than 8 primary figures have any control at all.** `docs/curriculum.md` marks which ones; adding a ninth requires removing one. The 20 Context Lenses are secondary figures with their own bounded controls (steppers and one Lab) and do not count against this cap. There are no reader quizzes or answer-gated outputs.
 3. **A control is always a slider, a two-way toggle, or a text input.** Never a dropdown, never a modal, never a multi-step wizard. The Context Lens adds steppers and Lab checkboxes as the only exceptions; both are bounded and keyboard-native.
 4. **Every figure is complete without touching it.** Controls refine; they never reveal required information.
 5. **Nothing is hidden behind a click in the main track.** The only collapsible elements in the entire document are the engineering asides, and they are decorative by definition (§1.2).
@@ -179,18 +179,23 @@ The central technical decision: **lessons do not author SVG.** They call a param
 ```mdx
 <SequenceFlow
   actors={[
-    { id: 'user',  label: 'کاربر' },
-    { id: 'agent', label: 'ایجنت' },
-    { id: 'tool',  label: 'ابزار سفارش' },
+    { id: 'user',  label: 'کاربر', kind: 'user' },
+    { id: 'agent', label: 'ایجنت', sublabel: 'چارچوب اجرا و ابزارها', kind: 'system' },
+    { id: 'model', label: 'مدل', kind: 'model' },
   ]}
   steps={[
-    { from: 'user',  to: 'agent', label: 'سفارشم کجاست؟' },
-    { from: 'agent', to: 'tool',  label: 'getOrder("۱۲۳")', mono: true },
-    { from: 'tool',  to: 'agent', label: 'در حال ارسال', dashed: true },
-    { from: 'agent', to: 'user',  label: 'سفارش شما فردا می‌رسد' },
+    { from: 'user',  to: 'agent', label: 'این فایل را توضیح بده.' },
+    { from: 'agent', to: 'model', label: 'درخواست و فهرست ابزارها' },
+    { from: 'model', to: 'agent', label: 'readFile("src/utils.ts")', mono: true, dashed: true },
+    { from: 'agent', to: 'agent', label: 'بررسی مجوز و خواندن فایل' },
+    { from: 'agent', to: 'model', label: 'فراخوانی دوباره، همراه متن فایل' },
+    { from: 'model', to: 'agent', label: 'توضیح فایل', dashed: true },
+    { from: 'agent', to: 'user',  label: 'نمایش توضیح', dashed: true },
   ]}
 />
 ```
+
+Sequence diagrams use the user, agent, and model as their three participants. The agent lane includes its harness and tool execution; file reads and permission checks are local actions, not separate participants. Model outputs always return to the agent before anything is presented to the user.
 
 This buys three things that matter at 35 figures:
 

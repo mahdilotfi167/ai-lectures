@@ -249,7 +249,7 @@ Six stacked segments in Part colors, filled portion at full opacity, unfilled at
 
 ### 5.5 TOC drawer
 
-One fixed icon button, top inline-start. Opens a wide `<dialog>` containing six color-coded Part bands, all 34 lesson links, and 53 concept links from the map data. A search field filters Persian/English names and lesson numbers; the current lesson is marked. On mobile the bands stack and lesson cards become a single column. Selection closes the map and focuses the destination. Escape, the close button, and backdrop clicks restore opener focus. Native `<dialog>` traps focus; a native `<details>` version provides no-JavaScript navigation. Hidden in print. The map is not repeated inside the book.
+One fixed icon button, top inline-start. Opens a wide `<dialog>` containing six color-coded Part bands, all 33 lesson links, and 54 concept links from the map data. A search field filters Persian/English names and lesson numbers; the current lesson is marked. On mobile the bands stack and lesson cards become a single column. Selection closes the map and focuses the destination. Escape, the close button, and backdrop clicks restore opener focus. Native `<dialog>` traps focus; a native `<details>` version provides no-JavaScript navigation. Hidden in print. The map is not repeated inside the book.
 
 ### 5.6 Part divider
 
@@ -361,38 +361,36 @@ Six aliases of existing hues — no new hex values:
 --ctx-attacker:  var(--danger);   /* red    — 5.3 only */
 ```
 
-Color is never the only signal. Every block also carries a text author label, an icon, and a distinct rail pattern:
-
-| Author | Rail pattern |
-|---|---|
-| developer | solid |
-| user | dotted |
-| model | long dashes |
-| tool | short dashes |
-| store | double line |
-| attacker | dashed + outline |
+The author aliases remain available as tokens, but blocks no longer use separate colored rails or icon badges. A short Persian kind label identifies each block; the source author is retained as screen-reader text. Changed, removed, cached, and dangerous states have explicit text, never color alone.
 
 ### 10.2 Tape
 
-- A bordered card holds the ordered blocks. The author rail is 4 px on the inline-start edge.
-- Blocks carry a kind chip, a mono role tag (`system`, `user`, …), a state badge, and optional lesson link.
-- JSON is `dir="ltr"`, ASCII-only, light code block. On < 600 px it wraps instead of scrolling horizontally.
-- The output area is dashed off from the input: «ادامهٔ متن (نوشتهٔ مدل)» plus «کلمهٔ بعدی» (or «توکن بعدی» from 3.2).
-- The outside lane is a dashed card labelled «بیرون از متن»; on ≥ 900 px it sits inline-end of the tape, on narrower screens above it.
-- States: `new` (accent), `changed` (dashed amber), `gone`/`evicted` (struck through + label), `danger` (red outline + ⚠), `dim`.
-- The footer is the spine sentence, plus the authored-output disclaimer.
+- One bordered sheet holds the ordered input blocks, separated by quiet horizontal rules.
+- Blocks carry a short kind label, the actual text, and only relevant state text or a lesson link. No role chips, icons, actor strip, or per-block token counts.
+- Exception for lessons 1.2 and 4.1: `showMessageRoles` adds plain, unboxed `system`, `user`, and `assistant` labels because message roles are the subject. This is not a restored raw view or actor strip.
+- `turnStart` inserts a quiet «نوبت ۱ / نوبت ۲» divider before a user message; the following assistant reply belongs to that same turn. The system instruction remains above the turn dividers.
+- `tapeLabel` distinguishes input before generation from a saved transcript after generation. Never present the new response as part of its own input.
+- JSON is `dir="ltr"` in a light code block, wrapping at all sizes. The mapping lesson keeps its actual `messages` example.
+- The output is a separate softly shaded area labelled ادامهٔ مدل. It appears complete immediately, with no typing animation or blinking cursor.
+- Conversation examples may supply an explicit output label such as «پاسخ تازهٔ دستیار — پایان نوبت ۲». Mapping frames may label JSON as a saved transcript rather than an outgoing request; saving a response is not another model call.
+- Outside actions use a compact note labelled بیرون از متن above the input, at all widths.
+- A model-driven read has a catalog/definition-only frame, an output request, agent execution outside the model, and the returned text in the next input. Skill instructions may keep their specialized kind label, but their note must identify them as the read result. Do not place full instructions in the earlier frame.
+- Program-driven preparation (MCP catalog discovery, automatic RAG, or saved-memory injection) is explicitly labelled as such; do not invent model calls for it. The Lab compares prepared snapshots and says so visibly; its read/test results still have their preceding requests.
+- Denied tool requests remain in history and receive an error result. Do not strike through the request as if the model never made it. Separate test runs retain separate request/result exchanges.
+- States: `new` (subtle tint + label), `changed` (subtle amber + label), `gone`/`evicted` (struck through + label), `danger` (red edge + warning label), `dim` (muted text).
+- Counts appear only in the capacity meter and Lab total. The footer combines the spine sentence and the simplification/authored-output disclaimer.
 
-### 10.3 Raw view
+### 10.3 One reading view
 
-`نمای خام` hides author rails, kind chips, badges, the actor strip, the outside lane and the meter, leaving one continuous text with mono role prefixes. The CSS is a single `.is-raw` class on the lens root. This is the "no magic, just text" moment.
+The previous labeled/raw modes are removed. The sole view keeps the actual input and useful source/change cues without the dense diagnostic metadata. No display-mode switch or hidden alternate representation.
 
 ### 10.4 Modes and controls
 
 | Mode | Layout | Controls |
 |---|---|---|
-| `steps` | one tape, frames stacked with a stepper | prev/next, raw |
-| `compare` | two tapes side by side (stacked < 900 px) | raw |
-| `static` | one tape, optional slot cards | raw |
+| `steps` | one tape, frames stacked with a stepper | prev/next |
+| `compare` | two tapes side by side (stacked < 900 px) | — |
+| `static` | one tape, optional slot cards | — |
 | `mapping` | JSON `messages` panel + tape | prev/next |
 | `lab` | toggles + tape + answer | checkboxes, presets, reset |
 
@@ -400,6 +398,6 @@ All controls are native `<button>`/`<input>` elements outside any SVG, min 44 px
 
 ### 10.5 Fallbacks
 
-- **No-JS**: all frames render stacked with their step headings and final outputs; steppers, predict options and Lab toggles are hidden; the Lab shows its default state and the three-preset table.
-- **Reduced motion**: all frames visible, no typing animation, no transitions; the stepper is hidden.
-- **Print**: all frames expanded, controls hidden, outputs and predict answers visible, code light, rails kept for greyscale.
+- **No-JS**: all frames render stacked with their step headings and final outputs; steppers and Lab toggles are hidden; the Lab shows its default state and the three-preset table.
+- **Reduced motion**: all frames visible, no transitions; the stepper is hidden.
+- **Print**: all frames expanded, controls hidden, outputs visible, code light; text labels preserve distinctions in greyscale.

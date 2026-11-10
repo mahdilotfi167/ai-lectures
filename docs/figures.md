@@ -95,7 +95,7 @@ Nodes, edges, and zones live in `src/data/concept-map.ts` — **one source of tr
 - `clickable`: selecting a node shows `def_fa` and its lesson number in the readout below the map.
 - Layout coordinates are **hand-tuned and committed**, not force-directed at runtime. Determinism matters more than elegance across 8 appearances.
 
-**Risk note**: a 53-node map is the hardest thing to make legible at 360px. The `stacked` variant drops edges and shows zones as a vertical list of grouped chips. Prototype this early — it is on the critical path for Gate 1.
+**Risk note**: a 54-node map is the hardest thing to make legible at 360px. The `stacked` variant drops edges and shows zones as a vertical list of grouped chips. Prototype this early — it is on the critical path for Gate 1.
 
 ---
 
@@ -105,7 +105,7 @@ Nodes, edges, and zones live in `src/data/concept-map.ts` — **one source of tr
 
 ```ts
 interface SequenceFlowProps extends FigureBase {
-  actors: { id: string; label: string; labelShort?: string; kind?: 'user'|'system'|'model'|'tool'|'store' }[];
+  actors: { id: string; label: string; labelShort?: string; sublabel?: string; kind?: 'user'|'system'|'model'|'tool'|'store' }[];
   steps: {
     from: string; to: string;
     label: string;
@@ -120,10 +120,13 @@ interface SequenceFlowProps extends FigureBase {
 ```
 
 - **First actor is rightmost.** Arrows travel right→left for "forward" messages.
-- Actor heads are boxes with a kind-specific icon; lifelines are dashed verticals.
-- Steps animate one per ~400 ms: arrow draws, label fades in.
-- `pause` draws a shaded bracket on the lifeline — used in 2.2 to show the model *stopping* while the harness executes the tool. This is the figure's whole point; it must be visually unmistakable.
-- `< 600px`: becomes a vertical list of numbered `from → to` rows with labels. Clearer than a squeezed diagram.
+- Production sequences have three participants: **user, agent, model**. The agent lane represents the assistant program, including its harness and tools. The harness is not a fourth participant, and a file is not an actor.
+- Actor heads have a kind-specific icon and an optional role subtitle; lifelines are dashed verticals. The agent lane has a light background to locate execution visually.
+- Messages are numbered in chronological order. Both model outputs (tool requests and final text) return to the agent; only the agent presents the reply to the user.
+- `from === to` renders a local-action box with a self-loop on that actor's lifeline. Use it for the agent checking permissions, reading a file, or rejecting a request; none of these are model actions.
+- Steps reveal in order using the shared reduced-motion-aware styles. Return messages retain their dashed stroke.
+- `pause` spans the gap from the outgoing message until the next incoming message on that lifeline. In 2.2 and 5.3, the first model call has ended; the agent finishes its local work before making a new call with the tool result.
+- `≤ 800px`: show role headers and numbered message cards rather than shrinking the labels. Local actions say «داخل ایجنت», not «از ایجنت به ایجنت». The desktop version remains the print view.
 
 ---
 
@@ -472,7 +475,7 @@ interface TradeoffTriangleProps extends FigureBase {
 
 ### 19. `RoadStrip` — the route
 
-**Used by**: 1.4.
+**Used by**: the development gallery only; the separate reading-guide lesson was removed.
 
 ```ts
 interface RoadStripProps extends FigureBase {
@@ -480,7 +483,7 @@ interface RoadStripProps extends FigureBase {
 }
 ```
 
-- A path with six markers, filling right→left. Colors match the progress rail's Part segments, so lesson 1.4 teaches the reader to read the rail without mentioning it.
+- A path with six markers, filling right→left. Colors match the progress rail's Part segments. Retained as a reusable gallery primitive, not a production lesson figure.
 
 ---
 
@@ -517,16 +520,20 @@ interface ContextLensProps {
 }
 ```
 
-Content lives in `src/data/context/lenses.ts`; blocks in `blocks.ts`; kinds in `kinds.ts`. Modes: `steps`, `compare`, `static`, `mapping`. Every frame is server-rendered; no-JS, print and reduced-motion show all frames. Controls are real buttons: stepper, raw-view toggle, and a three-option predict in at most two lenses.
+Content lives in `src/data/context/lenses.ts`; blocks in `blocks.ts`; kinds in `kinds.ts`. Layouts: `steps`, `compare`, `static`, `mapping`. All use one reading view, with no labeled/raw toggle. Every frame is server-rendered; no-JS, print and reduced-motion show all frames. Stepper buttons navigate sequences; example outputs are shown directly, with no quizzes or answer gating.
 
-- Blocks: author rail + kind label + mono role tag + body; JSON is LTR and ASCII-only.
+- Blocks: one short Persian kind label and the actual body, with subtle dividers. Source authors remain in assistive text. No actor strip, icon rail, role chips, or per-block token counts. JSON remains LTR and wraps; mapping retains the actual `messages` JSON.
 - States: `new`, `changed`, `gone`, `evicted`, `danger`, `dim`.
-- Footer: «مدل فقط ادامهٔ متنی را می‌نویسد که جلویش گذاشته‌اند.» From 3.2 the cursor says «توکن بعدی».
+- Outputs appear immediately in a separate area labelled ادامهٔ مدل; no typing animation. Outside actions use a compact note, separate from the input. Token counts are limited to capacity meters and the Lab total.
+- Footer: «مدل فقط ادامهٔ متنی را می‌نویسد که جلویش گذاشته‌اند.» Plus a short simplification/authored-output disclaimer.
 - The ConceptMap's `context` hub is the map-level view; the lens is the text-level view.
+- Examples use the working environment of a coding assistant like OpenCode or Hermes: project files, requests, guides, changes, command output, and review. Small fixtures are independent illustrations, not one mandatory bug story. `readFile`, `editFile`, and `runCommand` are teaching names; requests are never shown as executed work without actual result blocks.
 
 ### 22. `ContextLab` — build a context
 
 **Used by**: 4.3 only. A secondary figure. Five checkboxes plus three presets; a deterministic authored answer table; no model is called. No-JS and print show the default state and a three-preset table.
+
+The toggles represent project instructions, remembered file/test command, tools, a repair skill, and the login guide. With tools and a target path, the authored read/test evidence is explicitly shown. Removing that evidence produces an honest request for information, not fabricated code contents or a claim that tests passed. The output is a proposed repair plan; nothing executes in the document.
 
 Props: `id`, `caption`, `desc`. Data in `src/data/context/lab.ts`.
 
@@ -564,11 +571,11 @@ Icons are always paired with a text label. No icon-only meaning.
 | `Matrix2x2` | 6.1 | 1 |
 | `AnnotatedCode` | 4.1 | 1 |
 | `TradeoffTriangle` | 3.7 | 1 |
-| `RoadStrip` | 1.4 | 1 |
+| `RoadStrip` | Development gallery only | 0 inline |
 | `CostCalculator` | 5.2 | 1 |
 | `ContextLens` | 20 lessons (1.2, 1.3, 2.2–2.5, 2.7, 2.8, 3.3–3.5, 3.7, 4.1, 4.4, 4.5, 5.1–5.4, 6.4) | 20 (secondary) |
 | `ContextLab` | 4.3 | 1 (secondary) |
-| | **Total primary** | **33** |
+| | **Total primary** | **32** |
 | | **Total context** | **21** |
 
 Build order: `CardGrid`, `FlowPipeline`, `SequenceFlow`, `SplitCompare`, `LayerStack`, `StackedBar`, `ProbabilityBars`, `LoopTrace`, `BranchDiagram`, `Ladder`, `DataTable`, `ConceptMap`, then the six single-use primitives, then `ContextLens` and `ContextLab`. Highest reuse first, so content authoring on Part 1–2 can begin before the library is finished.

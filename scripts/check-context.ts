@@ -7,8 +7,9 @@ import { terms } from '../src/data/glossary.ts';
 import { lenses, lensByKey } from '../src/data/context/lenses.ts';
 import { kinds, type KindDef } from '../src/data/context/kinds.ts';
 import { blockById } from '../src/data/context/blocks.ts';
+import { story } from '../src/data/context/story.ts';
 import { labToggles, labSentences, labPresets, composeLab, labDefaultState } from '../src/data/context/lab.ts';
-import type { BlockRef, Frame, LensDef } from '../src/data/context/types.ts';
+import type { BlockRef, LensDef } from '../src/data/context/types.ts';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const lessonsDir = join(root, 'src/content/lessons');
@@ -67,13 +68,9 @@ function collectLensText(lens: LensDef) {
   const out: string[] = [lens.title ?? '', lens.narration ?? '', lens.compareNote ?? ''];
   const prose: string[] = [];
   for (const frame of lens.frames ?? []) {
-    out.push(frame.title, frame.narration, frame.output?.text ?? '', frame.output?.note ?? '');
+    out.push(frame.title, frame.narration, frame.tapeLabel ?? '', frame.output?.text ?? '', frame.output?.label ?? '', frame.output?.note ?? '');
     out.push(frame.outside?.label ?? '', frame.outside?.detail ?? '');
-    out.push(frame.predict?.question ?? '');
-    for (const option of frame.predict?.options ?? []) {
-      out.push(option.text, option.why);
-    }
-    out.push(frame.messages ?? '', frame.messagesNote ?? '');
+    out.push(frame.messages ?? '', frame.messagesNote ?? '', frame.messagesLabel ?? '');
     for (const ref of frame.blocks) collectTextFromBlockRef(ref, out, prose);
   }
   for (const panel of lens.panels ?? []) {
@@ -106,31 +103,15 @@ for (const lens of lenses) {
 const labLenses = lenses.filter((l) => l.mode === 'lab');
 if (labLenses.length !== 1) errors.push(`expected exactly 1 lab lens, found ${labLenses.length}`);
 
-/* 2 — frame schema, narration, predict */
-let predictCount = 0;
+/* 2 — frame schema and narration */
 for (const lens of lenses) {
-  const framePredicts = (lens.frames ?? []).filter((f) => f.predict).length;
-  const panelPredicts = (lens.panels ?? []).filter((p) => (p as unknown as Frame).predict).length;
-  const predicts = framePredicts + panelPredicts;
-  if (predicts > 1) errors.push(`lens ${lens.key}: ${predicts} predicts (max 1)`);
-  if (predicts === 1) predictCount += 1;
-
   for (const frame of lens.frames ?? []) {
     if (!frame.title || !frame.narration) errors.push(`lens ${lens.key}/${frame.id}: title or narration missing`);
     if (wordCount(frame.narration) > 22) {
       errors.push(`lens ${lens.key}/${frame.id}: narration ${wordCount(frame.narration)} words (max 22)`);
     }
-    if (frame.predict) {
-      if (frame.predict.options.length !== 3) {
-        errors.push(`lens ${lens.key}/${frame.id}: predict needs 3 options`);
-      }
-      const correct = frame.predict.options.filter((o) => o.correct).length;
-      if (correct !== 1) errors.push(`lens ${lens.key}/${frame.id}: predict needs exactly 1 correct (got ${correct})`);
-    }
   }
 }
-
-if (predictCount > 2) errors.push(`predict lenses: ${predictCount} (max 2)`);
 
 /* 3 — kind gate */
 for (const lens of lenses) {
@@ -186,7 +167,7 @@ for (const block of blockById.values()) {
       errors.push(`block ${block.id}: invalid JSON`);
     }
     if (/[^\x00-\x7F]/.test(block.text)) errors.push(`block ${block.id}: JSON is not ASCII`);
-  } else if (isProseKind(kind) && /[0-9]/.test(block.text)) {
+  } else if (isProseKind(kind) && /[0-9]/.test(block.text.replace(/\b[A-Za-z][A-Za-z0-9_./:-]*\b/g, ''))) {
     errors.push(`block ${block.id}: Latin digits in prose`);
   }
 }
@@ -207,14 +188,22 @@ const must = (id: string, needle: string, label: string) => {
   const b = blockById.get(id);
   if (!b || !b.text.includes(needle)) errors.push(`story: ${id} must include ${label}`);
 };
-must('sys', 'بازار', 'the store name');
-must('mem', 'سارا', 'the customer name');
-must('mem', '۱۲۳', 'order 123');
-must('r.order', '"status": "shipped"', 'status shipped');
-must('r.order', '"eta": "tomorrow"', 'eta tomorrow');
-must('doc.refund', '۷ روز', 'the 7-day refund window');
-must('a.hallucinated', '۸۸۴۳۲۱', 'the invented order id');
-must('a.badcall', '999', 'the attack order id');
+must('sys', 'دستیار برنامه‌نویسی', 'the coding-assistant role');
+must('mem', story.file, 'the source file');
+must('mem', story.testCommand, 'the current test command');
+must('mem.stale', story.staleTestCommand, 'the intentional stale command');
+must('r.file', story.originalCode, 'the illustrative source text');
+must('a.editcall', story.fixedCode, 'the proposed edit');
+must('r.edited', story.fixedCode, 'the applied edit');
+must('doc.guide', 'تفاوت فایل‌ها', 'the project review rule');
+must('test.fail', 'empty input: expected 0', 'the illustrative test failure');
+must('test.pass', `${story.passedTests} tests passed`, 'the successful test count');
+must('a.hallucinated', story.inventedFile, 'the intentionally invented file');
+must('a.badcall', story.privateFile, 'the blocked secrets-file request');
+must('a.skill.read', story.skillFile, 'the explicit skill-file read request');
+must('skill.menu', story.skillFile, 'the discoverable skill path');
+must('r.denied', 'Permission denied', 'the returned permission error');
+must('a.test.again', story.testCommand, 'the distinct post-edit test request');
 
 /* 7 — Lab sanity + glossary gate at 4.3 */
 const labText = [
@@ -284,7 +273,7 @@ if (mdxLensCount !== lenses.length) {
   errors.push(`expected ${lenses.length} lens lessons, found ${mdxLensCount}`);
 }
 
-console.log(`context: ${lenses.length - 1} lenses + 1 lab, ${predictCount} predict`);
+console.log(`context: ${lenses.length - 1} lenses + 1 lab`);
 for (const warning of warnings) console.warn(`warning: ${warning}`);
 if (errors.length) {
   for (const error of errors) console.error(`error: ${error}`);

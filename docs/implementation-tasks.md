@@ -113,7 +113,7 @@ Strictly in order, 1.1 → 6.4, in Part-sized batches. Each lesson: author the P
 Read before starting: `docs/terminology.md` in full, plus the previous lesson's takeaway.
 
 ### T3.1 Part 1 (1.1–1.5)
-Includes the master `ConceptMap` data (1.2) and the retail scenario (1.4) — both are referenced by every later Part, so get them reviewed carefully.
+Current Part 1 uses the shared navigation map and introduces a general-purpose coding assistant like OpenCode or Hermes in 1.3. Later Parts illustrate everyday repository, file, command, feature, and review tasks; no single fictional bug drives the whole book. Historical task numbering predates the removal of the separate map lesson.
 
 ### T3.2 Part 2 (2.1–2.8)
 ### T3.3 Part 3 (3.1–3.7)

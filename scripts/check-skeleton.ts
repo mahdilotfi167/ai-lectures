@@ -75,8 +75,8 @@ for (const expected of lessons) {
       } else {
         if (!p.body.includes('<ContextLens')) errors.push(`${prefix}: lens declared but no <ContextLens>`);
         if (def.mode === 'steps' || def.mode === 'mapping') {
-          if (!['stepper', 'predict'].includes(String(lens.interactive))) {
-            errors.push(`${prefix}: stepper lens interactive must be stepper or predict`);
+          if (lens.interactive !== 'stepper') {
+            errors.push(`${prefix}: stepper lens interactive must be stepper`);
           }
         } else if (lens.interactive !== false) {
           errors.push(`${prefix}: static/compare lens interactive must be false`);
@@ -125,8 +125,8 @@ const withLens = parsed.filter((p) => p.data.context_lens);
 if (withLens.length !== 21) errors.push(`expected 21 lessons with a context lens (20 + lab), found ${withLens.length}`);
 
 for (const part of parts) {
-  const retail = parsed.filter((p) => p.data.part === part.part && p.data.example === 'retail');
-  if (retail.length === 0) warnings.push(`part ${part.part}: no example: retail lesson`);
+  const coding = parsed.filter((p) => p.data.part === part.part && p.data.example === 'coding');
+  if (coding.length === 0) warnings.push(`part ${part.part}: no example: coding lesson`);
 }
 
 const ids = parsed.map((p) => p.data.id);

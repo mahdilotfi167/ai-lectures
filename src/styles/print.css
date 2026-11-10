@@ -256,28 +256,21 @@
   }
 
   .ctx-stepper,
-  .ctx-raw,
-  .ctx-predict__options,
   .ctx-lab__controls,
   .ctx-lab__presets {
     display: none !important;
   }
 
-  .ctx-predict__answer {
-    display: block !important;
-  }
-
-  html.js .ctx-predict:not(.is-answered) ~ .ctx-output-wrap,
   .ctx-output-wrap {
     display: block !important;
   }
 
-  .ctx-tape__main.has-outside {
-    display: block !important;
+  html.js .ctx-frame__step {
+    display: block;
   }
 
   .ctx-outside {
-    margin-block-start: 3mm;
+    margin-block-end: 3mm;
     background: #f5f5f5 !important;
     border-color: #999 !important;
   }
@@ -301,9 +294,13 @@
     border-color: #ddd;
   }
 
-  .ctx-block__rail {
-    print-color-adjust: exact;
-    -webkit-print-color-adjust: exact;
+  .ctx-turn {
+    break-after: avoid;
+  }
+
+  .ctx-output {
+    background: #f5f5f5 !important;
+    border-inline-start-color: #777;
   }
 
   .ctx-lab__presets-table {
@@ -339,7 +336,6 @@
 
   .ctx-block__meta,
   .ctx-block__note,
-  .ctx-block__tokens,
   .ctx-frame__head p,
   .ctx-output__head,
   .ctx-outside,
@@ -348,7 +344,7 @@
     font-size: 7.5pt;
   }
 
-  .ctx-tape {
+  .ctx-tape__main {
     padding: 2.5mm;
   }
 

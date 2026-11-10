@@ -3,14 +3,14 @@
 export const tokenSamples = {
   fa: {
     lang: 'fa' as const,
-    text: 'می‌خواهم سفارشم را لغو کنم',
-    tokens: ['می', 'خواهم', ' سفارش', 'م', ' را', ' لغو', ' کنم'],
+    text: 'می‌خواهم فایل‌هایم را بررسی کنم',
+    tokens: ['می', 'خواهم', ' فایل', 'ها', 'یم', ' را', ' بررسی', ' کنم'],
     flow: 'rtl' as const,
   },
   en: {
     lang: 'en' as const,
-    text: 'Cancel my order',
-    tokens: ['Cancel', ' my', ' order'],
+    text: 'Review my project files',
+    tokens: ['Review', ' my', ' project', ' files'],
     flow: 'ltr' as const,
   },
 };

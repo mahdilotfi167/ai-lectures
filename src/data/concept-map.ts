@@ -76,6 +76,7 @@ export const mapZones: MapZone[] = [
       'inference',
       'token',
       'context',
+      'turn',
       'context-window',
       'system-prompt',
       'training',

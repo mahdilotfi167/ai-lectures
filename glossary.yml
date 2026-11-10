@@ -29,10 +29,23 @@ terms:
     first_use: کانتکست (Context)
     short: کانتکست
     not_before: "1.2"
-    def_fa: "همهٔ متنی که در یک نوبت جلوی مدل گذاشته می‌شود: دستور، تاریخچه، اسناد و پرسش."
+    def_fa: "همهٔ متنی که در یک فراخوانی جلوی مدل گذاشته می‌شود: دستور، تاریخچه، اسناد و پرسش."
     def_en: "All the text placed in front of the model for one call."
     status: confirmed
     aliases: [Context]
+    zone: model
+
+  - id: turn
+    en: Turn
+    fa: نوبت
+    style: translate
+    first_use: نوبت گفت‌وگو (Turn)
+    short: نوبت
+    not_before: "1.2"
+    def_fa: "در این کتاب، از پیام تازهٔ شما تا پاسخ نهایی دستیار؛ ممکن است چند فراخوانی مدل و اجرای ابزار داشته باشد."
+    def_en: "In this book, the span from a new user message to the assistant's final reply; it may include multiple model calls and tool executions."
+    status: confirmed
+    aliases: []
     zone: model
 
   - id: model
@@ -119,7 +132,7 @@ terms:
     en: MCP
     fa: MCP
     style: keep-latin
-    first_use: MCP (پروتکل کانتکست مدل)
+    first_use: MCP (Model Context Protocol)
     short: MCP
     not_before: "2.3"
     def_fa: "استانداردی که ابزارها را یک‌بار تعریف می‌کند تا هر برنامه‌ای بتواند از آن‌ها استفاده کند."
@@ -161,7 +174,7 @@ terms:
     first_use: بدون وضعیت (Stateless)
     short: بدون وضعیت
     not_before: "2.5"
-    def_fa: "هر فراخوانی از صفر شروع می‌شود؛ مدل هیچ چیزی از نوبت قبل نگه نمی‌دارد."
+    def_fa: "مدل بین فراخوانی‌ها چیزی نگه نمی‌دارد؛ برنامه باید تاریخچه یا یادداشت لازم را دوباره در کانتکست قرار دهد."
     def_en: "Each call starts fresh; nothing is retained between calls."
     status: confirmed
     aliases: [Stateless, بی‌حافظه]
@@ -215,7 +228,7 @@ terms:
     first_use: ظرفیت کانتکست (Context Window)
     short: ظرفیت کانتکست
     not_before: "3.3"
-    def_fa: "حداکثر اندازهٔ کانتکست؛ مدل در یک نوبت بیشتر از این نمی‌بیند."
+    def_fa: "حداکثر اندازهٔ کانتکست؛ مدل در یک فراخوانی بیشتر از این نمی‌بیند."
     def_en: "The maximum amount of context a model can consider in a single pass."
     status: confirmed
     aliases: [Context window, Context length]
@@ -228,7 +241,7 @@ terms:
     first_use: دستور سیستم (System Prompt)
     short: دستور سیستم
     not_before: "1.2"
-    def_fa: "دستورالعمل ثابتی که در هر نوبت بالای کانتکست قرار می‌گیرد و نقش و قواعد را تعیین می‌کند."
+    def_fa: "دستورالعملی که در ورودی مدل نقش و قواعد را تعیین می‌کند؛ خودش نوبت گفت‌وگو نیست."
     def_en: "Fixed instructions placed atop the context on every call."
     status: confirmed
     aliases: [System prompt]
@@ -464,7 +477,7 @@ terms:
     first_use: جست‌وجوی معنایی (Semantic Search)
     short: جست‌وجوی معنایی
     not_before: "4.4"
-    def_fa: "جست‌وجو بر پایهٔ معنا نه کلمهٔ دقیق؛ «پس‌دادن کالا» سند «مرجوعی» را پیدا می‌کند."
+    def_fa: "جست‌وجو بر پایهٔ معنا نه کلمهٔ دقیق؛ پرسش دربارهٔ بررسی تغییر، بخش تست و بازبینی راهنما را پیدا می‌کند."
     def_en: "Search by meaning rather than exact keyword."
     status: confirmed
     aliases: [Semantic search, جستجوی معنایی]

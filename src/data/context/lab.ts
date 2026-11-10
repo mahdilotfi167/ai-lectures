@@ -1,4 +1,5 @@
 import type { KindId } from './types';
+import { traceRefs } from './traces';
 
 export interface LabToggle {
   id: 'sys' | 'mem' | 'tools' | 'skill' | 'doc';
@@ -13,7 +14,7 @@ export const labToggles: LabToggle[] = [
   {
     id: 'sys',
     label: 'دستور سیستم',
-    hint: 'بدون دستور، لحن و نقش مشخص نیست.',
+    hint: 'نقش دستیار، زبان گزارش و ممنوعیت انتشار را مشخص می‌کند.',
     blockId: 'sys',
     tokens: 58,
     defaultOn: true,
@@ -21,7 +22,7 @@ export const labToggles: LabToggle[] = [
   {
     id: 'mem',
     label: 'حافظه',
-    hint: 'بدون حافظه، شمارهٔ سفارش و ترجیح مشتری معلوم نیست.',
+    hint: 'مسیر فایل، کامند تست و ترجیح گزارش را از نوبت قبل می‌آورد.',
     blockId: 'mem',
     tokens: 40,
     defaultOn: true,
@@ -29,24 +30,24 @@ export const labToggles: LabToggle[] = [
   {
     id: 'tools',
     label: 'ابزارها',
-    hint: 'بدون ابزار، وضعیت واقعی سفارش در متن نیست.',
+    hint: 'با داشتن مسیر، درخواست خواندن و تست و نتیجهٔ نمونهٔ هر دو در متن نشان داده می‌شوند.',
     blockId: 'tools',
     tokens: 120,
     defaultOn: true,
   },
   {
     id: 'skill',
-    label: 'مهارت مرجوعی',
-    hint: 'بدون مهارت، روش مرجوعی و قاعدهٔ تأیید مدیر در متن نیست.',
+    label: 'متن آمادهٔ مهارت',
+    hint: 'این کلید متن ازپیش‌خوانده‌شده را انتخاب می‌کند، نه اجرای خواندن؛ مسیر بارگذاری در درس ۲.۴ آمده است.',
     blockId: 'skill.full',
     tokens: 95,
     defaultOn: false,
   },
   {
     id: 'doc',
-    label: 'سند سیاست مرجوعی',
-    hint: 'بدون سند، سیاست واقعی مرجوعی در متن نیست.',
-    blockId: 'doc.refund',
+    label: 'متن آمادهٔ راهنمای پروژه',
+    hint: 'برنامه متن راهنما را از قبل آماده کرده است؛ این کلید ادعای خواندن فایل توسط مدل نیست.',
+    blockId: 'doc.guide',
     tokens: 40,
     defaultOn: false,
   },
@@ -110,20 +111,26 @@ export const labSentences: LabSentence[] = [
     variants: [
       {
         when: { sys: true, mem: true },
-        text: 'سارا، سلام؛ از فروشگاه بازار.',
+        text: 'فایل src/utils.ts را با توجه به درخواست بررسی می‌کنم؛ چیزی را منتشر نمی‌کنم.',
         status: 'ok',
         sources: ['sys', 'mem'],
       },
       {
         when: { sys: true },
-        text: 'سلام؛ از فروشگاه بازار.',
+        text: 'دستیار برنامه‌نویسی هستم؛ در محدودهٔ پروژه کار می‌کنم و بدون درخواست منتشر نمی‌کنم.',
         status: 'ok',
         sources: ['sys'],
       },
       {
+        when: { mem: true },
+        text: 'فایل موردنظر src/utils.ts است؛ محدودهٔ مجاز تغییر را هم روشن می‌کنم.',
+        status: 'ok',
+        sources: ['mem'],
+      },
+      {
         when: {},
-        text: 'به‌عنوان یک مدل زبانی می‌توانم کمک کنم، اما چند سؤال عمومی دارم.',
-        status: 'warn',
+        text: 'برای شروع، محدودهٔ کار و فایل هدف را مشخص کنید.',
+        status: 'ask',
         sources: [],
       },
     ],
@@ -134,20 +141,20 @@ export const labSentences: LabSentence[] = [
     variants: [
       {
         when: { tools: true, mem: true },
-        text: 'سفارش ۱۲۳ شما ارسال شده و فردا می‌رسد.',
+        text: 'متن فایل و خروجی تست را دارم؛ در این نمونه، تستِ ورودی خالی خطا داده است.',
         status: 'ok',
-        sources: ['tools', 'mem'],
+        sources: ['results', 'mem'],
       },
       {
         when: { tools: true },
-        text: 'شمارهٔ سفارش را بفرمایید تا بررسی کنم.',
+        text: 'ابزار خواندن و تست در دسترس است؛ مسیر فایل را بفرستید تا نتیجهٔ واقعی بگیرم.',
         status: 'ask',
         sources: ['tools'],
       },
       {
         when: {},
-        text: 'سفارش شما در انبار آماده می‌شود و تا ۳ روز دیگر می‌رسد.',
-        status: 'warn',
+        text: 'بدون متن فایل و نتیجهٔ تست، نمی‌دانم کد فعلی چیست یا تست چه می‌گوید.',
+        status: 'ask',
         sources: [],
       },
     ],
@@ -158,16 +165,15 @@ export const labSentences: LabSentence[] = [
     variants: [
       {
         when: { doc: true },
-        text: 'اگر تا ۷ روز پس از تحویل بخواهید، مرجوعی ممکن است.',
+        text: 'طبق راهنمای پروژه، تست مرتبط و تفاوت فایل‌ها را بررسی می‌کنم و نتیجهٔ واقعی را می‌گویم.',
         status: 'ok',
         sources: ['doc'],
       },
       {
         when: {},
-        text: 'بله، تا ۳۰ روز می‌توانید مرجوع کنید.',
-        status: 'warn',
+        text: 'قواعد اختصاصی پروژه را ندارم؛ پیش از تغییر، راهنمای پروژه را می‌خوانم.',
+        status: 'ask',
         sources: [],
-        note: 'با سیاست واقعی نمی‌خواند؛ سند در متن نیست.',
       },
     ],
   },
@@ -176,7 +182,7 @@ export const labSentences: LabSentence[] = [
     variants: [
       {
         when: { skill: true },
-        text: 'اگر مبلغ بالای ۱٬۰۰۰٬۰۰۰ تومان باشد، اول تأیید مدیر می‌گیرم؛ می‌خواهید ثبت کنم؟',
+        text: 'اول خطا را بازتولید می‌کنم، فقط شرط لازم را عوض می‌کنم و تست قبلی را دوباره اجرا می‌کنم.',
         status: 'ok',
         sources: ['skill'],
       },
@@ -187,7 +193,7 @@ export const labSentences: LabSentence[] = [
     variants: [
       {
         when: { mem: true },
-        text: 'جزئیات را برایتان پیامک می‌کنم.',
+        text: 'کامند تستِ ذخیره‌شده npm test -- utils.test.ts است؛ نتیجه را فارسی و کوتاه گزارش می‌دهم.',
         status: 'ok',
         sources: ['mem'],
       },
@@ -215,7 +221,10 @@ export function composeLab(state: LabState): LabAnswer[] {
   return out;
 }
 
-export const labBlockOrder = ['sys', 'mem', 'tools', 'skill.full', 'doc.refund', 'hist.lab', 'u.lab'];
+// A final-input snapshot, not a runtime: each authored result follows its request.
+export const labEvidenceRefs = traceRefs('file', 'testFail');
+export const labEvidenceBlocks = labEvidenceRefs.map((ref) => ref.id);
+export const labBlockOrder = ['sys', 'mem', 'tools', 'skill.full', 'doc.guide', 'hist.lab', 'u.lab', ...labEvidenceBlocks];
 
 export const labAlwaysBlocks: { id: string; kind: KindId }[] = [
   { id: 'hist.lab', kind: 'history' },
