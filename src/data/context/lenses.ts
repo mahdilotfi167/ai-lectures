@@ -1,7 +1,7 @@
 import { requireBlock } from './blocks.ts';
 import { story } from './story.ts';
 import type { BlockRef, LensDef } from './types';
-import { traceRefs } from './traces';
+import { traceRefs } from './traces.ts';
 
 const t = (id: string) => requireBlock(id).text;
 const codingInput = (): BlockRef[] => [

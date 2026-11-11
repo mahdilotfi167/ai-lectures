@@ -80,6 +80,8 @@ All four fail the build.
 
 For each term, scan lessons in order. If `fa`, `en`, `short`, or any alias appears in a lesson with `id < not_before` → **fail**.
 
+The prose and Context validators share `scripts/lib/persian-term.ts`. For `training`'s Persian form «آموزش» only, the bounded phrases «آموزش یک محصول», «شکل آموزشی», and «مرزها آموزشی‌اند» describe teaching material and do not count as model training. Other occurrences in the same text, bare «آموزش», training compounds, technical «داده‌های آموزشی», and Latin `Training` remain checked. These are phrase-level exceptions, not lesson-level exemptions. Regression cases run with `node --test scripts/persian-term.test.ts`.
+
 > *Exception*: `src/data/concept-map.ts` is exempt. The shared navigation map deliberately shows words the reader does not know yet so they can find the introducing lesson (`PLAN §6.2`). The exemption is scoped to that file only, never to lesson prose.
 
 ### Rule 2 — first use

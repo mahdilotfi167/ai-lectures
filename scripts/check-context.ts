@@ -10,6 +10,7 @@ import { blockById } from '../src/data/context/blocks.ts';
 import { story } from '../src/data/context/story.ts';
 import { labToggles, labSentences, labPresets, composeLab, labDefaultState } from '../src/data/context/lab.ts';
 import type { BlockRef, LensDef } from '../src/data/context/types.ts';
+import { containsPersianTerm } from './lib/persian-term.ts';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const lessonsDir = join(root, 'src/content/lessons');
@@ -137,7 +138,7 @@ for (const lens of lenses) {
   const { all, prose } = collectLensText(lens);
   for (const term of terms) {
     if (compareLessonId(lens.lesson, term.not_before) >= 0) continue;
-    const hit = persianForms(term).find((form) => all.includes(form));
+    const hit = persianForms(term).find((form) => containsPersianTerm(all, form, term.id));
     if (hit) {
       errors.push(`lens ${lens.key}: "${hit}" (${term.id}) before ${term.not_before}`);
       continue;
@@ -213,7 +214,7 @@ const labText = [
 ].join(' ');
 for (const term of terms) {
   if (compareLessonId('4.3', term.not_before) >= 0) continue;
-  const hit = persianForms(term).find((form) => labText.includes(form));
+  const hit = persianForms(term).find((form) => containsPersianTerm(labText, form, term.id));
   if (hit) errors.push(`lab: "${hit}" (${term.id}) before ${term.not_before}`);
 }
 const allPresets = labPresets.map((p) => p.state);

@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
 import { terms } from '../src/data/glossary.ts';
 import { compareLessonId } from '../src/data/lessons.ts';
+import { containsPersianTerm } from './lib/persian-term.ts';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const lessonsDir = join(root, 'src/content/lessons');
@@ -76,11 +77,6 @@ const containsLatin = (text: string, form: string): boolean => {
   return new RegExp(`(?<![A-Za-z])${escaped}(?![A-Za-z])`, 'i').test(text);
 };
 
-const containsPersian = (text: string, form: string): boolean => {
-  if (!form) return false;
-  return text.includes(form);
-};
-
 /* Rule 1 — not_before */
 for (const term of terms) {
   const persianForms = [term.fa, term.short, ...(term.aliases ?? [])].filter(
@@ -92,7 +88,7 @@ for (const term of terms) {
     if (compareLessonId(lesson.data.id, term.not_before) >= 0) continue;
     const text = textForTerms(lesson.body);
     for (const form of persianForms) {
-      if (containsPersian(text, form)) {
+      if (containsPersianTerm(text, form, term.id)) {
         errors.push(
           `not_before: "${form}" (${term.id}) appears in ${lesson.data.id}, before ${term.not_before}`,
         );
@@ -191,8 +187,8 @@ for (const glossaryTerm of terms) {
     if (p.body.includes(`<Term id="${glossaryTerm.id}"`)) return true;
     const text = textForTerms(p.body);
     return (
-      text.includes(glossaryTerm.short) ||
-      text.includes(glossaryTerm.fa) ||
+      containsPersianTerm(text, glossaryTerm.short, glossaryTerm.id) ||
+      containsPersianTerm(text, glossaryTerm.fa, glossaryTerm.id) ||
       (glossaryTerm.style === 'keep-latin' && text.includes(glossaryTerm.en))
     );
   });

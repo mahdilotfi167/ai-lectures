@@ -1,5 +1,5 @@
 import type { KindId } from './types';
-import { traceRefs } from './traces';
+import { traceRefs } from './traces.ts';
 
 export interface LabToggle {
   id: 'sys' | 'mem' | 'tools' | 'skill' | 'doc';
