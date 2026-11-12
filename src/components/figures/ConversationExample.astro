@@ -1,0 +1,20 @@
+---
+import HtmlFigure from '../shell/HtmlFigure.astro';
+interface Props {
+  id: string;
+  caption: string;
+  desc: string;
+  messages: { role: 'کاربر' | 'دستیار'; text: string }[];
+}
+const { id, caption, desc, messages } = Astro.props;
+---
+<HtmlFigure id={id} caption={caption} desc={desc} type="conversation">
+  <ol class="conversation-example" aria-label="پیام‌های گفت‌وگو به‌ترتیب">
+    {messages.map((message) => (
+      <li class:list={['conversation-example__message', message.role === 'کاربر' && 'is-user']}>
+        <b>{message.role}</b>
+        <p>{message.text}</p>
+      </li>
+    ))}
+  </ol>
+</HtmlFigure>

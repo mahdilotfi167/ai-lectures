@@ -1,5 +1,7 @@
 ---
 import Caption from './Caption.astro';
+import LegacyAliases from './LegacyAliases.astro';
+import { canonicalAnchor } from '../../data/curriculum-migration';
 
 interface Props {
   id: string;
@@ -11,15 +13,17 @@ interface Props {
 }
 
 const { id, caption, type, describedby, class: className, suffix } = Astro.props;
+const anchor = canonicalAnchor(id);
 ---
 
 <figure
   class:list={['figure', 'wide', className]}
-  id={id}
+  id={anchor}
   data-reveal
   data-figure={type || undefined}
   aria-describedby={describedby}
 >
+  <LegacyAliases anchor={anchor} />
   <div class="figure__frame">
     <slot name="visual" />
     <slot name="controls" />

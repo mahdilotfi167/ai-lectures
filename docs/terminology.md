@@ -26,7 +26,7 @@ Working method per lesson:
 | long chained relative clauses | two short sentences |
 | passive voice by default | active voice |
 
-Examples may be localized where it carries meaning (3.2's Persian token counts; an Iranian online store in the running example). The running example and global product names stay as specified in `curriculum.md`.
+Examples may be localized where it carries meaning (5.2's illustrative Persian token boundaries). Keep general coding assistants such as OpenCode/Hermes as the recurring mechanics example; writing, learning, research and document examples supplement it. Do not substitute shopping support or one obligatory fictional project bug.
 
 ---
 
@@ -52,7 +52,7 @@ Examples may be localized where it carries meaning (3.2's Persian token counts; 
   style: translate-plus-latin        # translate | transliterate | keep-latin | translate-plus-latin
   first_use: ظرفیت کانتکست (Context Window)
   short: ظرفیت کانتکست
-  not_before: "3.3"
+  not_before: "5.3"
   def_fa: حداکثر اندازهٔ کانتکست؛ مدل در یک فراخوانی بیشتر از این نمی‌بیند.
   def_en: The maximum amount of context a model can consider in a single pass.
   status: confirmed                  # proposed | confirmed
@@ -66,8 +66,8 @@ Field notes:
 - **`first_use`** — the exact string at the term's first appearance. Rendered by `<Term>`.
 - **Presentation punctuation** — do not wrap terms or labels in quotation marks. Use one pair of parentheses for a first-use gloss, never nested parentheses around `<Term>`. Reserve quotation marks for actual quoted speech or sample text.
 - **`short`** — every later appearance.
-- **`not_before`** — the lesson id where the term is introduced. Appearing earlier is a build failure.
-- **`def_fa`** — ≤ 25 words, understandable standalone. Used in 6.4's clickable map, so it must read well out of context.
+- **`not_before`** — the current display lesson number where the term is introduced. Appearing earlier is a build failure. Introduce a minimal practical meaning when needed; deepen it later without re-glossing.
+- **`def_fa`** — concise and understandable standalone. Used in the shared navigation map, so it must read well out of context.
 - **`aliases`** — surface forms the validator should also catch (including the ZWNJ-less spelling).
 
 ---
@@ -83,6 +83,8 @@ For each term, scan lessons in order. If `fa`, `en`, `short`, or any alias appea
 The prose and Context validators share `scripts/lib/persian-term.ts`. For `training`'s Persian form «آموزش» only, the bounded phrases «آموزش یک محصول», «شکل آموزشی», and «مرزها آموزشی‌اند» describe teaching material and do not count as model training. Other occurrences in the same text, bare «آموزش», training compounds, technical «داده‌های آموزشی», and Latin `Training` remain checked. These are phrase-level exceptions, not lesson-level exemptions. Regression cases run with `node --test scripts/persian-term.test.ts`.
 
 > *Exception*: `src/data/concept-map.ts` is exempt. The shared navigation map deliberately shows words the reader does not know yet so they can find the introducing lesson (`PLAN §6.2`). The exemption is scoped to that file only, never to lesson prose.
+
+The short temperature noun «دما» uses word boundaries plus ordinary suffixes (دمای، دماها، دماهای), not embedded substring matching in unrelated words such as «چیدمان» and «خدمات». Actual temperature mentions and its Latin form remain gated. Regression tests cover both positive and negative cases; no lesson exemption is involved.
 
 ### Rule 2 — first use
 
@@ -120,9 +122,9 @@ Any term with `status: proposed` → fails the **release** build (Phase 5) but n
 <Term id="rag" form="short" />      {/* force short — rare, e.g. inside a heading */}
 ```
 
-The component resolves the lesson's position in the reading order and renders the right form. Authors never hand-type a glossed form, which makes Rule 2 structurally unbreakable rather than merely detected.
+The component renders `first_use` by default. Later calls must specify `form="short"`, or use ordinary short-form prose. The validator catches missing introductions and re-glossing; authors must keep metadata and actual first use aligned.
 
-It also sets `data-term="<id>"`, which 6.4's clickable map and any future index use.
+It also sets `data-term="<id>"`. Concept destinations come from the glossary introduction, not a term's historical technical classification.
 
 ---
 
@@ -144,40 +146,45 @@ Rationale: transliteration is already current in Persian technical speech. «ح�
 
 ### 6.3 Additional terms the curriculum needs
 
-Beyond the brief's 23, the curriculum introduces these — all seeded as `proposed` for Phase 0:
+All 50 current terms are confirmed. The complete introduction ledger is `glossary.yml`; selected practical-to-technical dependencies follow:
 
 | EN | FA | Style | `not_before` |
 |---|---|---|---|
 | Model | مدل | translate | 1.2 |
 | Chatbot | چت‌بات | transliterate | 2.1 |
 | Function calling | فراخوانی تابع | translate | 2.2 |
-| Stateless | بی‌حافظه / بدون وضعیت | translate | 2.5 |
+| Stateless | بی‌حافظه / بدون وضعیت | translate | 2.4 |
 | Context | کانتکست | transliterate | 1.2 |
 | Turn | نوبت | translate | 1.2 |
 | System prompt | دستور سیستم | translate | 1.2 |
-| Pre-training | پیش‌آموزش | translate | 3.4 |
-| Alignment | هم‌راستاسازی (Alignment) | translate-plus-latin | 3.4 |
-| RLHF | RLHF | keep-latin + gloss | 3.4 |
-| Reasoning | استدلال | translate | 3.7 |
-| Temperature | دما (Temperature) | translate-plus-latin | 4.1 |
-| Few-shot | چند-نمونه (Few-shot) | translate-plus-latin | 4.2 |
-| Context engineering | چیدمان کانتکست | translate | 4.3 |
-| Chunking | تکه‌تکه‌کردن (Chunking) | translate-plus-latin | 4.4 |
-| Vector database | پایگاه داده برداری | translate | 4.4 |
-| Semantic search | جست‌وجوی معنایی | translate | 4.4 |
-| Regression | پس‌رفت (Regression) | translate-plus-latin | 4.6 |
-| Orchestrator | هماهنگ‌کننده (Orchestrator) | translate-plus-latin | 5.1 |
-| Gateway | دروازه (Gateway) | translate-plus-latin | 5.1 |
-| Caching | کش‌کردن | transliterate | 5.2 |
-| Data leakage | نشت داده | translate | 5.3 |
-| Least privilege | کمترین دسترسی | translate | 5.3 |
-| Tracing | ردگیری (Tracing) | translate-plus-latin | 5.4 |
-| Latency | تأخیر (Latency) | translate-plus-latin | 5.4 |
-| Non-determinism | ناهم‌سانی / غیرقطعی‌بودن | translate | 5.4 |
-| Cost | هزینه | translate | 5.2 |
-| API | API | keep-latin + gloss | 4.1 |
+| Training | آموزش | translate | 3.3 |
+| Pre-training | پیش‌آموزش | translate | 5.4 |
+| Alignment | هم‌راستاسازی (Alignment) | translate-plus-latin | 5.4 |
+| RLHF | RLHF | keep-latin + gloss | 5.4 |
+| Reasoning | استدلال | translate | 3.2 |
+| Temperature | دما (Temperature) | translate-plus-latin | 6.1 |
+| Few-shot | چند-نمونه (Few-shot) | translate-plus-latin | 3.4 |
+| Context engineering | چیدمان کانتکست | translate | 6.2 |
+| Chunking | تکه‌تکه‌کردن (Chunking) | translate-plus-latin | 6.4 |
+| Vector database | پایگاه دادهٔ برداری | translate | 6.4 |
+| Semantic search | جست‌وجوی معنایی | translate | 6.4 |
+| Regression | پس‌رفت (Regression) | translate-plus-latin | 6.6 |
+| Orchestrator | هماهنگ‌کننده (Orchestrator) | translate-plus-latin | 6.10 |
+| Gateway | دروازه (Gateway) | translate-plus-latin | 6.10 |
+| Caching | کش‌کردن | transliterate | 6.7 |
+| Data leakage | نشت داده | translate | 3.3 |
+| Least privilege | کمترین دسترسی | translate-plus-latin | 4.2 |
+| Tracing | ردگیری (Tracing) | translate-plus-latin | 6.9 |
+| Latency | تأخیر (Latency) | translate-plus-latin | 6.9 |
+| Non-determinism | غیرقطعی‌بودن | translate | 6.9 |
+| Cost | هزینه | translate | 3.1 |
+| API | API | keep-latin + gloss | 6.1 |
 
-**`context` vs `context-window`.** `context` (کانتکست, 1.2) is the text placed in front of the model for one call. `context-window` (ظرفیت کانتکست, 3.3) is the *size limit* of that text. The first Context Lens in 1.2 needs the former; the eviction figure in 3.3 needs the latter. Do not use the size-limit term before 3.3.
+**`context` vs `context-window`.** `context` (کانتکست, 1.2) is the input of one call. `context-window` (ظرفیت کانتکست, 5.3) is its size limit. The practical stage teaches supplying relevant material and recovering omitted constraints without token mechanics. The technical eviction example is one program policy, not universal behavior.
+
+**Privacy before training mechanics.** The reader must understand possible training use before sharing in 3.3. Define it minimally as changing the model, then deepen it in 5.4. Cost begins with time/review/money in 3.1; evaluation begins personally in 4.5. Do not bypass glossary gates or pull an entire technical lesson forward.
+
+**Preferred vocabulary.** Use ایجنت، ورک‌فلو، کانتکست، ظرفیت کانتکست، چیدمان کانتکست، دارک مود، کامند، نوبت and ترمینال. Keep source text distinct from authorization and permissions distinct from written requests.
 
 **Turn convention.** In this book, «نوبت» runs from a fresh user message to the assistant's final reply. A turn can contain multiple model calls and tool executions; do not use «نوبت» as a synonym for a model call. A `system` instruction is outside the user/assistant turn pairs. `assistant` is a message role, not a fourth participant beside the user, agent, and model. The simple two-turn example has five stored messages (`system → user → assistant → user → assistant`), but only four input messages before the second answer is generated.
 
@@ -190,7 +197,7 @@ Beyond the brief's 23, the curriculum introduces these — all seeded as `propos
 - Persian digits in prose, headings, lesson numbers, figure labels.
 - Latin digits in code, JSON, API fields, and measurement tables (per-column `digits="latin"`).
 - Large numbers in prose get a Persian thousands separator: `۱۰٬۰۰۰`.
-- Prices and token counts in 5.2 use Latin digits (they sit in a measurement table) with a visible «قیمت‌ها نمونه‌اند و تغییر می‌کنند» note.
+- Prices and technical token counts in 6.7 use Latin digits in measurement columns, with a visible note that prices are illustrative and change.
 - Percentages: `۳۰٪` with the Persian percent sign.
 
 ---

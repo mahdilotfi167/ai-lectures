@@ -1,13 +1,4 @@
-export {};
-
-interface ReadingPosition {
-  version: 1;
-  section: string | null;
-  point: number;
-  fraction: number;
-  scrollY: number;
-  hash: string;
-}
+import { parseReadingPosition, readingHash, type ReadingPosition } from '../lib/reading-position';
 
 function init() {
   const sections = Array.from(document.querySelectorAll<HTMLElement>(
@@ -15,21 +6,17 @@ function init() {
   ));
   if (!sections.length) return;
 
-  const storageKey = `ai-interactive:reading-position:v1:${window.location.pathname}`;
+  const storageKey = `ai-interactive:reading-position:v2:${window.location.pathname}`;
+  const legacyKey = `ai-interactive:reading-position:v1:${window.location.pathname}`;
   let ready = false;
   let printing = false;
   let saveTimer: number | undefined;
+  let latest: ReadingPosition | null = null;
 
   const read = (): ReadingPosition | null => {
     try {
-      const value = JSON.parse(localStorage.getItem(storageKey) ?? 'null');
-      if (!value || value.version !== 1 ||
-          !(value.section === null || typeof value.section === 'string') ||
-          !Number.isInteger(value.point) || value.point < 0 ||
-          !Number.isFinite(value.fraction) || value.fraction < 0 || value.fraction > 1 ||
-          !Number.isFinite(value.scrollY) || value.scrollY < 0 ||
-          typeof value.hash !== 'string') return null;
-      return value;
+      return parseReadingPosition(localStorage.getItem(storageKey)) ??
+        parseReadingPosition(localStorage.getItem(legacyKey));
     } catch {
       // Storage can be unavailable for local files or when privacy settings block it.
       return null;
@@ -66,19 +53,55 @@ function init() {
     const start = top(stops[point]);
     const end = stops[point + 1] ? top(stops[point + 1]) : sectionEnd(sectionIndex);
     const position: ReadingPosition = {
-      version: 1,
+      version: 2,
       section: section.id || null,
       point,
       fraction: Math.max(0, Math.min(1, (y - start) / Math.max(1, end - start))),
       scrollY: y,
-      hash: window.location.hash,
+      hash: readingHash(window.location.hash),
     };
+    latest = position;
     try {
       localStorage.setItem(storageKey, JSON.stringify(position));
     } catch {
       // Reading and navigation must continue normally without persistent storage.
     }
   };
+
+  const restore = (position: ReadingPosition) => {
+    const sectionIndex = position.section === null ? 0 :
+      sections.findIndex((section) => section.id === position.section);
+    let y = 0;
+    if (sectionIndex >= 0) {
+      const stops = points(sections[sectionIndex]);
+      const point = Math.min(position.point, stops.length - 1);
+      const start = top(stops[point]);
+      const end = stops[point + 1] ? top(stops[point + 1]) : sectionEnd(sectionIndex);
+      y = start + position.fraction * Math.max(1, end - start);
+    }
+    const maxY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    window.scrollTo({ top: Math.min(maxY, Math.max(0, y)), behavior: 'instant' });
+  };
+
+  // Keep the same content point as responsive figures and text reflow. Saving
+  // the old absolute scroll offset during resize would capture a different lesson.
+  let resizeFrame = 0;
+  let resizePosition: ReadingPosition | null = null;
+  window.addEventListener('resize', () => {
+    if (printing || window.matchMedia('print').matches || !latest) return;
+    resizePosition ??= latest;
+    ready = false;
+    window.clearTimeout(saveTimer);
+    window.cancelAnimationFrame(resizeFrame);
+    resizeFrame = window.requestAnimationFrame(() => {
+      resizeFrame = window.requestAnimationFrame(() => {
+        if (resizePosition && readingHash(window.location.hash) === resizePosition.hash) restore(resizePosition);
+        resizePosition = null;
+        ready = true;
+        save();
+      });
+    });
+  });
 
   window.addEventListener('scroll', () => {
     if (!ready || printing) return;
@@ -102,7 +125,7 @@ function init() {
   const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
   // New links take priority. Refreshing the same link resumes the exact reading point.
   const resume = saved && (!initialHash ||
-    (navigation?.type === 'reload' && initialHash === saved.hash));
+    (navigation?.type === 'reload' && readingHash(initialHash) === saved.hash));
   let interrupted = false;
   const pending = new AbortController();
   const interrupt = () => { interrupted = true; };
@@ -117,18 +140,7 @@ function init() {
     window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
       pending.abort();
       if (resume && !interrupted && window.location.hash === initialHash) {
-        const sectionIndex = saved.section === null ? 0 :
-          sections.findIndex((section) => section.id === saved.section);
-        let y = saved.scrollY;
-        if (sectionIndex >= 0) {
-          const stops = points(sections[sectionIndex]);
-          const point = Math.min(saved.point, stops.length - 1);
-          const start = top(stops[point]);
-          const end = stops[point + 1] ? top(stops[point + 1]) : sectionEnd(sectionIndex);
-          y = start + saved.fraction * Math.max(1, end - start);
-        }
-        const maxY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-        window.scrollTo({ top: Math.min(maxY, Math.max(0, y)), behavior: 'instant' });
+        restore(saved);
       }
       ready = true;
       save();

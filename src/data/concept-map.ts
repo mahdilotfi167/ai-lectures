@@ -1,5 +1,5 @@
-import { requireTerm } from './glossary';
-import type { ZoneId } from './lessons';
+import { terms } from './glossary';
+import { parts, type ZoneId } from './lessons';
 
 export interface MapNode {
   id: string;
@@ -25,10 +25,9 @@ export interface MapEdge {
   label?: string;
 }
 
-const termNode = (zone: ZoneId, id: string): MapNode => {
-  const t = requireTerm(id);
+const termNode = (zone: ZoneId, t: (typeof terms)[number]): MapNode => {
   return {
-    id,
+    id: t.id,
     label: t.short,
     shortLabel: t.short.length > 14 ? t.short : undefined,
     lesson: t.not_before,
@@ -46,102 +45,28 @@ const conceptNode = (
   def: string,
 ): MapNode => ({ id, label, lesson, zone, def, kind: 'concept' });
 
-export const mapZones: MapZone[] = [
-  {
-    id: 'agents',
-    label: 'ایجنت‌ها',
-    part: 2,
-    color: 'var(--part-2)',
-    nodes: [
-      'agent',
-      'chatbot',
-      'tool-calling',
-      'function-calling',
-      'mcp',
-      'skill',
-      'memory',
-      'stateless',
-      'workflow',
-      'harness',
-    ].map((id) => termNode('agents', id)),
-  },
-  {
-    id: 'model',
-    label: 'مدل',
-    part: 3,
-    color: 'var(--part-3)',
-    nodes: [
-      'llm',
-      'model',
-      'inference',
-      'token',
-      'context',
-      'turn',
-      'context-window',
-      'system-prompt',
-      'training',
-      'pretraining',
-      'fine-tuning',
-      'alignment',
-      'rlhf',
-      'hallucination',
-      'reasoning',
-      'benchmark',
-    ].map((id) => termNode('model', id)),
-  },
-  {
-    id: 'build',
-    label: 'ساختن',
-    part: 4,
-    color: 'var(--part-4)',
-    nodes: [
-      'api',
-      'temperature',
-      'prompt',
-      'few-shot',
-      'context-engineering',
-      'rag',
-      'embedding',
-      'chunking',
-      'vector-database',
-      'semantic-search',
-      'eval',
-      'regression',
-    ].map((id) => termNode('build', id)),
-  },
-  {
-    id: 'run',
-    label: 'اجرا',
-    part: 5,
-    color: 'var(--part-5)',
-    nodes: [
-      'orchestrator',
-      'gateway',
-      'cost',
-      'caching',
-      'prompt-injection',
-      'guardrail',
-      'data-leakage',
-      'least-privilege',
-      'observability',
-      'tracing',
-      'latency',
-      'non-determinism',
-    ].map((id) => termNode('run', id)),
-  },
-  {
-    id: 'decide',
-    label: 'تصمیم',
-    part: 6,
-    color: 'var(--part-6)',
-    nodes: [
-      conceptNode('decide', 'value', 'ارزش و اولویت', '6.1', 'انتخاب اولین کاربرد بر پایهٔ حجم کار تکراری و تحمل خطا.'),
-      conceptNode('decide', 'build-or-buy', 'ساخت یا خرید', '6.2', 'چهار پرسش برای انتخاب بین خرید، ترکیب و ساخت.'),
-      conceptNode('decide', 'team', 'تیم و مهارت', '6.3', 'چهار نقشی که یک قابلیت هوش مصنوعی لازم دارد.'),
-      conceptNode('decide', 'map', 'نقشهٔ کامل', '6.4', 'همین نقشه، این بار با معنای همهٔ واژه‌ها.'),
-    ],
-  },
+const practicalNodes: MapNode[] = [
+  conceptNode('practice', 'value', 'انتخاب کار', '3.1', 'کار محدود با نتیجهٔ قابل‌بررسی و اشتباه قابل‌جبران.'),
+  conceptNode('practice', 'capability', 'انتخاب قابلیت', '3.2', 'قابلیت، دسترسی و اجازهٔ اجرا را جدا انتخاب کنید.'),
+  conceptNode('practice', 'evidence', 'دیده‌ها و شواهد', '3.5', 'دسترسی به فایل، با خواندن و استفادهٔ درست از آن متفاوت است.'),
+  conceptNode('practice', 'feedback', 'اصلاح گفت‌وگو', '3.6', 'فرض نادرست و چیزهایی را که نباید عوض شوند مشخص کنید.'),
+  conceptNode('judgment', 'verification', 'بررسی نتیجه', '4.1', 'برای هر ادعا شاهدی متناسب با پیامد خطا بخواهید.'),
+  conceptNode('judgment', 'recovery', 'توقف و بازیابی', '4.3', 'لغو اجرا لزوماً تغییرهای قبلی را برنمی‌گرداند.'),
+  conceptNode('judgment', 'routines', 'روش قابل‌تکرار', '4.4', 'روش پایدار را از واقعیت متغیر جدا نگه دارید.'),
+  conceptNode('systems', 'build-or-buy', 'استفاده تا ساخت', '6.11', 'از محصول آماده شروع کنید؛ مسئولیت هر اتصال و تغییر را بشناسید.'),
+  conceptNode('systems', 'team', 'مسئولیت نگه‌داری', '6.11', 'مالک نتیجه، بازبین حوزه و مسئول دسترسی و پشتیبانی را مشخص کنید.'),
+  conceptNode('systems', 'map', 'نقشهٔ کامل', '6.12', 'تصمیم‌های عملی و سازوکارهای فنی را به هم وصل کنید.'),
 ];
+
+/** Group by actual introduction, not the historical technical classification. */
+export const mapZones: MapZone[] = parts.map((part) => ({
+  id: part.zone, label: part.title, part: part.part, color: `var(--part-${part.part})`,
+  nodes: [
+    ...terms.filter((term) => Number(term.not_before.split('.')[0]) === part.part)
+      .map((term) => termNode(part.zone, term)),
+    ...practicalNodes.filter((node) => node.zone === part.zone),
+  ],
+}));
 
 export const mapNodes: MapNode[] = mapZones.flatMap((z) => z.nodes);
 export const mapNodeById = new Map(mapNodes.map((n) => [n.id, n]));

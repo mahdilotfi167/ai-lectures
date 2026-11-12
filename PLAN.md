@@ -1,16 +1,16 @@
-# هوش مصنوعی، از بالا به پایین — Master Plan
+# هوش مصنوعی؛ از شناخت تا کاربرد — Master Plan
 
-> **Product**: one self-contained, interactive, Persian (RTL) HTML document that teaches AI top-down to a mixed audience led by non-technical business readers.
+> **Product**: one self-contained, interactive, Persian (RTL) HTML document for people who want to use and understand AI.
 > **Deliverable**: `dist/index.html` — a single file, no network needed, openable from a USB stick or an email attachment.
-> **Source**: modular. 33 lesson files + a reusable figure component library + a build that inlines everything.
+> **Source**: modular. 41 lesson files + a reusable figure component library + a build that inlines everything.
 >
-> **Curriculum update**: the redundant map and reading-guide lessons were removed. Part 1 is now numbered 1.1–1.3; other Parts are unchanged. Older phase descriptions below retain the original 35-lesson scope; `src/data/lessons.ts` and `docs/curriculum.md` define the current curriculum.
+> **Current contract (user-first revision)**: overview/agents/basics (Parts 1–2) → effective use (Parts 3–4) → internals (Parts 5–6). 41 lessons, six Parts, three stages, 40 primary figures (seven interactive), 20 Lenses and one Lab in 6.2. The practical course is complete at 4.6. `PLAN-USER-FIRST.md` and `docs/curriculum.md` supersede the historical phase/order/aside requirements below; old 35-lesson counts and tasks are archival, not current authoring instructions. Numeric v1 links and reading positions migrate through stable content slugs.
 
 This file is the master plan. Four companion documents hold the detail:
 
 | Doc | Contents |
 |---|---|
-| [`docs/curriculum.md`](docs/curriculum.md) | The 33-lesson skeleton. One row per lesson: objective, figure, terms, budget. **The authoring contract.** |
+| [`docs/curriculum.md`](docs/curriculum.md) | The 41-lesson syllabus, outcomes, figures, terms, budgets, and provenance. **The authoring contract.** |
 | [`docs/figures.md`](docs/figures.md) | The figure component library. Props, animation behavior, RTL rules. |
 | [`docs/design-system.md`](docs/design-system.md) | Tokens, typography, RTL/LTR handling, motion, a11y, print. |
 | [`docs/terminology.md`](docs/terminology.md) | Persian content rules, glossary schema, validator rules. |
@@ -23,15 +23,15 @@ This file is the master plan. Four companion documents hold the detail:
 
 ### 1.1 The one-sentence goal
 
-A manager who knows nothing about AI should be able to scroll this document once, end to end, and afterwards (a) understand what the words mean, (b) understand how the pieces fit, and (c) ask their engineers good questions.
+A reader can choose a suitable task and capability, share useful material safely, collaborate, verify results, control authority and understand the mechanisms behind the interface.
 
 ### 1.2 Audience
 
-**Primary**: Persian-speaking business readers — executives, product managers, team leads, founders. No code literacy assumed. They read the main scroll and nothing else.
+**Primary**: Persian-speaking people who want to use and understand AI; no code literacy or application-building goal is assumed.
 
-**Secondary**: senior engineers and architects new to LLMs. They read the main scroll *plus* the collapsed `<Aside variant="eng">` blocks.
+**Secondary**: readers curious about deeper technical explanations in Parts 5–6. Engineering asides are retired.
 
-**Consequence — the two-track rule**: the main scroll must be 100% complete and coherent with every engineering aside collapsed. An aside may *deepen* a point but may never *carry* one. If a reader must open an aside to follow the next lesson, the lesson is wrong.
+**Consequence**: one continuous course. The first two stages stand alone; advanced APIs and system design are not prerequisites for effective use. Essential learning never depends on clicking a control.
 
 ### 1.3 Tone
 
@@ -49,11 +49,11 @@ Four devices carry continuity across 35 lessons. They are the reason this reads 
 
 ### 2.1 The shared navigation map
 
-The fixed **فهرست** button opens the document's map: six color-coded Part bands, all 33 lessons, and 54 concept links grouped from `src/data/concept-map.ts`. Every concept leads directly to its introducing lesson. Search supports Persian/English names and lesson numbers; the current reading location is highlighted.
+The fixed **فهرست** button opens six color-coded Part bands labelled with three stages, all 41 lessons, and concepts grouped by actual introduction from `src/data/concept-map.ts`. Search supports Persian/English names and lesson numbers; the current reading location is highlighted.
 
-Lesson **6.4** revisits this navigator without an inline primary figure; the separate introductory map lesson was removed. Part dividers contain orienting text only. No map is repeated in the reading flow. The old `ConceptMap` SVG remains available to the development gallery, not the production book.
+Lesson **6.12** revisits this navigator without an inline primary figure. No map is repeated in the reading flow. The old `ConceptMap` SVG remains available to the development gallery, not the production book.
 
-Implementation: `shell/TocMap.astro` renders the map-style links; `TocDrawer.astro` hosts the accessible dialog and a native no-JavaScript fallback. The book now has 32 primary figures (7 interactive), plus the unchanged 21 Context Lens/Lab pieces.
+Implementation: `shell/TocMap.astro` renders the map-style links; `TocDrawer.astro` hosts the accessible dialog and a native no-JavaScript fallback. The book has 40 primary figures (7 interactive), plus 21 Context Lens/Lab pieces.
 
 ### 2.2 The running example
 
@@ -63,16 +63,16 @@ The recurring example is **a general-purpose coding agent like OpenCode or Herme
 |---|---|
 | 1 | Meet the coding assistant, the project folder, the request, and the difference between product, harness, and model. |
 | 2 | Read a file, edit it, run a command, use project instructions, and review actual results; add dark mode as a feature example. |
-| 3 | Invent a file name, forget a previous path, or plan a cross-file change without checking dependencies. |
-| 4 | Use project guides, relevant files, command output, clear instructions, and a fixed evaluation set. |
-| 5 | We inspect repeated model calls, an outdated test command, and an injected request to read `/private/secrets.env`. |
-| 6 | Buy a coding-agent core or combine it with project-specific guides, tools, and approval rules. |
+| 3 | Choose a bounded task/capability, share safely, supply a clear brief and material, and correct a proposed change. |
+| 4 | Verify evidence, grant limited authority, stop/recover, reuse routines and compare total value. |
+| 5 | Explain invented file names, capacity/selection, trained parameters, and computation tradeoffs behind those practices. |
+| 6 | Inspect calls, prepared input, connectors, retrieval, traces and access enforcement; choose use/configure/connect/build responsibly. |
 
 Every tagged lesson uses `example: coding` in frontmatter. The validator warns if a Part has zero `example: coding` lessons. `src/data/context/story.ts` holds a few consistent illustrative paths, commands, and outputs; it is not a narrative every example must follow. Tool definitions are not evidence: claims of reading, edits, or test success require result blocks. Names such as `readFile`, `editFile`, and `runCommand` are teaching shorthand, not product-specific tool APIs.
 
 ### 2.3 The text-loop spine (Context Lens)
 
-Every concept in Parts 2–5 is a way of putting text into one box. A recurring **Context Lens** — a secondary figure — shows the actual text the model receives, who wrote each block, and what the model writes next. It appears in 20 lessons plus one Lab in 4.3. The full spec is `PLAN-CONTEXT.md`; it is implemented.
+A recurring **Context Lens** shows the sample input of a call, its sources and the model's new output. There are 20 Lens hosts plus one prepared-input Lab in 6.2. The practical lessons use static worked examples; the retained technical widgets deepen them later. Current hosts are in `docs/curriculum.md`; historical designs are recorded in `PLAN-CONTEXT.md`.
 
 The spine sentence closes every lens: «مدل فقط ادامهٔ متنی را می‌نویسد که جلویش گذاشته‌اند.» Lenses use one quiet reading view: short Persian block labels, actual input text, compact outside-action notes, and a separate complete model response. There is no labeled/raw switch, actor strip, per-block token counter, or typing animation; capacity meters and the Lab total remain.
 
@@ -80,7 +80,7 @@ Rules: at most one lens per lesson; every frame is server-rendered; every lens i
 
 ### 2.4 Progressive zoom
 
-The document is strictly top-down and never forward-references. Part 1 is the whole system at 10,000 feet. Part 2 opens the outermost layer users actually touch (agents). Part 3 zooms into the component inside it (the model). Part 4 zooms out to building. Part 5 to running. Part 6 to deciding.
+The current progression is user-first: overview and agent basics → task selection, sharing, dialogue, verification and authority → model and system mechanisms. Terms arrive when practically needed, then deepen later. Part 6 has three clusters: input/connections; sources/adaptation/evaluation; operation/decisions.
 
 A reader who stops after any Part has a complete, if shallower, mental model. Parts are not cliffhangers.
 
@@ -99,8 +99,8 @@ The document is a **single continuous vertical scroll**. No tabs. No pagination.
 1. **Animations auto-play.** When a figure scrolls into view, it animates once, on its own. The reader never presses "play".
 2. **At most one optional control per figure**, and only when exploration genuinely teaches something a passive animation cannot (e.g. the cost calculator in 5.2, the tokenizer in 3.2). Target: **no more than 8 primary figures have any control at all.** `docs/curriculum.md` marks which ones; adding a ninth requires removing one. The 20 Context Lenses are secondary figures with their own bounded controls (steppers and one Lab) and do not count against this cap. There are no reader quizzes or answer-gated outputs.
 3. **A control is always a slider, a two-way toggle, or a text input.** Never a dropdown, never a modal, never a multi-step wizard. The Context Lens adds steppers and Lab checkboxes as the only exceptions; both are bounded and keyboard-native.
-4. **Every figure is complete without touching it.** Controls refine; they never reveal required information.
-5. **Nothing is hidden behind a click in the main track.** The only collapsible elements in the entire document are the engineering asides, and they are decorative by definition (§1.2).
+4. **Every lesson is complete without touching a control.** Required learning is visible in prose and static figures; retained Lens steppers offer deeper traces with all frames present in no-JS, print and reduced motion.
+5. **No engineering asides or gated answers.** The shared navigator is optional, not a learning prerequisite.
 
 ### 3.3 Chrome
 

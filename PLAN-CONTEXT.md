@@ -1,6 +1,8 @@
 # PLAN-CONTEXT — "آنچه مدل می‌بیند" (What the model sees)
 
-> **Status**: implemented. 20 lenses + the 4.3 Lab are live in `dist/index.html`; this file remains the spec and the record of deviations.
+> **Status**: implemented and remapped to the 41-lesson user-first course. 20 Lenses + the Lab in 6.2 are retained. `docs/curriculum.md` lists current hosts; numeric references and original implementation tasks below are historical.
+>
+> **2026 user-first migration**: stable `fig-{slug}-ctx` identities preserve v1 numeric fragments. Skill loading is 2.3, memory 2.4, read/test/edit/retest 2.6, model depth Part 5, and API/Lab/MCP/RAG/security Part 6. Role labels remain opt-in in 1.2 and 6.1. Keep five skill frames, eight test frames, five returned-denial frames, complete ordered recaps and prepared-input Lab labels. Context eviction is a sample program policy, visible reasoning is an illustrative plan, and source/role labels are not permission enforcement. Historical raw-view, quiz and actor-strip requirements below do not apply.
 >
 > **Current examples**: a general-purpose coding agent like OpenCode or Hermes, not shopping support or one fictional project's bug. Examples cover repository exploration, adding a feature such as dark mode, reading/editing files, executing commands, fixing a failing test, using project guides, and reviewing changes. `story.ts` holds small illustrative fixtures (`src/utils.ts`, a test command, a sample edit), not a universal scenario. Tool names are teaching shorthand, not either product's actual API. `blocks.ts`, `lenses.ts`, and `lab.ts` contain the current examples; older scenarios and block IDs below are historical. File/test evidence is shown explicitly; definitions alone never establish code contents or execution success.
 >

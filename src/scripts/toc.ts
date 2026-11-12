@@ -27,6 +27,7 @@ const normalize = (value: string): string =>
 
 function filter(announce = true) {
   const query = normalize(search?.value ?? '');
+  if (dialog) dialog.dataset.filtered = String(Boolean(query));
   let count = 0;
   for (const zone of zones) {
     const zoneMatches = normalize(zone.dataset.search ?? '').includes(query);
@@ -35,7 +36,12 @@ function filter(announce = true) {
       entry.hidden = !zoneMatches && !normalize(entry.dataset.search ?? '').includes(query);
       if (!entry.hidden) count += 1;
     }
+    zone.dataset.resultCount = String(entries.filter((entry) => !entry.hidden).length);
     zone.hidden = entries.every((entry) => entry.hidden);
+    for (const heading of zone.querySelectorAll<HTMLElement>('[data-toc-cluster]')) {
+      heading.hidden = entries.filter((entry) => entry.dataset.cluster === heading.dataset.tocCluster)
+        .every((entry) => entry.hidden);
+    }
     const concepts = zone.querySelector<HTMLElement>('[data-toc-concepts]');
     if (concepts) {
       concepts.hidden = Array.from(concepts.querySelectorAll<HTMLElement>('[data-toc-entry]'))

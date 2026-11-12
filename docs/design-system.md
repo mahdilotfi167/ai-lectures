@@ -249,7 +249,7 @@ Six stacked segments in Part colors, filled portion at full opacity, unfilled at
 
 ### 5.5 TOC drawer
 
-One fixed icon button, top inline-start. Opens a wide `<dialog>` containing six color-coded Part bands, all 33 lesson links, and 54 concept links from the map data. A search field filters Persian/English names and lesson numbers; the current lesson is marked. On mobile the bands stack and lesson cards become a single column. Selection closes the map and focuses the destination. Escape, the close button, and backdrop clicks restore opener focus. Native `<dialog>` traps focus; a native `<details>` version provides no-JavaScript navigation. Hidden in print. The map is not repeated inside the book.
+One fixed icon button, top inline-start. Opens a wide `<dialog>` containing six color-coded Part bands, three stage labels, all 41 lesson links, and concept links derived from actual introductions. Search supports Persian/English names and lesson numbers. Filtered results use compact single-column bands instead of leaving empty map columns; a lone lesson fills the available width. On mobile the bands and cards stack. Selection closes the map and focuses the destination. Escape, the close button, and backdrop clicks restore opener focus. Native `<dialog>` traps focus; a native `<details>` version provides no-JavaScript navigation. Hidden in print. The map is not repeated inside the book.
 
 ### 5.6 Part divider
 
@@ -367,7 +367,7 @@ The author aliases remain available as tokens, but blocks no longer use separate
 
 - One bordered sheet holds the ordered input blocks, separated by quiet horizontal rules.
 - Blocks carry a short kind label, the actual text, and only relevant state text or a lesson link. No role chips, icons, actor strip, or per-block token counts.
-- Exception for lessons 1.2 and 4.1: `showMessageRoles` adds plain, unboxed `system`, `user`, and `assistant` labels because message roles are the subject. This is not a restored raw view or actor strip.
+- Exception for lessons 1.2 and 6.1: `showMessageRoles` adds plain, unboxed `system`, `user`, and `assistant` labels because message roles are the subject. This is not a restored raw view or actor strip.
 - `turnStart` inserts a quiet «نوبت ۱ / نوبت ۲» divider before a user message; the following assistant reply belongs to that same turn. The system instruction remains above the turn dividers.
 - `tapeLabel` distinguishes input before generation from a saved transcript after generation. Never present the new response as part of its own input.
 - JSON is `dir="ltr"` in a light code block, wrapping at all sizes. The mapping lesson keeps its actual `messages` example.
@@ -401,3 +401,8 @@ All controls are native `<button>`/`<input>` elements outside any SVG, min 44 px
 - **No-JS**: all frames render stacked with their step headings and final outputs; steppers and Lab toggles are hidden; the Lab shows its default state and the three-preset table.
 - **Reduced motion**: all frames visible, no transitions; the stepper is hidden.
 - **Print**: all frames expanded, controls hidden, outputs visible, code light; text labels preserve distinctions in greyscale.
+## 11. Current curriculum presentation
+
+The user-first revision has three stages across the existing six Part colors: overview/agents, effective use, technical internals. Show stage labels in Part dividers and the shared searchable TOC; do not add routes, tabs, gated tracks, repeated maps or engineering asides. Part 6 uses three textual clusters in the TOC.
+
+Lesson and figure anchors use stable slugs; zero-footprint legacy targets preserve published fragments even without JavaScript. Current numeric labels are presentation only. Static conversation examples show all labelled messages at once and work with no JS, print and reduced motion. All essential practical learning is visible without controls.

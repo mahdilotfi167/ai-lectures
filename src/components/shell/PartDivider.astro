@@ -1,23 +1,30 @@
 ---
-import { faNum } from '../../lib/format';
-import type { PartMeta } from '../../data/lessons';
+import { faNum, partAnchor } from '../../lib/format';
+import { parts, stages, type PartMeta } from '../../data/lessons';
+import LegacyAliases from './LegacyAliases.astro';
 
 interface Props {
   part: PartMeta;
 }
 
 const { part } = Astro.props;
+const stageIndex = stages.findIndex((stage) => stage.parts.includes(part.part));
+const stage = stages[stageIndex];
 ---
 
 <section
   class="part-divider full"
-  id={`part-${part.part}`}
+  id={partAnchor(part.part)}
+  data-part-number={part.part}
+  data-stage={stage.id}
   style={`--part-color: var(--part-${part.part})`}
   aria-labelledby={`part-${part.part}-title`}
 >
+  <LegacyAliases anchor={partAnchor(part.part)} />
   <div class="part-divider__inner">
+    <p class="part-divider__stage">مرحلهٔ {faNum(stageIndex + 1)} از {faNum(stages.length)} — {stage.title}</p>
     <div class="part-divider__num">بخش {faNum(part.part)}</div>
-    <div class="part-divider__kicker">از {faNum(6)} بخش</div>
+    <div class="part-divider__kicker">از {faNum(parts.length)} بخش</div>
     <h2 class="part-divider__title" id={`part-${part.part}-title`}>{part.title}</h2>
     <p class="part-divider__promise">{part.promise}</p>
     <p class="part-divider__divider">{part.divider}</p>

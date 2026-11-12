@@ -2,12 +2,13 @@
 import FigureShell from '../shell/FigureShell.astro';
 import { mapZones, mapEdges } from '../../data/concept-map';
 import { faNum } from '../../lib/format';
+import type { ZoneId } from '../../data/lessons';
 
 interface Props {
   id: string;
   desc: string;
   caption: string;
-  highlight: 'none' | 'all' | 'overview' | 'agents' | 'model' | 'build' | 'run' | 'decide';
+  highlight: 'none' | 'all' | ZoneId;
   revealZones?: boolean;
   clickable?: boolean;
   height?: number;

@@ -40,9 +40,9 @@ const project = (weights: [number, number, number]) => {
 
 <HtmlFigure id={id} desc={desc} caption={caption} type="triangle">
   <div class="figure__desktop">
-    <svg class="fig-svg" viewBox="0 0 1000 560" role="img" aria-labelledby={`${id}-title ${id}-desc`}>
+    <svg class="fig-svg" viewBox="0 0 1000 560" role="img" aria-labelledby={`${id}-title ${id}-svg-desc`}>
       <title id={`${id}-title`}>{caption}</title>
-      <desc id={`${id}-desc`}>{desc}</desc>
+      <desc id={`${id}-svg-desc`}>{desc}</desc>
 
       <polygon points={v.map((p) => `${p.x},${p.y}`).join(' ')} class="fig-tri-outline" />
       {v.map((p, i) => (

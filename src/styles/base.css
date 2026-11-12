@@ -218,6 +218,7 @@ a:hover {
 
 /* ---------- part divider ---------- */
 .part-divider {
+  position: relative;
   min-height: 45vh;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -279,6 +280,7 @@ a:hover {
 
 /* ---------- lesson ---------- */
 .lesson {
+  position: relative;
   margin-block: var(--space-24);
   scroll-margin-block-start: 5rem;
   --lesson-color: var(--part-1);
@@ -379,9 +381,66 @@ a:hover {
 
 /* ---------- figure ---------- */
 .figure {
+  position: relative;
   margin-block: var(--space-8);
   width: 100%;
   scroll-margin-block-start: 5rem;
+}
+
+/* Real fragment targets, including with JavaScript disabled; no layout footprint. */
+.legacy-anchor {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  display: block;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+  scroll-margin-block-start: 5rem;
+}
+
+.part-divider__stage {
+  color: var(--part-color);
+  font-size: var(--text-sm);
+  margin-block-end: var(--space-6);
+}
+
+.toc-zone__stage,
+.toc-lesson-grid__cluster {
+  color: var(--fg-muted);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  margin-block-end: var(--space-2);
+}
+
+.toc-lesson-grid__cluster {
+  grid-column: 1 / -1;
+  margin-block: var(--space-3) 0;
+}
+
+.conversation-example {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.conversation-example__message {
+  padding: var(--space-3) var(--space-4);
+  border-inline-start: 3px solid var(--stroke-strong);
+  border-radius: 8px;
+  background: var(--bg-sunken);
+  overflow-wrap: anywhere;
+}
+
+.conversation-example__message.is-user {
+  border-inline-start-color: var(--lesson-color);
+}
+
+.conversation-example__message b {
+  display: block;
+  font-size: var(--text-sm);
+  margin-block-end: var(--space-2);
 }
 
 /* Figures live inside the measure column but are allowed to break out to
@@ -493,7 +552,7 @@ a:hover {
 
 .figure__note {
   font-size: var(--text-xs);
-  color: var(--fg-faint);
+  color: var(--fg-muted);
   margin-block-start: var(--space-2);
 }
 
@@ -919,6 +978,41 @@ html.toc-is-open {
 
 .toc-zone__content {
   min-width: 0;
+}
+
+/* Search results are a compact list, not a mostly empty three-column map. */
+.toc-dialog[data-filtered='true'] .toc-zone {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+}
+
+.toc-dialog[data-filtered='true'] .toc-zone__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+}
+
+.toc-dialog[data-filtered='true'] .toc-zone__heading {
+  order: -1;
+}
+
+.toc-dialog[data-filtered='true'] .toc-zone__stage {
+  margin: 0;
+  font-size: var(--text-xs);
+}
+
+.toc-dialog[data-filtered='true'] .toc-zone__promise {
+  display: none;
+}
+
+.toc-dialog[data-filtered='true'] .toc-lesson-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+}
+
+.toc-dialog[data-filtered='true'] .toc-zone[data-result-count='1'] .toc-lesson-grid {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .toc-lesson-grid,

@@ -12,7 +12,7 @@ interface Props {
 }
 
 const { frame, lesson } = Astro.props;
-const showTokens = compareLessonId(lesson, '3.2') >= 0;
+const showTokens = compareLessonId(lesson, '5.2') >= 0;
 
 const output = frame.output;
 const jsonOutput = output ? /^[[{]/.test(output.text.trim()) : false;

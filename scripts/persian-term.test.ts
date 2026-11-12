@@ -35,3 +35,15 @@ test('exceptions do not affect other terms or matching forms', () => {
   assert.equal(containsPersianTerm('این شکل آموزشی است.', 'فاین‌تیونینگ', 'fine-tuning'), false);
   assert.equal(containsPersianTerm('متن', '', 'training'), false);
 });
+
+for (const text of ['چیدمان فعلی حفظ شود.', 'خدمات اضافی حساب می‌شوند.', 'چیدمان کانتکست']) {
+  test(`does not treat an embedded substring as temperature: ${text}`, () => {
+    assert.equal(containsPersianTerm(text, 'دما', 'temperature'), false);
+  });
+}
+
+for (const text of ['دما را تنظیم کنید.', 'دمای کمتر تضمین صحت نیست.', 'دماهای متفاوت', 'دما‌ها را مقایسه کنید.']) {
+  test(`keeps the temperature gate for actual references: ${text}`, () => {
+    assert.equal(containsPersianTerm(text, 'دما', 'temperature'), true);
+  });
+}

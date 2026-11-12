@@ -3,7 +3,7 @@ import FigureShell from '../shell/FigureShell.astro';
 import ContextTape from './ContextTape.astro';
 import ContextText from './ContextText.astro';
 import Icon from '../shell/Icon.astro';
-import { faNum } from '../../lib/format';
+import { faNum, lessonAnchor } from '../../lib/format';
 import { requireBlock } from '../../data/context/blocks';
 import {
   composeLab,
@@ -105,7 +105,7 @@ const presetButtonLabels: Record<string, string> = {
       این آزمایشگاه ورودی آمادهٔ یک فراخوانی را مقایسه می‌کند، نه مراحل اجرای زنده را.
       متن مهارت و راهنما از قبل توسط برنامه آماده شده‌اند؛ کلیدها فقط حضورشان را انتخاب می‌کنند.
       در نمونهٔ خواندن کد و تست، درخواست مدل پیش از نتیجهٔ ایجنت آمده است.
-      مسیر کامل خواندن مهارت را در <a href="#lesson-2-4">درس ۲.۴</a> ببینید.
+      مسیر کامل خواندن مهارت را در <a href={`#${lessonAnchor('2.3')}`}>درس ۲.۳</a> ببینید.
     </p>
 
     <div class="ctx-lab__controls">
@@ -141,7 +141,7 @@ const presetButtonLabels: Record<string, string> = {
 
     <div class="ctx-lab__grid">
       <div class="ctx-lab__tape">
-        <ContextTape frame={labFrame} lesson="4.3" />
+        <ContextTape frame={labFrame} lesson="6.2" />
         <p class="ctx-lab__tokens">
           <Icon name="coin" size={15} />
           ≈ <strong data-lab-token-count>{faNum(totalTokens)}</strong> توکن در این متن
@@ -214,7 +214,7 @@ const presetButtonLabels: Record<string, string> = {
         </tbody>
       </table>
       <p class="ctx-lab__cost-link">
-        هر بلوک بیشتر، بار بیشتر در هر نوبت. جزئیات در <a href="#lesson-5-2">درس ۵.۲</a>.
+        ورودی بیشتر می‌تواند در هر فراخوانی مصرف بیشتری داشته باشد. جزئیات در <a href={`#${lessonAnchor('6.7')}`}>درس ۶.۷</a>.
       </p>
     </div>
 

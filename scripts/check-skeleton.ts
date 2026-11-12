@@ -2,9 +2,11 @@ import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
-import { lessons, parts } from '../src/data/lessons.ts';
+import { lessons, parts, stages } from '../src/data/lessons.ts';
 import { termById } from '../src/data/glossary.ts';
-import { lensByKey } from '../src/data/context/lenses.ts';
+import { lenses, lensByKey } from '../src/data/context/lenses.ts';
+import { legacyAnchors } from '../src/data/curriculum-migration.ts';
+import { lessonAnchor, partAnchor } from '../src/lib/format.ts';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const dir = join(root, 'src/content/lessons');
@@ -37,6 +39,13 @@ for (const expected of lessons) {
   if (d.example !== expected.example) errors.push(`${prefix}: example ${d.example} != ${expected.example}`);
   if (d.words !== expected.words) errors.push(`${prefix}: words ${d.words} != ${expected.words}`);
   if (d.has_aside !== expected.hasAside) errors.push(`${prefix}: has_aside mismatch`);
+  if (JSON.stringify(d.terms_introduced) !== JSON.stringify(expected.terms)) errors.push(`${prefix}: terms mismatch`);
+  const introduced = expected.terms.slice().sort();
+  const glossaryIntroduced = [...termById.values()].filter((term) => term.not_before === expected.id).map((term) => term.id).sort();
+  if (JSON.stringify(introduced) !== JSON.stringify(glossaryIntroduced)) errors.push(`${prefix}: terms do not match glossary introductions`);
+  for (const termId of introduced) {
+    if (termById.get(termId)?.zone !== parts.find((part) => part.part === expected.part)?.zone) errors.push(`${prefix}: ${termId} has a stale concept zone`);
+  }
   if (d.status !== 'confirmed') warnings.push(`${prefix}: status is ${d.status}, not confirmed`);
 
   if (expected.figure) {
@@ -67,7 +76,7 @@ for (const expected of lessons) {
       errors.push(`${prefix}: unknown context lens ${lens.lens}`);
     } else {
       if (def.lesson !== expected.id) errors.push(`${prefix}: lens ${lens.lens} belongs to ${def.lesson}`);
-      const expectedLensId = `fig-${expected.part}-${expected.id.split('.')[1]}-ctx`;
+      const expectedLensId = `fig-${expected.slug}-ctx`;
       if (lens.id !== expectedLensId) errors.push(`${prefix}: lens id ${lens.id} != ${expectedLensId}`);
       if (def.mode === 'lab') {
         if (!p.body.includes('<ContextLab')) errors.push(`${prefix}: lab declared but no <ContextLab>`);
@@ -122,7 +131,25 @@ if (interactive.length !== expectedInteractive) {
 }
 
 const withLens = parsed.filter((p) => p.data.context_lens);
-if (withLens.length !== 21) errors.push(`expected 21 lessons with a context lens (20 + lab), found ${withLens.length}`);
+if (withLens.length !== lenses.length) errors.push(`expected ${lenses.length} lessons with a context lens, found ${withLens.length}`);
+
+const stageParts = stages.flatMap((stage) => stage.parts);
+if (new Set(stageParts).size !== stageParts.length ||
+    JSON.stringify(stageParts) !== JSON.stringify(parts.map((part) => part.part))) errors.push('stages must cover every Part exactly once, in reading order');
+for (const part of parts) {
+  const sequence = lessons.filter((lesson) => lesson.part === part.part).map((lesson) => lesson.id);
+  if (sequence.some((id, index) => id !== `${part.part}.${index + 1}`)) errors.push(`part ${part.part}: nonconsecutive display numbers`);
+}
+const anchors = new Set([
+  ...lessons.map((lesson) => lessonAnchor(lesson.id)),
+  ...lessons.flatMap((lesson) => lesson.figure ? [lesson.figure.id] : []),
+  ...withLens.map((entry) => entry.data.context_lens.id),
+  ...parts.map((part) => partAnchor(part.part)),
+]);
+for (const [alias, target] of Object.entries(legacyAnchors)) {
+  if (anchors.has(alias)) errors.push(`legacy anchor ${alias} collides with a canonical anchor`);
+  if (!anchors.has(target)) errors.push(`legacy anchor ${alias} has no destination ${target}`);
+}
 
 for (const part of parts) {
   const coding = parsed.filter((p) => p.data.part === part.part && p.data.example === 'coding');
@@ -131,6 +158,7 @@ for (const part of parts) {
 
 const ids = parsed.map((p) => p.data.id);
 if (new Set(ids).size !== ids.length) errors.push('duplicate lesson ids');
+if (new Set(lessons.map((lesson) => lesson.slug)).size !== lessons.length) errors.push('duplicate stable lesson slugs');
 
 console.log(`skeleton: ${parsed.length} lessons, ${interactive.length} interactive figures`);
 for (const warning of warnings) console.warn(`warning: ${warning}`);

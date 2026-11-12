@@ -1,6 +1,6 @@
 ---
 import { faNum } from '../../lib/format';
-import { lessons, parts } from '../../data/lessons';
+import { lessons, parts, stages } from '../../data/lessons';
 ---
 
 <section class="cover full" aria-labelledby="cover-title">
@@ -9,9 +9,10 @@ import { lessons, parts } from '../../data/lessons';
       هوش مصنوعی؛<br /><em>از شناخت تا کاربرد</em>
     </h1>
     <p class="cover__subtitle">
-      راهنمایی ساده برای فهمیدن هوش مصنوعی و تصمیم‌گیری آگاهانه دربارهٔ آن.
+      از شناخت دستیار و ایجنت، به استفادهٔ مؤثر و سپس فهم پشت‌صحنه.
     </p>
-    <div class="cover__meta" aria-label="مشخصات سند">
+    <div class="cover__meta" role="group" aria-label="مشخصات سند">
+      <span>{faNum(stages.length)} مرحله</span>
       <span>{faNum(parts.length)} بخش</span>
       <span>{faNum(lessons.length)} درس</span>
     </div>

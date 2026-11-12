@@ -37,7 +37,7 @@ const liveStep = steps[0];
       <span class="fig-prob__input-author fig-prob__input-author--user">کاربر</span>
       <span class="fig-prob__input-author fig-prob__input-author--model">مدل</span>
     </div>
-    <div class="fig-prob__sentence" aria-label="جملهٔ در حال ساخته‌شدن">
+    <div class="fig-prob__sentence" role="group" aria-label="جملهٔ در حال ساخته‌شدن">
       <span class="fig-prob__prefix">{prefix}</span>
       {chosenTokens.map((token, i) => (
         <span

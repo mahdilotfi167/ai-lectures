@@ -9,9 +9,10 @@
     "check:skeleton": "node scripts/check-skeleton.ts",
     "check:glossary": "node scripts/check-glossary.ts",
     "check:budget": "node scripts/check-budget.ts",
+    "test": "node --test scripts/*.test.ts",
     "check": "node scripts/check-skeleton.ts && node scripts/check-glossary.ts && node scripts/check-context.ts && node scripts/check-budget.ts",
     "prebuild": "node scripts/check-skeleton.ts && node scripts/check-glossary.ts && node scripts/check-context.ts && node scripts/check-budget.ts",
-    "build": "astro build && node scripts/check-budget.ts --post",
+    "build": "astro build && node scripts/check-budget.ts --post && node scripts/check-output.ts",
     "preview": "astro preview"
   },
   "dependencies": {

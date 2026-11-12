@@ -1,5 +1,6 @@
 ---
-import { faNum } from '../../lib/format';
+import { faNum, figNum } from '../../lib/format';
+import { canonicalAnchor } from '../../data/curriculum-migration';
 
 interface Props {
   id: string;
@@ -8,11 +9,11 @@ interface Props {
 }
 
 const { id, text, suffix } = Astro.props;
-const raw = id.replace(/^fig-/, '').replace(/-ctx$/, '');
+const raw = canonicalAnchor(id).replace(/^fig-/, '').replace(/-ctx$/, '');
 const isPart = raw.startsWith('part-');
 const label = isPart
   ? `بخش ${faNum(raw.slice(5))}`
-  : `شکل ${faNum(raw.replace('-', '.'))}${suffix ? ` ${suffix}` : ''}`;
+  : `شکل ${faNum(figNum(canonicalAnchor(id)))}${suffix ? ` ${suffix}` : ''}`;
 ---
 
 <figcaption class="figure__caption">

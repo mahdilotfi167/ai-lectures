@@ -1,8 +1,8 @@
 ---
-import { faNum, lessonAnchor } from '../../lib/format';
+import { faNum, lessonAnchor, partAnchor } from '../../lib/format';
 import { mapZones } from '../../data/concept-map';
 import { termById } from '../../data/glossary';
-import type { PartMeta, LessonMeta } from '../../data/lessons';
+import { stages, type PartMeta, type LessonMeta } from '../../data/lessons';
 
 interface Props {
   parts: PartMeta[];
@@ -17,16 +17,18 @@ const { parts, lessons, idPrefix = 'toc' } = Astro.props;
   {parts.map((part) => {
     const entries = lessons.filter((lesson) => lesson.part === part.part);
     const zone = mapZones.find((item) => item.part === part.part);
+    const stage = stages.find((item) => item.parts.includes(part.part))!;
     return (
       <section
         class="toc-zone"
         style={`--part-color: var(--part-${part.part})`}
         aria-labelledby={`${idPrefix}-part-${part.part}`}
         data-toc-zone={part.part}
-        data-search={`${part.title} ${part.promise}`}
+        data-search={`${stage.title} ${part.title} ${part.promise}`}
       >
         <header class="toc-zone__head">
-          <a class="toc-zone__heading" href={`#part-${part.part}`} data-toc-part={part.part}>
+          <p class="toc-zone__stage">مرحلهٔ {faNum(stages.indexOf(stage) + 1)} — {stage.title}</p>
+          <a class="toc-zone__heading" href={`#${partAnchor(part.part)}`} data-toc-part={part.part}>
             <span class="toc-zone__number" aria-hidden="true">{faNum(part.part)}</span>
             <span>
               <span class="toc-zone__kicker">بخش {faNum(part.part)} · {faNum(entries.length)} درس</span>
@@ -38,14 +40,19 @@ const { parts, lessons, idPrefix = 'toc' } = Astro.props;
 
         <div class="toc-zone__content">
           <ol class="toc-lesson-grid" aria-label={`درس‌های بخش ${faNum(part.part)}`}>
-            {entries.map((lesson) => (
-              <li data-toc-entry data-search={`${lesson.id} ${lesson.title} ${lesson.objective}`}>
+            {entries.map((lesson, index) => (
+              <>
+                {lesson.cluster && lesson.cluster !== entries[index - 1]?.cluster && (
+                  <li class="toc-lesson-grid__cluster" data-toc-cluster={lesson.cluster}><p>{lesson.cluster}</p></li>
+                )}
+              <li data-toc-entry data-cluster={lesson.cluster} data-search={`${lesson.cluster ?? ''} ${lesson.id} ${lesson.title} ${lesson.objective}`}>
                 <a class="toc-lesson" href={`#${lessonAnchor(lesson.id)}`} data-toc-lesson={lesson.id}>
                   <span class="toc-lesson__number">{faNum(lesson.id)}</span>
                   <span>{lesson.title}</span>
                   <span class="toc-lesson__current">در حال خواندن</span>
                 </a>
               </li>
+              </>
             ))}
           </ol>
 

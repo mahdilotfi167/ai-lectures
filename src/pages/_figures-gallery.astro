@@ -20,6 +20,7 @@ import DataTable from '../components/figures/DataTable.astro';
 import TradeoffTriangle from '../components/figures/TradeoffTriangle.astro';
 import Matrix2x2 from '../components/figures/Matrix2x2.astro';
 import CostCalculator from '../components/figures/CostCalculator.astro';
+import ConversationExample from '../components/figures/ConversationExample.astro';
 import { tokenSamples } from '../data/figures/tokens';
 import { apiBlocks } from '../data/figures/api';
 ---
@@ -29,7 +30,7 @@ import { apiBlocks } from '../data/figures/api';
     <header class="gallery__head">
       <h1>گالری شکل‌ها</h1>
       <p>
-        صفحهٔ توسعه برای بررسی همهٔ بیست شکل در سه اندازه و در حالت کاهش حرکت.
+        صفحهٔ توسعه برای بررسی شکل‌های پایه و گفت‌وگوی مرتب در سه اندازه و در حالت کاهش حرکت.
         این صفحه در خروجی نهایی ساخته نمی‌شود.
       </p>
       <label class="gallery__toggle">
@@ -274,6 +275,14 @@ import { apiBlocks } from '../data/figures/api';
 
     <section class="gallery__item"><h2>۲۰. CostCalculator</h2>
       <CostCalculator id="fig-g-20" caption="نمونهٔ ماشین‌حساب" desc="ماشین‌حساب هزینه با سه لغزنده." />
+    </section>
+    <section class="gallery__item"><h2>۲۱. ConversationExample</h2>
+      <ConversationExample id="fig-g-21" caption="اصلاح هدفمند برنامه پیش از اجرا." desc="سه پیام مرتب از کاربر و دستیار، با اصلاح محدوده پیش از هر تغییر."
+        messages={[
+          { role: 'کاربر', text: 'ابتدا برنامه بده؛ چیدمان نباید تغییر کند.' },
+          { role: 'دستیار', text: 'پیشنهاد: رنگ‌ها و سربرگ را عوض کنیم.' },
+          { role: 'کاربر', text: 'سربرگ بماند؛ فقط رنگ‌ها را بررسی کن و هنوز ویرایش نکن.' }
+        ]} />
     </section>
   </div>
 </Book>

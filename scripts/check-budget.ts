@@ -2,7 +2,7 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
-import { lessons } from '../src/data/lessons.ts';
+import { lessons, parts, stages } from '../src/data/lessons.ts';
 import { lenses } from '../src/data/context/lenses.ts';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -69,7 +69,11 @@ if (post) {
   const lessonCount = (html.match(/class="lesson"/g) ?? []).length;
   const partCount = (html.match(/class="part-divider full"/g) ?? []).length;
   if (lessonCount !== lessons.length) errors.push(`expected ${lessons.length} lesson articles in output, found ${lessonCount}`);
-  if (partCount !== 6) errors.push(`expected 6 part dividers in output, found ${partCount}`);
+  if (partCount !== parts.length) errors.push(`expected ${parts.length} part dividers in output, found ${partCount}`);
+  for (const stage of stages) {
+    const count = (html.match(new RegExp(`data-stage="${stage.id}"`, 'g')) ?? []).length;
+    if (count !== stage.parts.length) errors.push(`stage ${stage.id}: expected ${stage.parts.length} Part labels, found ${count}`);
+  }
 
   const lensCount = (html.match(/data-context-lens=/g) ?? []).length;
   const labCount = (html.match(/data-context-lab=/g) ?? []).length;
@@ -78,11 +82,6 @@ if (post) {
     errors.push(`expected ${expectedLenses} context lenses in output, found ${lensCount}`);
   }
   if (labCount !== 1) errors.push(`expected 1 context lab in output, found ${labCount}`);
-  if (size > 678 * 1024) {
-    warnings.push(
-      `context lenses added ${Math.round((size - 618 * 1024) / 1024)} KB over the 618 KB baseline (plan estimate: <= 60 KB)`,
-    );
-  }
 }
 
 for (const warning of warnings) console.warn(`warning: ${warning}`);

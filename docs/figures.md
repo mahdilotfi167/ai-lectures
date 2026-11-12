@@ -1,6 +1,10 @@
 # Figure library
 
-The 35 lesson figures are built from **20 primitives**. A further **2 context primitives** (`ContextLens`, `ContextLab`) render the secondary Context Lenses specified in `PLAN-CONTEXT.md`. Lessons never author SVG — they pass data to a component (PLAN §4.3).
+The current book has **40 primary figures**, seven with optional controls, built from the existing primitives plus the static `ConversationExample`. A further **2 context primitives** (`ContextLens`, `ContextLab`) render 20 Lenses and one Lab. Lessons never author SVG — they pass data to a component.
+
+> Current hosts, counts and stable identities are in `docs/curriculum.md`. Numeric host references in the original component catalogue below are historical. Use `fig-{slug}` / `fig-{slug}-ctx`; display numbers come from metadata. Do not assign a reused numeric identity to different content.
+
+`ConversationExample` takes `{ id, caption, desc, messages: { role: 'کاربر' | 'دستیار', text: string }[] }`. It renders every message in an ordered HTML list, labelled without hidden states, animation or a live model. It represents message order and targeted feedback, not a participant sequence or evidence of execution.
 
 Fifteen primitives are reused across two or more lessons; five are single-use because their lesson genuinely needs a bespoke visual. The two context primitives are shared by 21 lessons. Build them in the order given in `implementation-tasks.md` (shared primitives first).
 
@@ -14,7 +18,7 @@ Every primitive accepts, in addition to its own props:
 
 ```ts
 interface FigureBase {
-  id: string;              // "fig-2-3", matches frontmatter
+  id: string;              // "fig-skills", matches frontmatter
   title?: string;          // <title> inside SVG, for screen readers
   desc: string;            // <desc> — a sentence describing the figure for non-visual readers. REQUIRED.
   interactive?: boolean;   // default false
@@ -549,33 +553,34 @@ Icons are always paired with a text label. No icon-only meaning.
 
 ---
 
-## Primitive → lesson map
+## Current primitive → lesson map
 
 | Primitive | Lessons | Count |
 |---|---|---|
 | `ConceptMap` | Development gallery only; production navigation uses `shell/TocMap.astro` and the same map data | 0 inline |
-| `CardGrid` | 1.1, 1.3, 3.6, 6.3 | 4 |
-| `FlowPipeline` | 3.4, 4.4, 5.1 | 3 |
-| `SequenceFlow` | 2.2, 5.3 | 2 |
-| `LoopTrace` | 2.5, 2.7 | 2 |
-| `SplitCompare` | 2.1, 2.4 | 2 |
-| `LayerStack` | 1.2, 4.2 | 2 |
-| `StackedBar` | 3.3, 4.3 | 2 |
-| `ProbabilityBars` | 3.1, 3.5 | 2 |
-| `BranchDiagram` | 2.6, 6.2 | 2 |
-| `Ladder` | 4.5, 4.7 | 2 |
-| `DataTable` | 4.6, 5.4 | 2 |
-| `TokenStrip` | 3.2 | 1 |
-| `GraphMorph` | 2.3 | 1 |
-| `ExplodedView` | 2.8 | 1 |
-| `Matrix2x2` | 6.1 | 1 |
-| `AnnotatedCode` | 4.1 | 1 |
-| `TradeoffTriangle` | 3.7 | 1 |
+| `CardGrid` | 1.1, 1.3, 3.2, 4.4, 5.6 | 5 |
+| `FlowPipeline` | 3.3, 5.4, 6.4, 6.10 | 4 |
+| `SequenceFlow` | 2.2, 6.8 | 2 |
+| `LoopTrace` | 2.4, 2.6, 4.6 | 3 |
+| `SplitCompare` | 2.1, 2.3, 3.5 | 3 |
+| `LayerStack` | 1.2, 3.4 | 2 |
+| `StackedBar` | 5.3, 6.2 | 2 |
+| `ProbabilityBars` | 5.1, 5.5 | 2 |
+| `BranchDiagram` | 2.5, 4.3, 6.11 | 3 |
+| `Ladder` | 4.2, 6.5 | 2 |
+| `DataTable` | 4.1, 4.5, 6.6, 6.9 | 4 |
+| `TokenStrip` | 5.2 | 1 |
+| `GraphMorph` | 6.3 | 1 |
+| `ExplodedView` | 2.7 | 1 |
+| `Matrix2x2` | 3.1 | 1 |
+| `AnnotatedCode` | 6.1 | 1 |
+| `TradeoffTriangle` | 5.7 | 1 |
 | `RoadStrip` | Development gallery only | 0 inline |
-| `CostCalculator` | 5.2 | 1 |
-| `ContextLens` | 20 lessons (1.2, 1.3, 2.2–2.5, 2.7, 2.8, 3.3–3.5, 3.7, 4.1, 4.4, 4.5, 5.1–5.4, 6.4) | 20 (secondary) |
-| `ContextLab` | 4.3 | 1 (secondary) |
-| | **Total primary** | **32** |
+| `CostCalculator` | 6.7 | 1 |
+| `ConversationExample` | 3.6 | 1 |
+| `ContextLens` | Hosts listed in `curriculum.md` and `lenses.ts` | 20 (secondary) |
+| `ContextLab` | 6.2 | 1 (secondary) |
+| | **Total primary** | **40** |
 | | **Total context** | **21** |
 
 Build order: `CardGrid`, `FlowPipeline`, `SequenceFlow`, `SplitCompare`, `LayerStack`, `StackedBar`, `ProbabilityBars`, `LoopTrace`, `BranchDiagram`, `Ladder`, `DataTable`, `ConceptMap`, then the six single-use primitives, then `ContextLens` and `ContextLab`. Highest reuse first, so content authoring on Part 1–2 can begin before the library is finished.

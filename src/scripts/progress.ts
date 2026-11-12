@@ -10,23 +10,21 @@ let lessonTops: { id: string; top: number }[] = [];
 let ticking = false;
 
 function measure() {
-  const parts = Array.from(document.querySelectorAll<HTMLElement>('[id^="part-"]')).filter(
-    (el) => /^part-\d+$/.test(el.id),
-  );
+  const parts = Array.from(document.querySelectorAll<HTMLElement>('[data-part-number]'));
   ranges = parts.map((el, index) => {
     const next = parts[index + 1];
     return {
-      part: Number(el.id.replace('part-', '')),
+      part: Number(el.dataset.partNumber),
       top: el.getBoundingClientRect().top + window.scrollY,
       bottom: next
         ? next.getBoundingClientRect().top + window.scrollY
         : document.documentElement.scrollHeight,
-      segment: document.querySelector<HTMLElement>(`.rail__seg[data-part="${el.id.replace('part-', '')}"]`),
+      segment: document.querySelector<HTMLElement>(`.rail__seg[data-part="${el.dataset.partNumber}"]`),
     };
   });
 
   lessonTops = Array.from(document.querySelectorAll<HTMLElement>('.lesson')).map((el) => ({
-    id: el.id.replace('lesson-', '').replace('-', '.'),
+    id: el.dataset.lessonNumber!,
     top: el.getBoundingClientRect().top + window.scrollY,
   }));
 }
@@ -83,7 +81,7 @@ function init() {
   for (const button of document.querySelectorAll<HTMLButtonElement>('.rail__seg')) {
     button.addEventListener('click', () => {
       const part = button.dataset.part;
-      const target = document.getElementById(`part-${part}`);
+      const target = document.querySelector<HTMLElement>(`[data-part-number="${part}"]`);
       target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   }

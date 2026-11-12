@@ -264,3 +264,4 @@ Executed from `PLAN-CONTEXT.md`. The full spec, frame scripts and acceptance cri
 - [x] Print: all frames expanded, controls hidden, ~100 A4 pages.
 - [x] `dist/` contains exactly `index.html`; size ≈ 0.92 MB.
 - [ ] `[H]` Native-reader review of all Persian lens narrations, predicts and Lab sentences.
+> **Current status:** the original tasks below are an archival implementation record. The active 41-lesson, three-stage contract is `curriculum.md`, with the implementation/release checklist in `../PLAN-USER-FIRST.md`. Do not restore old lesson numbering, removed asides or retired Context controls from historical tasks.

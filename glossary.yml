@@ -4,10 +4,10 @@
 # Schema: docs/terminology.md §3
 #
 # STATUS: every entry is `confirmed` (Phase 0 gate signed off).
-# Renaming a term after Phase 3 means re-reviewing authored lessons — decide now.
+# First introductions follow the user-first curriculum; technical depth may come later.
 
 terms:
-  # ─────────────────────────────── Part 1 ───────────────────────────────
+  # Stable term keys are grouped by topic below; not_before gives reading order.
 
   - id: llm
     en: LLM
@@ -20,7 +20,7 @@ terms:
     def_en: "A model trained on large text corpora to predict the next token."
     status: confirmed
     aliases: [Large Language Model, مدل زبانی بزرگ]
-    zone: model
+    zone: overview
 
   - id: context
     en: Context
@@ -33,7 +33,7 @@ terms:
     def_en: "All the text placed in front of the model for one call."
     status: confirmed
     aliases: [Context]
-    zone: model
+    zone: overview
 
   - id: turn
     en: Turn
@@ -46,7 +46,7 @@ terms:
     def_en: "In this book, the span from a new user message to the assistant's final reply; it may include multiple model calls and tool executions."
     status: confirmed
     aliases: []
-    zone: model
+    zone: overview
 
   - id: model
     en: Model
@@ -59,7 +59,7 @@ terms:
     def_en: "The trained weights that map input text to output text."
     status: confirmed
     aliases: []
-    zone: model
+    zone: overview
 
   - id: harness
     en: Harness
@@ -72,7 +72,7 @@ terms:
     def_en: "The program around the model that assembles input, runs tools, and handles output."
     status: confirmed      # decided in Phase 0
     aliases: [Harness]
-    zone: agents
+    zone: overview
 
   # ─────────────────────────────── Part 2 ───────────────────────────────
 
@@ -96,8 +96,8 @@ terms:
     first_use: چت‌بات
     short: چت‌بات
     not_before: "2.1"
-    def_fa: "سیستمی که به هر پرسش یک پاسخ می‌دهد و کار دیگری انجام نمی‌دهد."
-    def_en: "A system that answers questions and takes no actions."
+    def_fa: "رابط گفت‌وگویی برای گرفتن و فرستادن پیام؛ محصول می‌تواند ابزار و رفتار ایجنتی هم داشته باشد."
+    def_en: "A conversational interface; the product may also provide tools and agentic behavior."
     status: confirmed
     aliases: [چتبات]
     zone: agents
@@ -134,12 +134,12 @@ terms:
     style: keep-latin
     first_use: MCP (Model Context Protocol)
     short: MCP
-    not_before: "2.3"
-    def_fa: "استانداردی که ابزارها را یک‌بار تعریف می‌کند تا هر برنامه‌ای بتواند از آن‌ها استفاده کند."
-    def_en: "A standard interface so tools are defined once and usable by any client."
+    not_before: "6.3"
+    def_fa: "قرارداد مشترک اتصال برنامه‌ها به ابزار و منابع؛ کشف قابلیت به معنی اجازهٔ اجرا نیست."
+    def_en: "A shared connection protocol for tools and resources; capability discovery is not execution authorization."
     status: confirmed
     aliases: [Model Context Protocol, پروتکل کانتکست مدل]
-    zone: agents
+    zone: systems
 
   - id: skill
     en: Skill
@@ -147,7 +147,7 @@ terms:
     style: translate-plus-latin
     first_use: مهارت (Skill)
     short: مهارت
-    not_before: "2.4"
+    not_before: "2.3"
     def_fa: "بستهٔ دستورالعمل که فقط وقتی لازم شود به کانتکست اضافه می‌شود — می‌گوید کار چطور انجام شود."
     def_en: "A packaged set of instructions loaded into context on demand."
     status: confirmed
@@ -160,7 +160,7 @@ terms:
     style: translate
     first_use: حافظه
     short: حافظه
-    not_before: "2.5"
+    not_before: "2.4"
     def_fa: "چیزی که سیستم اطراف مدل ذخیره و بازخوانی می‌کند؛ خود مدل چیزی را به یاد نمی‌آورد."
     def_en: "State stored and recalled by the surrounding system, not by the model."
     status: confirmed
@@ -173,12 +173,12 @@ terms:
     style: translate
     first_use: بدون وضعیت (Stateless)
     short: بدون وضعیت
-    not_before: "2.5"
+    not_before: "2.4"
     def_fa: "مدل بین فراخوانی‌ها چیزی نگه نمی‌دارد؛ برنامه باید تاریخچه یا یادداشت لازم را دوباره در کانتکست قرار دهد."
     def_en: "Each call starts fresh; nothing is retained between calls."
     status: confirmed
     aliases: [Stateless, بی‌حافظه]
-    zone: model
+    zone: agents
 
   - id: workflow
     en: Workflow
@@ -186,14 +186,14 @@ terms:
     style: transliterate
     first_use: ورک‌فلو (Workflow)
     short: ورک‌فلو
-    not_before: "2.6"
+    not_before: "2.5"
     def_fa: "زنجیرهٔ مراحل از پیش تعیین‌شده؛ مسیر ثابت است و مدل آن را انتخاب نمی‌کند."
     def_en: "A predefined sequence of steps; the path is fixed, not chosen by the model."
     status: confirmed
     aliases: [Workflow, ورکفلو]
     zone: agents
 
-  # ─────────────────────────────── Part 3 ───────────────────────────────
+  # ─────────────────────────────── Model concepts ──────────────────────
 
   - id: inference
     en: Inference
@@ -201,9 +201,9 @@ terms:
     style: translate
     first_use: استنتاج (Inference)
     short: استنتاج
-    not_before: "3.1"
-    def_fa: "لحظه‌ای که از یک مدل آموخته‌شده پاسخ می‌گیریم. هر بار هزینه دارد."
-    def_en: "Running a trained model to get an output. Costs money every time."
+    not_before: "5.1"
+    def_fa: "اجرای مدل آماده برای تولید خروجی؛ منابع محاسباتی مصرف می‌کند."
+    def_en: "Running a trained model to produce output, consuming computation."
     status: confirmed
     aliases: [Inference]
     zone: model
@@ -214,7 +214,7 @@ terms:
     style: transliterate
     first_use: توکن (Token)
     short: توکن
-    not_before: "3.2"
+    not_before: "5.2"
     def_fa: "تکه‌های کوچکی که متن به آن‌ها شکسته می‌شود؛ واحد شمارش محدودیت و هزینه."
     def_en: "The small text pieces a model reads and bills by."
     status: confirmed
@@ -227,7 +227,7 @@ terms:
     style: translate-plus-latin
     first_use: ظرفیت کانتکست (Context Window)
     short: ظرفیت کانتکست
-    not_before: "3.3"
+    not_before: "5.3"
     def_fa: "حداکثر اندازهٔ کانتکست؛ مدل در یک فراخوانی بیشتر از این نمی‌بیند."
     def_en: "The maximum amount of context a model can consider in a single pass."
     status: confirmed
@@ -245,7 +245,7 @@ terms:
     def_en: "Fixed instructions placed atop the context on every call."
     status: confirmed
     aliases: [System prompt]
-    zone: build
+    zone: overview
 
   - id: training
     en: Training
@@ -253,12 +253,12 @@ terms:
     style: translate
     first_use: آموزش (Training)
     short: آموزش
-    not_before: "3.4"
-    def_fa: "فرایند پرهزینه و یک‌بارهٔ ساختن مدل. جدا از استنتاج."
-    def_en: "The expensive, one-off process of building a model."
+    not_before: "3.3"
+    def_fa: "فرایند تغییر پارامترهای مدل با داده و محاسبه؛ با دریافت پاسخ در یک گفت‌وگو یکی نیست."
+    def_en: "Updating model parameters using data and computation, distinct from receiving a conversational response."
     status: confirmed
     aliases: [Training]
-    zone: model
+    zone: practice
 
   - id: pretraining
     en: Pre-training
@@ -266,7 +266,7 @@ terms:
     style: translate
     first_use: پیش‌آموزش (Pre-training)
     short: پیش‌آموزش
-    not_before: "3.4"
+    not_before: "5.4"
     def_fa: "مرحلهٔ اول آموزش: خواندن حجم عظیمی از متن برای یادگیری زبان و دانش عمومی."
     def_en: "First training stage: learning language and general knowledge from bulk text."
     status: confirmed
@@ -279,12 +279,12 @@ terms:
     style: transliterate
     first_use: فاین‌تیونینگ (Fine-tuning)
     short: فاین‌تیونینگ
-    not_before: "3.4"
-    def_fa: "آموزش بیشتر یک مدل آماده روی داده‌های شما تا رفتار یا سبکش تغییر کند."
-    def_en: "Further training a ready model on your data to change its behavior or style."
+    not_before: "5.4"
+    def_fa: "آموزش بیشتر مدل آماده با دادهٔ منتخب؛ می‌تواند رفتار، قالب و دانش را تغییر دهد."
+    def_en: "Further training of a ready model on selected data; it can change behavior, format, and knowledge."
     status: confirmed
     aliases: [Fine-tuning, Finetuning, فاین تیونینگ]
-    zone: build
+    zone: model
 
   - id: alignment
     en: Alignment
@@ -292,9 +292,9 @@ terms:
     style: translate-plus-latin
     first_use: هم‌راستاسازی (Alignment)
     short: هم‌راستاسازی
-    not_before: "3.4"
-    def_fa: "مرحلهٔ آخر آموزش: شکل‌دادن به رفتار مدل تا پاسخ‌هایش مفید و بی‌خطر باشند."
-    def_en: "Final training stage shaping the model toward helpful, safe responses."
+    not_before: "5.4"
+    def_fa: "هدف و روش‌های نزدیک‌کردن رفتار مدل به انتظارهای مطلوب؛ تضمین بی‌خطایی نیست."
+    def_en: "Goals and methods for shaping model behavior toward desired expectations, without guaranteeing correctness or safety."
     status: confirmed
     aliases: [Alignment, هم راستاسازی]
     zone: model
@@ -305,7 +305,7 @@ terms:
     style: keep-latin
     first_use: RLHF (یادگیری تقویتی با بازخورد انسان)
     short: RLHF
-    not_before: "3.4"
+    not_before: "5.4"
     def_fa: "روشی برای هم‌راستاسازی که در آن انسان‌ها پاسخ‌های بهتر را انتخاب می‌کنند."
     def_en: "An alignment method where humans rank preferred responses."
     status: confirmed
@@ -318,12 +318,12 @@ terms:
     style: translate-plus-latin
     first_use: توهم (Hallucination)
     short: توهم
-    not_before: "3.5"
-    def_fa: "وقتی مدل چیزی روان و قابل‌باور می‌سازد که واقعیت ندارد — نتیجهٔ طبیعی حدس کلمهٔ بعدی."
+    not_before: "4.1"
+    def_fa: "وقتی مدل ادعایی نادرست یا بی‌پشتوانه می‌سازد، حتی اگر روان و باورپذیر باشد."
     def_en: "A fluent, plausible output with no fact behind it."
     status: confirmed
     aliases: [Hallucination, هالوسینیشن]
-    zone: model
+    zone: judgment
 
   - id: reasoning
     en: Reasoning
@@ -331,12 +331,12 @@ terms:
     style: translate
     first_use: استدلال (Reasoning)
     short: استدلال
-    not_before: "3.7"
-    def_fa: "مدل پیش از پاسخ‌دادن، مراحل میانی بیشتری تولید می‌کند؛ کندتر و گران‌تر، اما دقیق‌تر."
+    not_before: "3.2"
+    def_fa: "صرف کار و محاسبهٔ بیشتر برای حل مسئله؛ می‌تواند کمک کند، اما درستی را تضمین نمی‌کند."
     def_en: "Spending more compute at answer time on intermediate steps."
     status: confirmed
     aliases: [Reasoning]
-    zone: model
+    zone: practice
 
   - id: benchmark
     en: Benchmark
@@ -344,14 +344,14 @@ terms:
     style: transliterate
     first_use: بنچمارک (Benchmark)
     short: بنچمارک
-    not_before: "3.7"
+    not_before: "5.7"
     def_fa: "آزمون استاندارد برای مقایسهٔ مدل‌ها. مفید، اما کار شما را اندازه نمی‌گیرد."
     def_en: "A standard test for comparing models; not a measure of your task."
     status: confirmed
     aliases: [Benchmark]
     zone: model
 
-  # ─────────────────────────────── Part 4 ───────────────────────────────
+  # ─────────────────────────────── Requests and sources ─────────────────
 
   - id: api
     en: API
@@ -359,12 +359,12 @@ terms:
     style: keep-latin
     first_use: API (واسط برنامه‌نویسی)
     short: API
-    not_before: "4.1"
+    not_before: "6.1"
     def_fa: "راهی که یک برنامه از برنامهٔ دیگر چیزی می‌خواهد؛ اینجا: فرستادن متن و گرفتن متن."
     def_en: "The programmatic interface for sending text and receiving text."
     status: confirmed
     aliases: []
-    zone: build
+    zone: systems
 
   - id: temperature
     en: Temperature
@@ -372,12 +372,12 @@ terms:
     style: translate-plus-latin
     first_use: دما (Temperature)
     short: دما
-    not_before: "4.1"
+    not_before: "6.1"
     def_fa: "تنظیمی که مشخص می‌کند مدل چقدر پاسخ‌های کم‌احتمال‌تر را انتخاب کند."
     def_en: "A setting controlling how often the model picks less likely tokens."
     status: confirmed
     aliases: [Temperature]
-    zone: build
+    zone: systems
 
   - id: prompt
     en: Prompt
@@ -385,12 +385,12 @@ terms:
     style: transliterate
     first_use: پرامپت (Prompt)
     short: پرامپت
-    not_before: "4.2"
-    def_fa: "متنی که به مدل می‌دهید: نقش، کار، محدودیت‌ها و نمونه‌ها."
-    def_en: "The text you give the model: role, task, constraints, examples."
+    not_before: "3.4"
+    def_fa: "متن درخواست: هدف، مواد مرتبط، محدودیت، خروجی و معیار پایان؛ نقش و نمونه هم می‌توانند کمک کنند."
+    def_en: "A task brief describing the goal, relevant material, constraints, deliverable, and completion criteria; roles and examples can support it."
     status: confirmed
     aliases: [Prompt, پرومپت]
-    zone: build
+    zone: practice
 
   - id: few-shot
     en: Few-shot
@@ -398,12 +398,12 @@ terms:
     style: translate-plus-latin
     first_use: چند-نمونه (Few-shot)
     short: چند-نمونه
-    not_before: "4.2"
+    not_before: "3.4"
     def_fa: "گذاشتن چند مثال از پاسخ درست داخل پرامپت تا مدل الگو را بگیرد."
     def_en: "Including a few worked examples in the prompt."
     status: confirmed
     aliases: [Few-shot, Few shot]
-    zone: build
+    zone: practice
 
   - id: context-engineering
     en: Context engineering
@@ -411,12 +411,12 @@ terms:
     style: translate
     first_use: چیدمان کانتکست (Context Engineering)
     short: چیدمان کانتکست
-    not_before: "4.3"
+    not_before: "6.2"
     def_fa: "کار واقعی: انتخاب و چیدن درست چیزهایی که در کانتکست قرار می‌گیرند."
     def_en: "Choosing and arranging what goes into the context window."
     status: confirmed
     aliases: [Context engineering]
-    zone: build
+    zone: systems
 
   - id: rag
     en: RAG
@@ -424,12 +424,12 @@ terms:
     style: keep-latin
     first_use: RAG (تولید افزوده با بازیابی)
     short: RAG
-    not_before: "4.4"
+    not_before: "6.4"
     def_fa: "پیش از پاسخ‌دادن، مرتبط‌ترین تکه‌های اسناد شما پیدا و به کانتکست اضافه می‌شوند."
     def_en: "Retrieve relevant document chunks, add them to context, then generate."
     status: confirmed
     aliases: [Retrieval Augmented Generation, Retrieval-Augmented Generation]
-    zone: build
+    zone: systems
 
   - id: embedding
     en: Embedding
@@ -437,12 +437,12 @@ terms:
     style: transliterate
     first_use: امبدینگ (بردار معنایی)
     short: امبدینگ
-    not_before: "4.4"
+    not_before: "6.4"
     def_fa: "تبدیل یک متن به فهرستی از عددها، به‌گونه‌ای که متن‌های هم‌معنا عددهای نزدیک بگیرند."
     def_en: "A numeric vector where similar meanings land close together."
     status: confirmed
     aliases: [Embedding, بردار معنایی]
-    zone: build
+    zone: systems
 
   - id: chunking
     en: Chunking
@@ -450,12 +450,12 @@ terms:
     style: translate-plus-latin
     first_use: تکه‌تکه‌کردن (Chunking)
     short: تکه‌تکه‌کردن
-    not_before: "4.4"
+    not_before: "6.4"
     def_fa: "بریدن اسناد بلند به قطعه‌های کوچک، تا بتوان فقط قطعهٔ مرتبط را بازیابی کرد."
     def_en: "Splitting long documents into retrievable pieces."
     status: confirmed
     aliases: [Chunking]
-    zone: build
+    zone: systems
 
   - id: vector-database
     en: Vector database
@@ -463,12 +463,12 @@ terms:
     style: translate
     first_use: پایگاه دادهٔ برداری (Vector Database)
     short: پایگاه دادهٔ برداری
-    not_before: "4.4"
+    not_before: "6.4"
     def_fa: "جایی که امبدینگ‌ها نگه داشته می‌شوند تا نزدیک‌ترین‌ها سریع پیدا شوند."
     def_en: "Storage for embeddings with fast nearest-neighbor search."
     status: confirmed
     aliases: [Vector database, Vector store, پایگاه داده برداری]
-    zone: build
+    zone: systems
 
   - id: semantic-search
     en: Semantic search
@@ -476,12 +476,12 @@ terms:
     style: translate
     first_use: جست‌وجوی معنایی (Semantic Search)
     short: جست‌وجوی معنایی
-    not_before: "4.4"
+    not_before: "6.4"
     def_fa: "جست‌وجو بر پایهٔ معنا نه کلمهٔ دقیق؛ پرسش دربارهٔ بررسی تغییر، بخش تست و بازبینی راهنما را پیدا می‌کند."
     def_en: "Search by meaning rather than exact keyword."
     status: confirmed
     aliases: [Semantic search, جستجوی معنایی]
-    zone: build
+    zone: systems
 
   - id: eval
     en: Eval
@@ -489,12 +489,12 @@ terms:
     style: translate-plus-latin
     first_use: ارزیابی (Eval)
     short: ارزیابی
-    not_before: "4.6"
-    def_fa: "مجموعه‌ای ثابت از نمونه‌ها با پاسخ درست، که هر تغییر را با آن می‌سنجید."
-    def_en: "A fixed test set with expected answers, run against every change."
+    not_before: "4.5"
+    def_fa: "سنجش نتیجه با معیار مشخص؛ در بررسی منظم از نمونه‌های نماینده و معیارهای ثابت استفاده می‌کنیم."
+    def_en: "Assessing outcomes against explicit criteria; systematic evaluation uses representative cases and stable criteria."
     status: confirmed
     aliases: [Eval, Evals, Evaluation]
-    zone: build
+    zone: judgment
 
   - id: regression
     en: Regression
@@ -502,14 +502,14 @@ terms:
     style: translate-plus-latin
     first_use: پس‌رفت (Regression)
     short: پس‌رفت
-    not_before: "4.6"
+    not_before: "6.6"
     def_fa: "وقتی تغییری میانگین را بهتر می‌کند اما موردی که قبلاً درست بود را می‌شکند."
     def_en: "A change that improves the average while breaking a previously passing case."
     status: confirmed
     aliases: [Regression]
-    zone: build
+    zone: systems
 
-  # ─────────────────────────────── Part 5 ───────────────────────────────
+  # ─────────────────────────────── Operation and safety ────────────────
 
   - id: orchestrator
     en: Orchestrator
@@ -517,12 +517,12 @@ terms:
     style: translate-plus-latin
     first_use: هماهنگ‌کننده (Orchestrator)
     short: هماهنگ‌کننده
-    not_before: "5.1"
+    not_before: "6.10"
     def_fa: "بخشی که کانتکست را می‌سازد، مدل را صدا می‌زند، ابزارها را اجرا می‌کند و حلقه را می‌گرداند."
     def_en: "The component that assembles context, calls the model, and runs the loop."
     status: confirmed
     aliases: [Orchestrator, ارکستریتور]
-    zone: run
+    zone: systems
 
   - id: gateway
     en: Gateway
@@ -530,12 +530,12 @@ terms:
     style: translate-plus-latin
     first_use: دروازه (Gateway)
     short: دروازه
-    not_before: "5.1"
+    not_before: "6.10"
     def_fa: "نقطهٔ ورود همهٔ درخواست‌ها؛ جای احراز هویت، محدودیت نرخ و ثبت گزارش."
     def_en: "The single entry point handling auth, rate limiting, and logging."
     status: confirmed
     aliases: [Gateway]
-    zone: run
+    zone: systems
 
   - id: cost
     en: Cost
@@ -543,12 +543,12 @@ terms:
     style: translate
     first_use: هزینه
     short: هزینه
-    not_before: "5.2"
-    def_fa: "در این سیستم‌ها هزینه بر پایهٔ توکن است: هر توکن ورودی و خروجی قیمت دارد."
-    def_en: "Billed per token, input and output."
+    not_before: "3.1"
+    def_fa: "پول و زمان کل رسیدن به نتیجهٔ قابل‌قبول، شامل آماده‌سازی، انتظار، بررسی و اصلاح."
+    def_en: "The money and total time needed to reach an acceptable outcome, including briefing, waiting, checking, and correction."
     status: confirmed
     aliases: []
-    zone: run
+    zone: practice
 
   - id: caching
     en: Caching
@@ -556,12 +556,12 @@ terms:
     style: transliterate
     first_use: کش‌کردن (Caching)
     short: کش‌کردن
-    not_before: "5.2"
-    def_fa: "نگه‌داشتن بخش‌های تکراری کانتکست یا پاسخ‌ها، تا دوباره هزینه نشوند."
-    def_en: "Reusing repeated context or responses instead of paying again."
+    not_before: "6.7"
+    def_fa: "استفادهٔ دوباره از محاسبه یا پاسخ ذخیره‌شده؛ شرایط، تازگی و قیمت به روش و سرویس وابسته‌اند."
+    def_en: "Reusing computation or stored responses; conditions, freshness, and pricing depend on the method and service."
     status: confirmed
     aliases: [Caching, Cache, کش کردن]
-    zone: run
+    zone: systems
 
   - id: prompt-injection
     en: Prompt injection
@@ -569,12 +569,12 @@ terms:
     style: translate
     first_use: تزریق پرامپت (Prompt Injection)
     short: تزریق پرامپت
-    not_before: "5.3"
+    not_before: "6.8"
     def_fa: "متنی که از بیرون وارد کانتکست می‌شود و مدل آن را به‌جای داده، دستور می‌فهمد."
     def_en: "Untrusted text entering the context and being obeyed as an instruction."
     status: confirmed
     aliases: [Prompt injection]
-    zone: run
+    zone: systems
 
   - id: guardrail
     en: Guardrail
@@ -582,12 +582,12 @@ terms:
     style: transliterate
     first_use: گاردریل (Guardrail)
     short: گاردریل
-    not_before: "5.3"
+    not_before: "6.8"
     def_fa: "محدودیت‌هایی بیرون از مدل که جلوی خروجی یا کار خطرناک را می‌گیرند."
     def_en: "Constraints outside the model that block unsafe output or actions."
     status: confirmed      # decided in Phase 0
     aliases: [Guardrail, حفاظ]
-    zone: run
+    zone: systems
 
   - id: data-leakage
     en: Data leakage
@@ -595,12 +595,12 @@ terms:
     style: translate
     first_use: نشت داده
     short: نشت داده
-    not_before: "5.3"
+    not_before: "3.3"
     def_fa: "بیرون‌رفتن داده‌ای که نباید دیده شود — از طریق کانتکست، گزارش‌ها یا پاسخ مدل."
     def_en: "Sensitive data escaping through context, logs, or output."
     status: confirmed
     aliases: []
-    zone: run
+    zone: practice
 
   - id: least-privilege
     en: Least privilege
@@ -608,12 +608,12 @@ terms:
     style: translate
     first_use: کمترین دسترسی (Least Privilege)
     short: کمترین دسترسی
-    not_before: "5.3"
+    not_before: "4.2"
     def_fa: "هر ابزار فقط همان دسترسی را دارد که لازم است؛ ایجنت کلید همه‌ٔ درها را نمی‌گیرد."
     def_en: "Each tool gets only the access it needs."
     status: confirmed
     aliases: [Least privilege]
-    zone: run
+    zone: judgment
 
   - id: observability
     en: Observability
@@ -621,12 +621,12 @@ terms:
     style: translate
     first_use: مشاهده‌پذیری (Observability)
     short: مشاهده‌پذیری
-    not_before: "5.4"
+    not_before: "6.9"
     def_fa: "توانایی دیدن اینکه در هر درخواست چه گذشت: کانتکست، فراخوانی‌ها، هزینه و نتیجه."
     def_en: "Being able to see what happened in each request."
     status: confirmed
     aliases: [Observability, مشاهده پذیری]
-    zone: run
+    zone: systems
 
   - id: tracing
     en: Tracing
@@ -634,12 +634,12 @@ terms:
     style: translate-plus-latin
     first_use: ردگیری (Tracing)
     short: ردگیری
-    not_before: "5.4"
+    not_before: "6.9"
     def_fa: "ثبت گام‌به‌گام یک درخواست، از ورود تا پاسخ، برای یافتن محل خرابی."
     def_en: "Recording a request step by step to locate failures."
     status: confirmed
     aliases: [Tracing, Trace]
-    zone: run
+    zone: systems
 
   - id: latency
     en: Latency
@@ -647,12 +647,12 @@ terms:
     style: translate-plus-latin
     first_use: تأخیر (Latency)
     short: تأخیر
-    not_before: "5.4"
+    not_before: "6.9"
     def_fa: "زمانی که کاربر منتظر پاسخ می‌ماند. در ایجنت‌ها با هر فراخوانی جمع می‌شود."
     def_en: "The time a user waits; it accumulates with each call in an agent loop."
     status: confirmed
     aliases: [Latency, تاخیر]
-    zone: run
+    zone: systems
 
   - id: non-determinism
     en: Non-determinism
@@ -660,9 +660,9 @@ terms:
     style: translate
     first_use: غیرقطعی‌بودن (Non-determinism)
     short: غیرقطعی‌بودن
-    not_before: "5.4"
+    not_before: "6.9"
     def_fa: "یک ورودی ثابت می‌تواند پاسخ‌های متفاوت بدهد؛ پس آزمون‌های معمول کافی نیستند."
     def_en: "The same input can produce different outputs."
     status: confirmed
     aliases: [Non-determinism, Nondeterminism, غیر قطعی بودن]
-    zone: run
+    zone: systems

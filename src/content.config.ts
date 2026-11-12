@@ -11,7 +11,7 @@ const lessons = defineCollection({
     objective_fa: z.string().min(1),
     figure: z.object({
       component: z.string().min(1),
-      id: z.string().regex(/^fig-\d-\d+$/),
+      id: z.string().regex(/^fig-[a-z][a-z0-9-]+$/),
       caption_fa: z.string().min(1),
       interactive: z.boolean().default(false),
     }).optional(),
@@ -21,7 +21,7 @@ const lessons = defineCollection({
     has_aside: z.boolean().default(false),
     context_lens: z
       .object({
-        id: z.string().regex(/^fig-\d-\d+-ctx$/),
+        id: z.string().regex(/^fig-[a-z][a-z0-9-]+-ctx$/),
         lens: z.string().min(1),
         caption_fa: z.string().min(1),
         interactive: z

@@ -18,6 +18,7 @@ const errors: string[] = [];
 const warnings: string[] = [];
 
 const lessonIds = new Set(lessons.map((l) => l.id));
+const labLesson = lenses.find((lens) => lens.mode === 'lab')?.lesson;
 const allowedLatin = new Set(
   readFileSync(join(root, 'allowed-latin.txt'), 'utf8')
     .split('\n')
@@ -98,7 +99,7 @@ for (const lens of lenses) {
   if (lens.mode === 'static' && (lens.frames ?? []).length !== 1) {
     errors.push(`lens ${lens.key}: static needs exactly 1 frame`);
   }
-  if (lens.mode === 'lab' && lens.lesson !== '4.3') errors.push(`lens ${lens.key}: lab must be in 4.3`);
+  if (lens.mode === 'lab' && lens.lesson !== lessons.find((lesson) => lesson.slug === 'context-engineering')?.id) errors.push(`lens ${lens.key}: lab must accompany context assembly`);
 }
 
 const labLenses = lenses.filter((l) => l.mode === 'lab');
@@ -123,6 +124,7 @@ for (const lens of lenses) {
       return;
     }
     const kind = kinds[block.kind];
+    if (ref.lessonRef && !lessonIds.has(ref.lessonRef)) errors.push(`lens ${lens.key}: unknown reference ${ref.lessonRef}`);
     if (compareLessonId(kind.introducedIn, lens.lesson) > 0) {
       errors.push(
         `lens ${lens.key}: block ${ref.id} kind "${kind.id}" introduced in ${kind.introducedIn}, lens is ${lens.lesson}`,
@@ -206,14 +208,14 @@ must('skill.menu', story.skillFile, 'the discoverable skill path');
 must('r.denied', 'Permission denied', 'the returned permission error');
 must('a.test.again', story.testCommand, 'the distinct post-edit test request');
 
-/* 7 — Lab sanity + glossary gate at 4.3 */
+/* 7 — Lab sanity + glossary gate at its actual host */
 const labText = [
   ...labToggles.flatMap((t) => [t.label, t.hint]),
   ...labSentences.flatMap((s) => s.variants.flatMap((v) => [v.text, ...v.sources])),
   ...labPresets.map((p) => p.label),
 ].join(' ');
 for (const term of terms) {
-  if (compareLessonId('4.3', term.not_before) >= 0) continue;
+  if (!labLesson || compareLessonId(labLesson, term.not_before) >= 0) continue;
   const hit = persianForms(term).find((form) => containsPersianTerm(labText, form, term.id));
   if (hit) errors.push(`lab: "${hit}" (${term.id}) before ${term.not_before}`);
 }
@@ -250,8 +252,8 @@ for (const entry of parsed) {
   if (lens.lesson !== entry.data.id) {
     errors.push(`${entry.data.id}: lens ${meta.lens} belongs to ${lens.lesson}`);
   }
-  if (meta.id !== `fig-${entry.data.part}-${entry.data.id.split('.')[1]}-ctx`) {
-    errors.push(`${entry.data.id}: context lens id ${meta.id} does not follow fig-P-N-ctx`);
+  if (meta.id !== `fig-${entry.data.slug}-ctx`) {
+    errors.push(`${entry.data.id}: context lens id ${meta.id} does not follow fig-SLUG-ctx`);
   }
   const tag = entry.body.match(/<Context(Lens|Lab)\b[\s\S]*?\/>/)?.[0];
   if (!tag) {

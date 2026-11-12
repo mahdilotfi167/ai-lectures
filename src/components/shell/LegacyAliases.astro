@@ -1,0 +1,6 @@
+---
+import { aliasesFor } from '../../data/curriculum-migration';
+interface Props { anchor: string }
+const { anchor } = Astro.props;
+---
+{aliasesFor(anchor).map((id) => <span id={id} class="legacy-anchor" aria-hidden="true"></span>)}

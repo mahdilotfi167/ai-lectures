@@ -1,6 +1,7 @@
 ---
 import { render } from 'astro:content';
 import { faNum, lessonAnchor } from '../../lib/format';
+import LegacyAliases from './LegacyAliases.astro';
 
 interface Props {
   entry: any;
@@ -16,9 +17,11 @@ const anchor = lessonAnchor(d.id);
 <article
   class="lesson"
   id={anchor}
+  data-lesson-number={d.id}
   style={`--lesson-color: var(--part-${d.part})`}
   aria-labelledby={`${anchor}-title`}
 >
+  <LegacyAliases anchor={anchor} />
   <header class="lesson__header">
     <div class="lesson__num">درس {faNum(d.id)}</div>
     <h3 class="lesson__title" id={`${anchor}-title`}>{d.title_fa}</h3>
